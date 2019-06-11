@@ -40,12 +40,20 @@ def get_style_key_list(param):
 def get_body_key_list(param):
     all_keys = param.keys()
     body_key_list = []
+    body_script_key_list = []
     body = re.compile("body\$*", re.IGNORECASE)
     for key in all_keys:
         ret = body.match(key)
         if ret != None:
             body_key_list.append(key)
-    return body_key_list
+
+    script = re.compile("bscript\$*", re.IGNORECASE)
+    for key in all_keys:
+        ret = script.match(key)
+        if ret != None:
+            body_script_key_list.append(key)
+
+    return body_key_list, body_script_key_list
 
 def headstructure(param):
     script_key_list = []
@@ -71,9 +79,12 @@ def headstructure(param):
 
 def bodystructure(param):
     body_key_list = []
-    body_key_list = get_body_key_list(param)
+    body_key_list, body_script_key = get_body_key_list(param)
     body_key_list.sort()
     st = ""
     for key in body_key_list:
         st = st + param[key]
+
+    for bkey in body_script_key:
+        st = st + "<script type=text/javascript src=" + param[bkey] + " ></script>"
     return st

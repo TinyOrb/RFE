@@ -14,7 +14,7 @@ def initial():
         "body$b6":"<div id=log name=log><h2>Logs and Reports</h2></div>",
         "body$b7":"</div>",
         "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
-        "script$s2":"static/test.js",
+        "bscript$s2":"static/RFE.js",
         "style$t1":"static/RFE.css"
         }
     i = 1
@@ -34,7 +34,7 @@ def InitialLoad(request):
 
 def LoadTestSuite(request):
     try:
-        file_path = request.POST.get("file_path","")
+        suite = request.POST.get("suite","")
     except Exception as e:
-        raise e
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
         
