@@ -23,7 +23,7 @@ urlpatterns = [
     #url(r'^admin/', admin.site.urls),
     url(r'^App1$', Test.test1, name="App1"),
     url(r'^$', Test.home),
-    url(r'^RFE$', RFE.InitialLoad, name="RFE")
+    url(r'^RFE$', RFE.InitialLoad, name="RFE"),
     url(r'^RFETS$', RFE.LoadTestSuite, name="TS")
     #path(r'^App1/',Test.test1, name="index")
 ]

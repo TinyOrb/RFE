@@ -2,6 +2,8 @@ from django.http import HttpResponse
 import datetime
 from modelling import HTMLLoader
 from Robot_loader import Al_robot
+from Robot_loader import Al_robot_parser
+import json
 
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
@@ -26,6 +28,10 @@ def initial():
     initial_loading["headrawscript$r"+str(i)] = "});"
     return HTMLLoader.htmlstructure(**initial_loading)
 
+def fetchSuite(suite):
+    TC = Al_robot_parser.get_testcases_list(Al_robot.fetch_All_suite()[suite])
+    return TC
+
 def InitialLoad(request):
     try:
         return HttpResponse(initial())
@@ -34,7 +40,10 @@ def InitialLoad(request):
 
 def LoadTestSuite(request):
     try:
-        suite = request.POST.get("suite","")
+        if request.method == "POST":
+            suite = request.POST["suite"]
+            return HttpResponse(json.dumps(fetchSuite(suite)))
     except Exception as e:
+        raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
         
