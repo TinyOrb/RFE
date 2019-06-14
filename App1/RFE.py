@@ -9,7 +9,7 @@ def initial():
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
         "body$b1":"<div id=header name=header><h3 style='padding:1%;'>Robotframework Front End</h3></div>",
-        "body$b2":"<div id=suite name=suite><h2>Test Suite</h2></div>",
+        "body$b2":"<div id=suite name=suite><h2>Features</h2></div>",
         "body$b3":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
         "body$b4":"<div id=ControlReport name=ControlReport>",
         "body$b5":"<div id=control name=control><h2>Controls</h2></div><br>",
@@ -28,8 +28,8 @@ def initial():
     initial_loading["headrawscript$r"+str(i)] = "});"
     return HTMLLoader.htmlstructure(**initial_loading)
 
-def fetchSuite(suite):
-    TC = Al_robot_parser.get_testcases_list(Al_robot.fetch_All_suite()[suite])
+def fetchSuite(feature):
+    TC = Al_robot_parser.get_testcases_list(feature , Al_robot.fetch_All_suite()[feature])
     return TC
 
 def InitialLoad(request):
@@ -41,8 +41,8 @@ def InitialLoad(request):
 def LoadTestSuite(request):
     try:
         if request.method == "POST":
-            suite = request.POST["suite"]
-            return HttpResponse(json.dumps(fetchSuite(suite)))
+            feature = request.POST["feature"]
+            return HttpResponse(json.dumps(fetchSuite(feature)))
     except Exception as e:
         raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
