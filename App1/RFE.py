@@ -9,7 +9,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
-        "body$b1":"<div id=header name=header><h3 style='padding:1%;'>Robotframework Front End</h3></div>",
+        "body$b1":"<div id=header name=header><h2 style=\"padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
         "body$b2":"<div id=suite name=suite><h2>Features</h2></div>",
         "body$b3":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
         "body$b4":"<div id=ControlReport name=ControlReport>",
