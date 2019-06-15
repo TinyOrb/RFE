@@ -4,6 +4,7 @@ from modelling import HTMLLoader
 from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
 import json
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
@@ -16,7 +17,8 @@ def initial():
         "body$b6":"<div id=log name=log><h2>Logs and Reports</h2></div>",
         "body$b7":"</div>",
         "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
-        "bscript$s2":"static/RFE.js",
+        "script$s2": "static/he.js",
+        "bscript$s1":"static/RFE.js",
         "style$t1":"static/RFE.css"
         }
     i = 1
@@ -32,12 +34,14 @@ def fetchSuite(feature):
     TC = Al_robot_parser.get_testcases_list(feature , Al_robot.fetch_All_suite()[feature])
     return TC
 
+@ensure_csrf_cookie
 def InitialLoad(request):
     try:
         return HttpResponse(initial())
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+@ensure_csrf_cookie
 def LoadTestSuite(request):
     try:
         if request.method == "POST":

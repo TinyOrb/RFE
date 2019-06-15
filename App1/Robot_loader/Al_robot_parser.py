@@ -2,7 +2,7 @@ import os
 import re
 
 def get_all_robot_ext(path):
-    all_file = os.listdir("/home/jaarvis/robot_sample_suite/project1")
+    all_file = os.listdir(path)
     fl = {}
     for f in all_file:
         if re.compile("[a-zA-Z_]+[a-z0-9A-Z_]*.robot$", re.IGNORECASE).match(f):
@@ -30,7 +30,7 @@ def get_testcases_list(feature, path):
         split_content = content.split("\n")
         
         for li in range(len(split_content)):
-            if re.compile("[*]{3}[/\s]{0,1}Test Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(split_content[li]):
+            if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(split_content[li]):
                 suite_begin = li + 1
                 suite_end = None
 
@@ -42,15 +42,15 @@ def get_testcases_list(feature, path):
                 if suite_end == None:
                     suite_end = len(split_content)
                 
-                print pl, suite_begin, suite_end
+    #            print pl, suite_begin, suite_end
                 
                 for xi in range(suite_begin, suite_end):
-                    if re.compile("[/\s]{0,1}[a-zA-Z0-1.:_$#-]+[a-zA-Z/\s0-1.:_$#-]*").match(split_content[xi]):
+                    if re.compile("[/\s]{0,1}[a-zA-Z0-1.:_$-]+[a-zA-Z/\s0-1.:_$#-]*").match(split_content[xi]):
                         tcs.append(split_content[xi])
         
         suite["tcs"] = tcs
         sl_tc["suites"].append(suite)
-    print sl_tc
+    # print sl_tc
     
     return sl_tc
 
@@ -61,6 +61,6 @@ def get_sub_suite(path):
         fr = open(pl, "r")
         content = fr.read()
         for cont in content.split("\n"):
-            if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(cont):
+            if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(cont):
                 sl[pl] = robot_fl[pl]
     return sl

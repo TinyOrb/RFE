@@ -2,8 +2,8 @@ Test_Suite_Folder = {
     #"Highball":"C:\\RATF1\\Highball\\testcase",
     #"Boss":"C:\\RATF1\\automation-boss\\TestCases",
     #"CDR-BI":"C:\RATF1\CDR-BI\\Testcase"
-
-    'project1': '/home/jaarvis/robot_sample_suite/project1'
+    'project1':'/home/shad/workspace_saisei/sample_robot',
+    'project2': '/home/shad/workspace_saisei/qa/robot/tests'
     }
 
 def list_robot_files(path):

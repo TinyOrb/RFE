@@ -51,14 +51,38 @@ function get_suite_tree(feature_name){
 					console.log(msg);
 					htmlTable = "";
 					for(i = 0; i < data.suites.length; i++){
-						htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr><td><h3>" + data.suites[i].name.toUpperCase() + "</h3></td><td><h6 style=\"text-align:right;\">Run</h6><td></tr></table>" ;
+						htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr><td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td><td><h6 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer;\">Run</h6><td></tr></table>" ;
 						for(j = 0; j < data.suites[i].tcs.length; j++){
-							htmlTable = htmlTable + "<div style=\"width:100%;margin:auto;background:lightgrey;\"><h4>" + data.suites[i].tcs[j];
-							htmlTable = htmlTable + "</h4></div>"
+							htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr><td><h4>" + he.escape(data.suites[i].tcs[j]) + "</h4></td><td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j]) +"\" style=\"text-align:right; cursor:pointer;\">Run</h6><td></tr></table>";
 						}
 					}
 					$("#testcase").html(tc_head + htmlTable);
-                                        $("#testcase").css({"overflow":"auto"});
+                    $("#testcase").css({"overflow":"auto"});
+
+                    $(".runnable").hover(function(){
+                    $(this).css({"color":"lightgrey"});
+                    }, function(){
+                    $(this).css({"color":"white"})
+                    });
+
+                    $(".runnable2").hover(function(){
+                    $(this).css({"color":"darkgrey"});
+                    }, function(){
+                    $(this).css({"color":"#090909"})
+                    });
+
+                    $(".runnable").click(function(){
+                        console.log(this.innerHTML);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                    });
+
+                    $(".runnable2").click(function(){
+                        console.log(this);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                        console.log(this.getAttribute("tc"));
+                    });
 				}
 				else{
 					$("#errormsg2").text("No data received");
