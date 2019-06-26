@@ -12,7 +12,7 @@ import RFE.App1.settings as meta
 result_dir = None
 
 
-def trigger(feature, suite=None, tc=None, variable=None, variablefile=None):
+def trigger(feature, suite=None, tc=None, variable=None, variablefile=None, include_tags=None, exclude_tags=None):
     global result_dir
     with open('track.json') as json_file:
         data = json.load(json_file)
@@ -36,12 +36,77 @@ def trigger(feature, suite=None, tc=None, variable=None, variablefile=None):
         cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
         current_state["time"] = cur_time1
         current_state["dir"] = os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1)
-        current_state["script_output"] = ""
-        current_state["log"] = ""
-        current_state["output"] = ""
-        current_state["xml"] = ""
-        current_state["cmd"] = ""
+        current_state["script_output"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "script.txt")
+        current_state["log"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "log.html")
+        current_state["output"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "report.html")
+        current_state["xml"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "output.html")
+        current_state["cmd"] = "python -m robot "
+        if include_tags is not None:
+            current_state["cmd"] += "--include \"%s\" " % include_tags
+        if exclude_tags is not None:
+            current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
+        if variable is not None:
+            current_state["cmd"] += "--variable==\"%s\" " % variable
+        if variablefile is not None:
+            current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+        current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
+        current_state["cmd"] += "-t \"%s\" " % tc
+        current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
 
+    elif suite is not None:
+        current_state = fetch_current(feature, suite, tc)
+        if len(current_state) != 0:
+            update_history(current_state, feature, suite, tc)
+
+        current_state["status"] = "not started"
+        cur_time = str(datetime.datetime.now())
+        cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+        current_state["time"] = cur_time1
+        current_state["dir"] = os.path.join(os.path.join(os.path.join(result_dir, feature), suite), cur_time1)
+        current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
+        current_state["log"] = os.path.join(current_state["dir"], "log.html")
+        current_state["output"] = os.path.join(current_state["dir"], "report.html")
+        current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+        current_state["cmd"] = "python -m robot "
+        if include_tags is not None:
+            current_state["cmd"] += "--include \"%s\" " % include_tags
+        if exclude_tags is not None:
+            current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
+        if variable is not None:
+            current_state["cmd"] += "--variable==\"%s\" " % variable
+        if variablefile is not None:
+            current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+        current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
+        current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
+
+    elif suite is not None:
+        current_state = fetch_current(feature, suite, tc)
+        if len(current_state) != 0:
+            update_history(current_state, feature, suite, tc)
+
+        current_state["status"] = "not started"
+        cur_time = str(datetime.datetime.now())
+        cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+        current_state["time"] = cur_time1
+        current_state["dir"] = os.path.join(os.path.join(result_dir, feature), cur_time1)
+        current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
+        current_state["log"] = os.path.join(current_state["dir"], "log.html")
+        current_state["output"] = os.path.join(current_state["dir"], "report.html")
+        current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+        current_state["cmd"] = "python -m robot "
+        if include_tags is not None:
+            current_state["cmd"] += "--include \"%s\" " % include_tags
+        if exclude_tags is not None:
+            current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
+        if variable is not None:
+            current_state["cmd"] += "--variable==\"%s\" " % variable
+        if variablefile is not None:
+            current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+        current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
+        current_state["cmd"] += Al_robot.fetch_All_suite()[feature]
+
+    else:
+        print("No input provided")
 
 def create_track(feature, suite=None, tc=None):
     pass

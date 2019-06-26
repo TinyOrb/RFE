@@ -30,9 +30,11 @@ def initial():
     initial_loading["headrawscript$r"+str(i)] = "});"
     return HTMLLoader.htmlstructure(**initial_loading)
 
+
 def fetchSuite(feature):
-    TC = Al_robot_parser.get_testcases_list(feature , Al_robot.fetch_All_suite()[feature])
+    TC = Al_robot_parser.get_testcases_list(feature, Al_robot.fetch_All_suite()[feature])
     return TC
+
 
 @ensure_csrf_cookie
 def InitialLoad(request):
@@ -41,6 +43,7 @@ def InitialLoad(request):
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+
 @ensure_csrf_cookie
 def LoadTestSuite(request):
     try:
@@ -48,6 +51,5 @@ def LoadTestSuite(request):
             feature = request.POST["feature"]
             return HttpResponse(json.dumps(fetchSuite(feature)))
     except Exception as e:
-        raise e
+        # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
-        
