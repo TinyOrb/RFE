@@ -36,10 +36,10 @@ def trigger(feature, suite=None, tc=None, variable=None, variablefile=None, incl
         cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
         current_state["time"] = cur_time1
         current_state["dir"] = os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1)
-        current_state["script_output"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "script.txt")
-        current_state["log"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "log.html")
-        current_state["output"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "report.html")
-        current_state["xml"] = os.path.join(os.path.join(os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc), cur_time1), "output.html")
+        current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
+        current_state["log"] = os.path.join(current_state["dir"], "log.html")
+        current_state["output"] = os.path.join(current_state["dir"], "report.html")
+        current_state["xml"] = os.path.join(current_state["dir"], "output.html")
         current_state["cmd"] = "python -m robot "
         if include_tags is not None:
             current_state["cmd"] += "--include \"%s\" " % include_tags
@@ -121,7 +121,27 @@ def get_run_state(feature, suite=None, tc=None):
 
 
 def fetch_history(feature, suite=None, tc=None):
-    pass
+    with open('track.json') as json_file:
+        data = json.load(json_file)
+    flag = 0
+    for data_feature in data["features"]:
+        if data_feature["name"] == feature:
+            if suite is not None:
+                for data_suite in data_feature["suites"]:
+                    if data_suite["name"] == suite:
+                        if tc != None:
+                            for data_tc in data_suite["tcs"]:
+                                if data_tc["name"] == tc:
+                                    flag = 1
+                                    return data_tc["history_status"]
+                        else:
+                            flag = 2
+                            return data_suite["history_status"]
+            else:
+                flag = 3
+                return data_feature["history_status"]
+    if flag == 0:
+        print("query failed")
 
 
 def fetch_current(feature, suite=None, tc=None):
