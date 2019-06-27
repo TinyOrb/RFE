@@ -279,16 +279,16 @@ def run(current_state, feature, suite, tc):
         return False
     subprocess.Popen(["echo ******start of script output****** > %s ; %s >> %s ; "
                       "echo ******end of script output****** >> %s " %
-                      (current_state["script_output"], current_state["cmd"], current_state["script_output"], current_state["script_output"])],
-                     stdout=subprocess.PIPE, shell=True)
+                      (current_state["script_output"], current_state["cmd"], current_state["script_output"], current_state["script_output"])], shell=True)
 
     current_state["status"] = "running"
     update_current(current_state, feature, suite, tc)
 
     line = subprocess.check_output(['tail', '-1', current_state["script_output"]])
 
-    while "******end of script output******" not in line:
+    while "******end of script output******" not in str(line):
         time.sleep(5)
+        line = subprocess.check_output(['tail', '-1', current_state["script_output"]])
 
     current_state["status"] = "done"
     cur_time = str(datetime.datetime.now())
@@ -436,7 +436,7 @@ def insert_data_set(data, feature, suite, FEATURE=None, SUITE=None, TC=None):
 
 
 if __name__ == "__main__":
-    p_feature = "project1"
+    p_feature = "project2"
     p_suite = "mtu.robot"
 
     #p_tc = "TC_101"
