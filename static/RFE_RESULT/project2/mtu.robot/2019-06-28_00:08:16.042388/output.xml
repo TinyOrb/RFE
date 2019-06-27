@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20190628 00:08:16.132" generator="Robot 3.0.4 (Python 2.7.16 on linux2)">
+<suite source="/home/shad/workspace_saisei/qa/robot/tests/mtu.robot" id="s1" name="Mtu">
+<kw type="setup" name="Clean Up All Nodes And Initialize Testbed">
+<kw name="Print Testbed Info">
+<arguments>
+<arg>STM</arg>
+</arguments>
+<msg timestamp="20190628 00:08:16.167" level="FAIL">No keyword with name 'Print Testbed Info' found.</msg>
+<status status="FAIL" endtime="20190628 00:08:16.167" starttime="20190628 00:08:16.166"></status>
+</kw>
+<status status="FAIL" endtime="20190628 00:08:16.167" starttime="20190628 00:08:16.165"></status>
+</kw>
+<test id="s1-t1" name="TC101 Basic Smoke - Verify MTU On Internal/External Vlan/Non-Vlan Interfaces With Different Ping Packet Length">
+<tags>
+<tag>smoke</tag>
+<tag>TC101</tag>
+</tags>
+<status status="FAIL" endtime="20190628 00:08:16.168" critical="yes" starttime="20190628 00:08:16.167">Parent suite setup failed:
+No keyword with name 'Print Testbed Info' found.</status>
+</test>
+<test id="s1-t2" name="TC102 Verify MTU On Internal/External Vlan/Non-Vlan Interfaces With Different Ping Packet Length">
+<tags>
+<tag>nightly</tag>
+<tag>TC102</tag>
+</tags>
+<status status="FAIL" endtime="20190628 00:08:16.168" critical="yes" starttime="20190628 00:08:16.168">Parent suite setup failed:
+No keyword with name 'Print Testbed Info' found.</status>
+</test>
+<kw type="teardown" name="Clean Up All Nodes" library="COMMON_KEYWORDS">
+<kw name="Log" library="BuiltIn">
+<doc>Logs the given message with the given level.</doc>
+<arguments>
+<arg>****cleanup ...disabled for now ....its good to leave testbed in failed state</arg>
+</arguments>
+<msg timestamp="20190628 00:08:16.170" level="INFO">****cleanup ...disabled for now ....its good to leave testbed in failed state</msg>
+<status status="PASS" endtime="20190628 00:08:16.170" starttime="20190628 00:08:16.170"></status>
+</kw>
+<status status="PASS" endtime="20190628 00:08:16.170" starttime="20190628 00:08:16.169"></status>
+</kw>
+<doc>Sanity Test for STM Interface MTU</doc>
+<metadata>
+<item>Author dinesh@saisei.com
+Feature Sanity Test for STM Interface MTU
+Methodology This test varies the MTU of internal/external interfaces and then send pings from
+iperf to see that all ping packets &lt;=MTU get icmp response and packets&gt;MTU gets dropped
+and receive proper icmp error response.
+The test generates 'count' number of sample packet lengths that are on &gt;MTU and &lt;MTU, and
+pings with all those packet lengths.
+*MTU can only be changed during interface initialization, Hence it becomes necessary to
+reconfigure STM for every sample of MTU to be tested (bit annoying ?).
+Refer to 'Validate MTU' Keyword in TRAFFICLib.py file for more detailed way how this is done.
+*NOTE that if Traffic generators are on VM, make the vswitch MTU on ESXI to 9000 bytes.
+
+Testbed 5 Nodes, STM is Baremetal , 4 vm instances running iperf3
+Configuration Dual Bump, Sandwich
+Topology1 iperf3Client---internal-bump-1--STM---external--bump-2---iperf3Server
+iperf3Client2--internal-bump-2--STM---external--bump-2---iperf3Server2
+
+robot --variablefile testbeds/10_1_11_106.py --loglevel debug --variable IS_LAG:True mtu.robot
+robot --variablefile testbeds/10_1_11_106.py --loglevel debug --variable IS_LAG:False mtu.robot
+
+Topology2 iperf3Client---internal-lag--STM---external-lag--iperf3Server
+iperf3Client2--internal-lag--STM---external-lag--iperf3Server2
+
+robot --variablefile testbeds/10_1_11_106.py --loglevel debug --variable SKIP_CFG:none dualbump.robot
+NOTES
+**to skip teardown on failure so setup is left in state to debug
+robot -X --skipteardownonexit --variablefile testbeds/10_1_11_106.py --loglevel debug --variable IS_LAG:True dualbump.robot
+**to run a specific test
+robot -X --skipteardownonexit --include TC108 --include TC109 --variablefile testbeds/10_1_11_106.py --loglevel debug --variable SKIP_CFG:none dualbump.robot
+</item>
+</metadata>
+<status status="FAIL" endtime="20190628 00:08:16.170" starttime="20190628 00:08:16.134">Suite setup failed:
+No keyword with name 'Print Testbed Info' found.</status>
+</suite>
+<statistics>
+<total>
+<stat fail="2" pass="0">Critical Tests</stat>
+<stat fail="2" pass="0">All Tests</stat>
+</total>
+<tag>
+<stat fail="1" pass="0">nightly</stat>
+<stat fail="1" pass="0">smoke</stat>
+<stat fail="1" pass="0">TC101</stat>
+<stat fail="1" pass="0">TC102</stat>
+</tag>
+<suite>
+<stat fail="2" id="s1" name="Mtu" pass="0">Mtu</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20190628 00:08:16.152" level="ERROR">Error in file '/home/shad/workspace_saisei/qa/robot/tests/mtu.robot': Test library 'TRAFFICLib.py' does not exist.</msg>
+<msg timestamp="20190628 00:08:16.153" level="ERROR">Error in file '/home/shad/workspace_saisei/qa/robot/tests/mtu.robot': Test library 'KPILib.py' does not exist.</msg>
+<msg timestamp="20190628 00:08:16.153" level="ERROR">Error in file '/home/shad/workspace_saisei/qa/robot/tests/mtu.robot': Test library 'TESTBEDLib.py' does not exist.</msg>
+<msg timestamp="20190628 00:08:16.154" level="ERROR">Error in file '/home/shad/workspace_saisei/qa/robot/tests/mtu.robot': Test library 'CORELib.py' does not exist.</msg>
+</errors>
+</robot>

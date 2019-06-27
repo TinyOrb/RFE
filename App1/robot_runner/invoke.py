@@ -201,10 +201,10 @@ def update_history(current_status, feature, suite=None, tc=None):
                                     data_tc["history_status"].append(current_status)
                                     flag = 1
                         else:
-                            data_suite["current_status"].append(current_status)
+                            data_suite["history_status"].append(current_status)
                             flag = 2
             else:
-                data_feature["current_status"].append(current_status)
+                data_feature["history_status"].append(current_status)
                 flag = 3
 
     if flag == 0:
@@ -279,7 +279,8 @@ def run(current_state, feature, suite, tc):
         return False
     subprocess.Popen(["echo ******start of script output****** > %s ; %s >> %s ; "
                       "echo ******end of script output****** >> %s " %
-                      (current_state["script_output"], current_state["cmd"], current_state["script_output"], current_state["script_output"])], shell=True)
+                      (current_state["script_output"], current_state["cmd"], current_state["script_output"], current_state["script_output"])],
+                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     current_state["status"] = "running"
     update_current(current_state, feature, suite, tc)
@@ -345,44 +346,50 @@ def ensure_data_set(data, feature, suite, tc):
     global result_dir
     current_data_set = fetch_detail_traverse_data(data, feature, suite, tc)
 
-    if current_data_set["feature"] is not None and suite is None:
-        if current_data_set["suite"] is not None and tc is None:
-            if current_data_set["tc"] is not None:
-                print("Data set already exist")
-            else:
-                print("Preparing test case data set")
-                d_tc = dict()
-                d_tc["name"] = tc
-                d_tc["id"] = data["tc_count"] + 1
-                d_tc["dir"] = os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc)
-                d_tc["current_status"] = {}
-                d_tc["history_status"] = []
-                print("Inserting test case data set")
-                insert_data_set(data, feature, suite, TC=d_tc)
-                print("Insertion completed")
+    if current_data_set["feature"] is not None:
+        if suite is None:
+            print("Data set already exist")
         else:
-            print("Preparing suite data set")
-            d_suite = dict()
-            d_suite["name"] = suite
-            d_suite["id"] = data["suite_count"] + 1
-            d_suite["dir"] = os.path.join(os.path.join(result_dir, feature), suite)
-            d_suite["current_status"] = {}
-            d_suite["history_status"] = []
-            d_suite["tcs"] = []
-            print("Inserting suite data set")
-            insert_data_set(data, feature, suite, SUITE=d_suite)
-            print("Insertion completed")
-            if tc is not None:
-                print("Preparing test case data set")
-                d_tc = dict()
-                d_tc["name"] = tc
-                d_tc["id"] = data["tc_count"] + 1
-                d_tc["dir"] = os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc)
-                d_tc["current_status"] = {}
-                d_tc["history_status"] = []
-                print("Inserting test case data set")
-                insert_data_set(data, feature, suite, TC=d_tc)
+            if current_data_set["suite"] is not None:
+                if tc is None:
+                    print("Data set already exist")
+                else:
+                    if current_data_set["tc"] is not None:
+                        print("Data set already exist")
+                    else:
+                        print("Preparing test case data set")
+                        d_tc = dict()
+                        d_tc["name"] = tc
+                        d_tc["id"] = data["tc_count"] + 1
+                        d_tc["dir"] = os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc)
+                        d_tc["current_status"] = {}
+                        d_tc["history_status"] = []
+                        print("Inserting test case data set")
+                        insert_data_set(data, feature, suite, TC=d_tc)
+                        print("Insertion completed")
+            else:
+                print("Preparing suite data set")
+                d_suite = dict()
+                d_suite["name"] = suite
+                d_suite["id"] = data["suite_count"] + 1
+                d_suite["dir"] = os.path.join(os.path.join(result_dir, feature), suite)
+                d_suite["current_status"] = {}
+                d_suite["history_status"] = []
+                d_suite["tcs"] = []
+                print("Inserting suite data set")
+                insert_data_set(data, feature, suite, SUITE=d_suite)
                 print("Insertion completed")
+                if tc is not None:
+                    print("Preparing test case data set")
+                    d_tc = dict()
+                    d_tc["name"] = tc
+                    d_tc["id"] = data["tc_count"] + 1
+                    d_tc["dir"] = os.path.join(os.path.join(os.path.join(result_dir, feature), suite), tc)
+                    d_tc["current_status"] = {}
+                    d_tc["history_status"] = []
+                    print("Inserting test case data set")
+                    insert_data_set(data, feature, suite, TC=d_tc)
+                    print("Insertion completed")
     else:
         print("Preparing feature data set")
         d_feature = dict()
@@ -423,21 +430,25 @@ def ensure_data_set(data, feature, suite, tc):
 def insert_data_set(data, feature, suite, FEATURE=None, SUITE=None, TC=None):
     if FEATURE is not None:
         data["features"].append(FEATURE)
+        data["feature_count"] = data["feature_count"] + 1
     elif SUITE is not None:
         for data_feature in data["features"]:
             if data_feature["name"] == feature:
                 data_feature["suites"].append(SUITE)
+                data["suite_count"] = data["suite_count"] + 1
     elif TC is not None:
         for data_feature in data["features"]:
             if data_feature["name"] == feature:
                 for data_suite in data_feature["suites"]:
                     if data_suite["name"] == suite:
                         data_suite["tcs"].append(TC)
+                        data["tc_count"] = data["tc_count"] + 1
 
 
 if __name__ == "__main__":
     p_feature = "project2"
-    p_suite = "mtu.robot"
+    #p_suite = "mtu.robot"
+    p_suite = "span.robot"
 
     #p_tc = "TC_101"
     #trigger(feature=p_feature, suite=p_suite, tc=p_tc)
