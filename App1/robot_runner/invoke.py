@@ -277,10 +277,9 @@ def run(current_state, feature, suite, tc):
     if not ensure_path(current_state["script_output"], type="file"):
         print("Failed to create script output file")
         return False
-    subprocess.Popen(["echo ******start of script output****** > %s ; %s >> %s ; "
-                      "echo ******end of script output****** >> %s " %
-                      (current_state["script_output"], current_state["cmd"], current_state["script_output"], current_state["script_output"])],
-                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    with open(current_state["script_output"], "wb") as out:
+        subprocess.Popen(["echo ******start of script output******; %s ; echo ******end of script output****** " %
+                          current_state["cmd"]], stdout=out, stderr=out, shell=True)
 
     current_state["status"] = "running"
     update_current(current_state, feature, suite, tc)
