@@ -3,6 +3,7 @@ import datetime
 from modelling import HTMLLoader
 from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
+from robot_runner import invoke as invoke
 import json
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -49,7 +50,7 @@ def LoadTestSuite(request):
     try:
         if request.method == "POST":
             feature = request.POST["feature"]
-            return HttpResponse(json.dumps(fetchSuite(feature)))
+            return HttpResponse(json.dumps(invoke.get_run_state(fetchSuite(feature))))
     except Exception as e:
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

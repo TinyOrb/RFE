@@ -1,1 +1,106 @@
-{"features": [{"name": "project2", "id": 1, "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2", "current_status": {}, "history_status": [], "suites": [{"name": "mtu.robot", "id": 1, "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot", "current_status": {"status": "done", "time": "2019-06-28_00:34:17.873145", "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145", "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/script.txt", "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/log.html", "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/report.html", "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/output.html", "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145\" /home/shad/workspace_saisei/qa/robot/tests/mtu.robot", "end_time": "2019-06-28_00:34:22.885269"}, "history_status": [{"status": "done", "time": "2019-06-28_00:20:39.415721", "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721", "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/script.txt", "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/log.html", "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/report.html", "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/output.html", "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721\" /home/shad/workspace_saisei/qa/robot/tests/mtu.robot", "end_time": "2019-06-28_00:20:44.809061"}], "tcs": []}, {"name": "span.robot", "id": 1, "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot", "current_status": {"status": "done", "time": "2019-06-28_00:52:49.025541", "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541", "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/script.txt", "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/log.html", "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/report.html", "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/output.html", "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541\" /home/shad/workspace_saisei/qa/robot/tests/span.robot", "end_time": "2019-06-28_00:52:54.071102"}, "history_status": [{"status": "done", "time": "2019-06-28_00:35:58.765148", "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148", "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/script.txt", "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/log.html", "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/report.html", "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/output.html", "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148\" /home/shad/workspace_saisei/qa/robot/tests/span.robot", "end_time": "2019-06-28_00:36:03.778868"}, {"status": "running", "time": "2019-06-28_00:51:06.450753", "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753", "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/script.txt", "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/log.html", "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/report.html", "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/output.html", "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753\" /home/shad/workspace_saisei/qa/robot/tests/span.robot", "end_time": "2019-06-28_00:36:03.778868"}], "tcs": []}]}], "tc_count": 0, "suite_count": 1, "feature_count": 0}
+{
+  "features": [
+    {
+      "name": "project2",
+      "id": 1,
+      "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2",
+      "current_status": {
+
+      },
+      "history_status": [
+
+      ],
+      "suites": [
+        {
+          "name": "mtu.robot",
+          "id": 1,
+          "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot",
+          "current_status": {
+            "status": "done",
+            "time": "2019-06-28_00:34:17.873145",
+            "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145",
+            "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/script.txt",
+            "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/log.html",
+            "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/report.html",
+            "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145/output.html",
+            "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:34:17.873145\" /home/shad/workspace_saisei/qa/robot/tests/mtu.robot",
+            "end_time": "2019-06-28_00:34:22.885269"
+          },
+          "history_status": [
+            {
+              "status": "done",
+              "time": "2019-06-28_00:20:39.415721",
+              "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721",
+              "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/script.txt",
+              "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/log.html",
+              "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/report.html",
+              "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721/output.html",
+              "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/mtu.robot/2019-06-28_00:20:39.415721\" /home/shad/workspace_saisei/qa/robot/tests/mtu.robot",
+              "end_time": "2019-06-28_00:20:44.809061"
+            }
+          ],
+          "tcs": [
+
+          ]
+        },
+        {
+          "name": "span.robot",
+          "id": 1,
+          "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot",
+          "current_status": {
+            "status": "running",
+            "time": "2019-06-28_10:20:05.582231",
+            "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231",
+            "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/script.txt",
+            "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/log.html",
+            "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/report.html",
+            "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/output.html",
+            "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231\" /home/shad/workspace_saisei/qa/robot/tests/span.robot",
+            "end_time": "2019-06-28_10:20:10.639092"
+          },
+          "history_status": [
+            {
+              "status": "done",
+              "time": "2019-06-28_00:35:58.765148",
+              "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148",
+              "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/script.txt",
+              "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/log.html",
+              "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/report.html",
+              "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148/output.html",
+              "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:35:58.765148\" /home/shad/workspace_saisei/qa/robot/tests/span.robot",
+              "end_time": "2019-06-28_00:36:03.778868"
+            },
+            {
+              "status": "running",
+              "time": "2019-06-28_00:51:06.450753",
+              "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753",
+              "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/script.txt",
+              "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/log.html",
+              "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/report.html",
+              "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/output.html",
+              "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753\" /home/shad/workspace_saisei/qa/robot/tests/span.robot",
+              "end_time": "2019-06-28_00:36:03.778868"
+            },
+            {
+              "status": "done",
+              "time": "2019-06-28_00:52:49.025541",
+              "dir": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541",
+              "script_output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/script.txt",
+              "log": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/log.html",
+              "output": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/report.html",
+              "xml": "/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541/output.html",
+              "cmd": "python -m robot --outputdir \"/home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:52:49.025541\" /home/shad/workspace_saisei/qa/robot/tests/span.robot",
+              "end_time": "2019-06-28_00:52:54.071102"
+            }
+          ],
+          "tcs": [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "tc_count": 0,
+  "suite_count": 1,
+  "feature_count": 0
+}

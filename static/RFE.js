@@ -51,9 +51,9 @@ function get_suite_tree(feature_name){
 					console.log(msg);
 					htmlTable = "";
 					for(i = 0; i < data.suites.length; i++){
-						htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr><td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td><td><h6 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer;\">Run</h6><td></tr></table>" ;
+						htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr><td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td><td><h6 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+data.suites[i].status+"</h6><td></tr></table>" ;
 						for(j = 0; j < data.suites[i].tcs.length; j++){
-							htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr><td><h4>" + he.escape(data.suites[i].tcs[j]) + "</h4></td><td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j]) +"\" style=\"text-align:right; cursor:pointer;\">Run</h6><td></tr></table>";
+							htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr><td><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td><td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+data.suites[i].tcs[j].status+"</h6><td></tr></table>";
 						}
 					}
 					$("#testcase").html(tc_head + htmlTable);
@@ -62,13 +62,19 @@ function get_suite_tree(feature_name){
                     $(".runnable").hover(function(){
                     $(this).css({"color":"lightgrey"});
                     }, function(){
-                    $(this).css({"color":"white"})
+                    if(this.innerHTML == "Run")
+                        $(this).css({"color":"white"})
+                    else
+                        $(this).css({"color":"#E39FF6"})
                     });
 
                     $(".runnable2").hover(function(){
                     $(this).css({"color":"darkgrey"});
                     }, function(){
-                    $(this).css({"color":"#090909"})
+                    if(this.innerHTML == "Run")
+                        $(this).css({"color":"#090909"})
+                    else
+                        $(this).css({"color":"#67032F"})
                     });
 
                     $(".runnable").click(function(){

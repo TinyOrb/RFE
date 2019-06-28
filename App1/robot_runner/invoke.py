@@ -4,15 +4,15 @@ import datetime
 import time
 import os
 import threading
-import RFE.App1.Robot_loader.Al_robot as Al_robot
-import RFE.App1.settings as meta
+import App1.Robot_loader.Al_robot as Al_robot
+import App1.settings as meta
 
 result_dir = None
 
 
 def trigger(feature, suite=None, tc=None, variable=None, variablefile=None, include_tags=None, exclude_tags=None):
     global result_dir
-    with open('track.json') as json_file:
+    with open('App1/robot_runner/track.json') as json_file:
         data = json.load(json_file)
 
     result_dir = os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT")
@@ -21,7 +21,7 @@ def trigger(feature, suite=None, tc=None, variable=None, variablefile=None, incl
     else:
         ensure_data_set(data, feature, suite, tc)
 
-        with open('track.json', 'w') as outfile:
+        with open('App1/robot_runner/track.json', 'w') as outfile:
             json.dump(data, outfile)
 
     if tc is not None:
@@ -117,13 +117,61 @@ def trigger(feature, suite=None, tc=None, variable=None, variablefile=None, incl
     x.start()
 
 
-def get_run_state(feature, suite=None, tc=None):
-    pass
+def get_run_state(stack_json):
+    print("Fetching query")
+    try:
+        with open('App1/robot_runner/track.json') as json_file:
+            data = json.load(json_file)
+
+        feature = stack_json["feature"]
+
+        d_feature = None
+        for f in data["features"]:
+            if f["name"] == feature:
+                d_feature = f
+
+        if d_feature is not None:
+            for suite in stack_json["suites"]:
+                s_flag = 0
+                for d_suite in d_feature["suites"]:
+                    if d_suite["name"] == suite["name"]:
+                        s_flag = 1
+                        if d_suite["current_status"]["status"].lower() == "running":
+                            suite["status"] = "Running"
+                        else:
+                            suite["status"] = "Run"
+                        for tc in suite["tcs"]:
+                            t_flag = 0
+                            for d_tc in d_suite["tcs"]:
+                                if tc["name"] == d_tc["name"]:
+                                    t_flag = 1
+                                    if d_tc["current_status"]["status"].lower() == "running":
+                                        tc["status"] = "Running"
+                                    else:
+                                        tc["status"] = "Run"
+                                break
+                            if t_flag == 0:
+                                tc["status"] = "Run"
+                        break
+                if s_flag == 0:
+                    suite["status"] = "Run"
+                    for tc in suite["tcs"]:
+                        tc["status"] = "Run"
+
+        else:
+            for suite in stack_json["suites"]:
+                suite["status"] = "Run"
+                for tc in suite["tcs"]:
+                    tc["status"] = "Run"
+    except Exception as e:
+        print("Exception occur %s" % str(e))
+
+    return stack_json
 
 
 def fetch_history(feature, suite=None, tc=None):
     print("Fetching query")
-    with open('track.json') as json_file:
+    with open('App1/robot_runner/track.json') as json_file:
         data = json.load(json_file)
     flag = 0
     status = None
@@ -154,7 +202,7 @@ def fetch_history(feature, suite=None, tc=None):
 
 def fetch_current(feature, suite=None, tc=None):
     print("Fetching query")
-    with open('track.json') as json_file:
+    with open('App1/robot_runner/track.json') as json_file:
         data = json.load(json_file)
     flag = 0
     status = None
@@ -185,7 +233,7 @@ def fetch_current(feature, suite=None, tc=None):
 
 def update_history(current_status, feature, suite=None, tc=None):
     print("Updating status")
-    with open('track.json') as json_file:
+    with open('App1/robot_runner/track.json') as json_file:
         data = json.load(json_file)
 
     flag = 0
@@ -212,7 +260,7 @@ def update_history(current_status, feature, suite=None, tc=None):
         return False
     elif flag == 1 or flag == 2 or flag == 3:
         try:
-            with open('track.json', 'w') as outfile:
+            with open('App1/robot_runner/track.json', 'w') as outfile:
                 json.dump(data, outfile)
             print("Insertion success")
             return True
@@ -225,7 +273,7 @@ def update_history(current_status, feature, suite=None, tc=None):
 
 def update_current(current_status, feature, suite=None, tc=None):
     print("Updating status")
-    with open('track.json') as json_file:
+    with open('App1/robot_runner/track.json') as json_file:
         data = json.load(json_file)
     flag = 0
     for data_feature in data["features"]:
@@ -250,7 +298,7 @@ def update_current(current_status, feature, suite=None, tc=None):
         return False
     elif flag == 1 or flag == 2 or flag == 3:
         try:
-            with open('track.json', 'w') as outfile:
+            with open('App1/robot_runner/track.json', 'w') as outfile:
                 json.dump(data, outfile)
             print("Insertion success")
             return True
@@ -259,18 +307,6 @@ def update_current(current_status, feature, suite=None, tc=None):
     else:
         print("Unknown state")
         return False
-
-
-def get_tc():
-    pass
-
-
-def get_suite():
-    pass
-
-
-def get_feature():
-    pass
 
 
 def run(current_state, feature, suite, tc):

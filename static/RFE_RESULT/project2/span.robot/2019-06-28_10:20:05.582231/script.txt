@@ -33,7 +33,7 @@ No keyword with name 'Print Testbed Info' found.
 5 critical tests, 0 passed, 5 failed
 5 tests total, 0 passed, 5 failed
 ==============================================================================
-Output:  /home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/output.xml
-Log:     /home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/log.html
-Report:  /home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_00:51:06.450753/report.html
+Output:  /home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/output.xml
+Log:     /home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/log.html
+Report:  /home/shad/django-some/RFE/static/RFE_RESULT/project2/span.robot/2019-06-28_10:20:05.582231/report.html
 ******end of script output******

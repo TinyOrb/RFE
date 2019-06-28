@@ -46,7 +46,7 @@ def get_testcases_list(feature, path):
                 
                 for xi in range(suite_begin, suite_end):
                     if re.compile("[/\s]{0,1}[a-zA-Z0-1.:_$-]+[a-zA-Z/\s0-1.:_$#-]*").match(split_content[xi]):
-                        tcs.append(split_content[xi])
+                        tcs.append({"name":split_content[xi]})
         
         suite["tcs"] = tcs
         sl_tc["suites"].append(suite)
