@@ -1,11 +1,16 @@
+import json
+import os
+
 from django.http import HttpResponse
-import datetime
+from django.views.decorators.csrf import ensure_csrf_cookie
+
 from modelling import HTMLLoader
 from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
-from robot_runner import invoke as invoke
-import json
-from django.views.decorators.csrf import ensure_csrf_cookie
+from robot_runner.invoke import invoke as invoke
+import App1.settings as meta
+
+runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
@@ -47,10 +52,11 @@ def InitialLoad(request):
 
 @ensure_csrf_cookie
 def LoadTestSuite(request):
+    global runner
     try:
         if request.method == "POST":
             feature = request.POST["feature"]
-            return HttpResponse(json.dumps(invoke.get_run_state(fetchSuite(feature))))
+            return HttpResponse(json.dumps(runner.get_run_state(fetchSuite(feature))))
     except Exception as e:
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
