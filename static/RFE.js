@@ -1,12 +1,21 @@
 tc_head = ""
+current_feature = ""
 $(document).ready(function(){
 	console.log("loaded")
 	tc_head = $("#testcase").html()
+	current_feature = $(".suite_list")[0].innerHTML
+
         $(".suite_list").click(function(){
-		// console.log(this.innerHTML);
-		get_suite_tree(this.innerHTML)
+		current_feature = this.innerHTML;
+		get_suite_tree(current_feature)
 	});
 
+    get_suite_tree(current_feature)
+
+    setInterval(function(){
+        if(current_feature != "")
+            get_suite_tree(current_feature)
+        }, 5000);
 })
 
 
@@ -28,7 +37,7 @@ function getCookie(name) {
 
 
 function get_suite_tree(feature_name){
-	console.log(feature_name)
+	//console.log(feature_name)
 
 	$.ajaxSetup({
     		beforeSend: function(xhr, settings) {
@@ -48,12 +57,18 @@ function get_suite_tree(feature_name){
 				if(msg != "" && msg.toLowerCase() != "none"){
 					var data = JSON.parse(msg);
 					//console.log(data);
-					console.log(msg);
+					//console.log(msg);
 					htmlTable = "";
 					for(i = 0; i < data.suites.length; i++){
-						htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr><td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td><td><h6 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+data.suites[i].status+"</h6><td></tr></table>" ;
+						htmlTable += "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr>"
+						htmlTable += "<td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td>"
+						htmlTable += "<td><h5 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+data.suites[i].status+"</h5></td>"
+						htmlTable += "</tr></table>" ;
 						for(j = 0; j < data.suites[i].tcs.length; j++){
-							htmlTable = htmlTable + "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr><td><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td><td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+data.suites[i].tcs[j].status+"</h6><td></tr></table>";
+							htmlTable += "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr>"
+							htmlTable += "<td><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td>"
+							htmlTable += "<td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+data.suites[i].tcs[j].status+"</h6></td>"
+							htmlTable += "</tr></table>";
 						}
 					}
 					$("#testcase").html(tc_head + htmlTable);

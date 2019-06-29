@@ -112,7 +112,7 @@ class invoke:
             self.update_current(current_state, feature, suite, tc)
 
         else:
-            print("No input provided")
+            print("No enough input provided")
             return
 
         print("Main    : before creating thread")
