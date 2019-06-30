@@ -94,7 +94,7 @@ def Abort_instance(request):
                 tc = request.POST["tc"]
             except KeyError as k:
                 tc = None
-            return HttpResponse(runner.get_run_state(feature=feature, suite=suite, tc=tc))
+            return HttpResponse(runner.abort_run(feature=feature, suite=suite, tc=tc))
     except Exception as e:
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

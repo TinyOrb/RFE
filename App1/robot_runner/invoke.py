@@ -3,6 +3,7 @@ import json
 import datetime
 import time
 import os
+import signal
 import threading
 
 import App1.Robot_loader.Al_robot as Al_robot
@@ -128,7 +129,16 @@ class invoke:
             return "Fail"
 
     def abort_run(self, feature, suite=None, tc=None):
-        self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "abort"
+        try:
+            self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "abort"
+            time.sleep(5)
+            if self.fetch_current(feature, suite, tc)["status"].lower() != "running":
+                return "success"
+            else:
+                return "fail"
+        except Exception as e:
+            print("Exception occurred %s" % str(e))
+            return "fail"
 
     def get_run_state(self, stack_json):
         print("Fetching query")
@@ -324,7 +334,7 @@ class invoke:
         with open(current_state["script_output"], "wb") as out:
             process = subprocess.Popen(["echo ******start of script output******; %s ; "
                                         "echo ******end of script output****** " %
-                                        current_state["cmd"]], stdout=out, stderr=out, shell=True)
+                                        current_state["cmd"]], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
 
         current_state["status"] = "running"
         self.update_current(current_state, feature, suite, tc)
@@ -333,6 +343,7 @@ class invoke:
 
         while "******end of script output******" not in str(line):
             if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] == "abort":
+                os.killpg(os.getpgid(process.pid), signal.SIGTERM)
                 process.kill()
                 current_state["status"] = "aborted"
                 self.update_current(current_state, feature, suite, tc)

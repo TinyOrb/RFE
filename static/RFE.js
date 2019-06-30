@@ -100,6 +100,9 @@ function get_suite_tree(feature_name){
                         console.log(this.innerHTML);
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
+                        if(this.innerHTML.toLowerCase() != "running"){
+                        invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), null)
+                        }
                     });
 
                     $(".runnable2").click(function(){
@@ -113,6 +116,7 @@ function get_suite_tree(feature_name){
                         console.log(this.innerHTML);
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
+                        invoke("abort", this.getAttribute("feat"), this.getAttribute("suite"), null)
                     });
 
                     $(".abort_handle2").click(function(){
@@ -148,4 +152,58 @@ function f1(){
 	else{
 		$("#div1").html("Oops, you forget to mention names.")	
 	}
+}
+
+function invoke(action, feature, suite, tc){
+    if(feature != null && suite != null && tc != null)
+    {
+    data = {feature:feature, suite:suite, tc:tc}
+    }
+    else{
+        if(feature != null && suite != null)
+        {
+            data = {feature:feature, suite:suite}
+        }
+        else{
+            if(feature != null)
+            {
+                data = {feature:feature}
+            }
+            else{
+                console.log("Inappropriate data")
+                return
+            }
+        }
+    }
+    if(action == "run")
+    {
+    url = "/RFERUN"
+    }
+    else{
+            if(action == "abort")
+            {
+                url = "/RFEABORT"
+            }
+            else {
+                console.log("Unknown error")
+                return
+            }
+        }
+    var ajx = $.ajax({
+				url:url,
+				method:"POST",
+				data:data
+				});
+		ajx.done(function(msg){
+                if(msg.toLowerCase() == "success")
+                {
+                    console.log(action + ": successful")
+                }
+                else{
+                console.log(action + ": failed")
+                }
+			});
+		ajx.fail(function(jqXHR, textStatus){
+				console.log(jqXHR, textStatus);
+			});
 }
