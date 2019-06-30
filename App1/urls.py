@@ -24,6 +24,8 @@ urlpatterns = [
     url(r'^App1$', Test.test1, name="App1"),
     url(r'^$', Test.home),
     url(r'^RFE$', RFE.InitialLoad, name="RFE"),
-    url(r'^RFETS$', RFE.LoadTestSuite, name="TS")
+    url(r'^RFETS$', RFE.LoadTestSuite, name="TS"),
+    url(r'^RFERUN$', RFE.Run_instance, name="Run"),
+    url(r'^RFERUN$', RFE.Abort_instance, name="Abort")
     #path(r'^App1/',Test.test1, name="index")
 ]

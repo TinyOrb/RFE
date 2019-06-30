@@ -63,11 +63,15 @@ function get_suite_tree(feature_name){
 						htmlTable += "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr>"
 						htmlTable += "<td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td>"
 						htmlTable += "<td><h5 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+data.suites[i].status+"</h5></td>"
+						if(data.suites[i].status == "Running")
+						    htmlTable += "<td><h5 class=abort_handle feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">Abort</h5></td>"
 						htmlTable += "</tr></table>" ;
 						for(j = 0; j < data.suites[i].tcs.length; j++){
 							htmlTable += "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr>"
 							htmlTable += "<td><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td>"
 							htmlTable += "<td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+data.suites[i].tcs[j].status+"</h6></td>"
+							if(data.suites[i].tcs[j].status == "Running")
+							    htmlTable += "<td><h6 class=abort_handle2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">Abort</h6></td>"
 							htmlTable += "</tr></table>";
 						}
 					}
@@ -99,6 +103,19 @@ function get_suite_tree(feature_name){
                     });
 
                     $(".runnable2").click(function(){
+                        console.log(this);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                        console.log(this.getAttribute("tc"));
+                    });
+
+                    $(".abort_handle").click(function(){
+                        console.log(this.innerHTML);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                    });
+
+                    $(".abort_handle2").click(function(){
                         console.log(this);
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));

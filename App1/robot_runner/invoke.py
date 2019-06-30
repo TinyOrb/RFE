@@ -17,109 +17,115 @@ class invoke:
         self.result_dir = result_dir
 
     def trigger(self, feature, suite=None, tc=None, variable=None, variablefile=None, include_tags=None, exclude_tags=None):
-        with open(self.track) as json_file:
-            data = json.load(json_file)
+        try:
+            with open(self.track) as json_file:
+                data = json.load(json_file)
 
-        if not self.ensure_path(self.result_dir):
-            return False
-        else:
-            self.ensure_data_set(data, feature, suite, tc)
+            if not self.ensure_path(self.result_dir):
+                return "Fail"
+            else:
+                self.ensure_data_set(data, feature, suite, tc)
 
-            with open(self.track, 'w') as outfile:
-                json.dump(data, outfile)
+                with open(self.track, 'w') as outfile:
+                    json.dump(data, outfile)
 
-        if tc is not None:
-            current_state = self.fetch_current(feature, suite, tc)
-            if len(current_state) != 0:
-                self.update_history(current_state, feature, suite, tc)
+            if tc is not None:
+                current_state = self.fetch_current(feature, suite, tc)
+                if len(current_state) != 0:
+                    self.update_history(current_state, feature, suite, tc)
 
-            current_state["status"] = "not started"
-            cur_time = str(datetime.datetime.now())
-            cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
-            current_state["time"] = cur_time1
-            current_state["dir"] = os.path.join(os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc), cur_time1)
-            current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
-            current_state["log"] = os.path.join(current_state["dir"], "log.html")
-            current_state["output"] = os.path.join(current_state["dir"], "report.html")
-            current_state["xml"] = os.path.join(current_state["dir"], "output.html")
-            current_state["cmd"] = "python -m robot "
-            if include_tags is not None:
-                current_state["cmd"] += "--include \"%s\" " % include_tags
-            if exclude_tags is not None:
-                current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
-            if variable is not None:
-                current_state["cmd"] += "--variable==\"%s\" " % variable
-            if variablefile is not None:
-                current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
-            current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
-            current_state["cmd"] += "-t \"%s\" " % tc
-            current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
+                current_state["status"] = "not started"
+                cur_time = str(datetime.datetime.now())
+                cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+                current_state["time"] = cur_time1
+                current_state["dir"] = os.path.join(os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc), cur_time1)
+                current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
+                current_state["log"] = os.path.join(current_state["dir"], "log.html")
+                current_state["output"] = os.path.join(current_state["dir"], "report.html")
+                current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+                current_state["cmd"] = "python -m robot "
+                if include_tags is not None:
+                    current_state["cmd"] += "--include \"%s\" " % include_tags
+                if exclude_tags is not None:
+                    current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
+                if variable is not None:
+                    current_state["cmd"] += "--variable==\"%s\" " % variable
+                if variablefile is not None:
+                    current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+                current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
+                current_state["cmd"] += "-t \"%s\" " % tc
+                current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
 
-            self.update_current(current_state, feature, suite, tc)
+                self.update_current(current_state, feature, suite, tc)
 
-        elif suite is not None:
-            current_state = self.fetch_current(feature, suite, tc)
-            if len(current_state) != 0:
-                self.update_history(current_state, feature, suite, tc)
+            elif suite is not None:
+                current_state = self.fetch_current(feature, suite, tc)
+                if len(current_state) != 0:
+                    self.update_history(current_state, feature, suite, tc)
 
-            current_state["status"] = "not started"
-            cur_time = str(datetime.datetime.now())
-            cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
-            current_state["time"] = cur_time1
-            current_state["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), cur_time1)
-            current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
-            current_state["log"] = os.path.join(current_state["dir"], "log.html")
-            current_state["output"] = os.path.join(current_state["dir"], "report.html")
-            current_state["xml"] = os.path.join(current_state["dir"], "output.html")
-            current_state["cmd"] = "python -m robot "
-            if include_tags is not None:
-                current_state["cmd"] += "--include \"%s\" " % include_tags
-            if exclude_tags is not None:
-                current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
-            if variable is not None:
-                current_state["cmd"] += "--variable==\"%s\" " % variable
-            if variablefile is not None:
-                current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
-            current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
-            current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
-            self.update_current(current_state, feature, suite, tc)
+                current_state["status"] = "not started"
+                cur_time = str(datetime.datetime.now())
+                cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+                current_state["time"] = cur_time1
+                current_state["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), cur_time1)
+                current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
+                current_state["log"] = os.path.join(current_state["dir"], "log.html")
+                current_state["output"] = os.path.join(current_state["dir"], "report.html")
+                current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+                current_state["cmd"] = "python -m robot "
+                if include_tags is not None:
+                    current_state["cmd"] += "--include \"%s\" " % include_tags
+                if exclude_tags is not None:
+                    current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
+                if variable is not None:
+                    current_state["cmd"] += "--variable==\"%s\" " % variable
+                if variablefile is not None:
+                    current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+                current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
+                current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
+                self.update_current(current_state, feature, suite, tc)
 
-        elif suite is not None:
-            current_state = self.fetch_current(feature, suite, tc)
-            if len(current_state) != 0:
-                self.update_history(current_state, feature, suite, tc)
+            elif suite is not None:
+                current_state = self.fetch_current(feature, suite, tc)
+                if len(current_state) != 0:
+                    self.update_history(current_state, feature, suite, tc)
 
-            current_state["status"] = "not started"
-            cur_time = str(datetime.datetime.now())
-            cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
-            current_state["time"] = cur_time1
-            current_state["dir"] = os.path.join(os.path.join(self.result_dir, feature), cur_time1)
-            current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
-            current_state["log"] = os.path.join(current_state["dir"], "log.html")
-            current_state["output"] = os.path.join(current_state["dir"], "report.html")
-            current_state["xml"] = os.path.join(current_state["dir"], "output.html")
-            current_state["cmd"] = "python -m robot "
-            if include_tags is not None:
-                current_state["cmd"] += "--include \"%s\" " % include_tags
-            if exclude_tags is not None:
-                current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
-            if variable is not None:
-                current_state["cmd"] += "--variable==\"%s\" " % variable
-            if variablefile is not None:
-                current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
-            current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
-            current_state["cmd"] += Al_robot.fetch_All_suite()[feature]
-            self.update_current(current_state, feature, suite, tc)
+                current_state["status"] = "not started"
+                cur_time = str(datetime.datetime.now())
+                cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+                current_state["time"] = cur_time1
+                current_state["dir"] = os.path.join(os.path.join(self.result_dir, feature), cur_time1)
+                current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
+                current_state["log"] = os.path.join(current_state["dir"], "log.html")
+                current_state["output"] = os.path.join(current_state["dir"], "report.html")
+                current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+                current_state["cmd"] = "python -m robot "
+                if include_tags is not None:
+                    current_state["cmd"] += "--include \"%s\" " % include_tags
+                if exclude_tags is not None:
+                    current_state["cmd"] += "--exclude \"%s\" " % exclude_tags
+                if variable is not None:
+                    current_state["cmd"] += "--variable==\"%s\" " % variable
+                if variablefile is not None:
+                    current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+                current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
+                current_state["cmd"] += Al_robot.fetch_All_suite()[feature]
+                self.update_current(current_state, feature, suite, tc)
 
-        else:
-            print("No enough input provided")
-            return
+            else:
+                print("No enough input provided")
+                return "Fail"
 
-        print("Main    : before creating thread")
-        self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "continue"
-        x = threading.Thread(target=self.run, args=(current_state, feature, suite, tc,))
-        print("Main    : before running thread")
-        x.start()
+            print("Main    : before creating thread")
+            self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "continue"
+            x = threading.Thread(target=self.run, args=(current_state, feature, suite, tc,))
+            print("Main    : before running thread")
+            x.start()
+
+            return "Success"
+        except Exception as e:
+            print("Exception occur %s" % str(e))
+            return "Fail"
 
     def abort_run(self, feature, suite=None, tc=None):
         self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "abort"
@@ -186,7 +192,7 @@ class invoke:
                 if suite is not None:
                     for data_suite in data_feature["suites"]:
                         if data_suite["name"] == suite:
-                            if tc != None:
+                            if tc is not None:
                                 for data_tc in data_suite["tcs"]:
                                     if data_tc["name"] == tc:
                                         flag = 1
@@ -216,7 +222,7 @@ class invoke:
                 if suite is not None:
                     for data_suite in data_feature["suites"]:
                         if data_suite["name"] == suite:
-                            if tc != None:
+                            if tc is not None:
                                 for data_tc in data_suite["tcs"]:
                                     if data_tc["name"] == tc:
                                         flag = 1
@@ -247,7 +253,7 @@ class invoke:
                 if suite is not None:
                     for data_suite in data_feature["suites"]:
                         if data_suite["name"] == suite:
-                            if tc != None:
+                            if tc is not None:
                                 for data_tc in data_suite["tcs"]:
                                     if data_tc["name"] == tc:
                                         data_tc["history_status"].append(current_status)
@@ -284,7 +290,7 @@ class invoke:
                 if suite is not None:
                     for data_suite in data_feature["suites"]:
                         if data_suite["name"] == suite:
-                            if tc != None:
+                            if tc is not None:
                                 for data_tc in data_suite["tcs"]:
                                     if data_tc["name"] == tc:
                                         data_tc["current_status"] = current_status
@@ -330,7 +336,8 @@ class invoke:
                 process.kill()
                 current_state["status"] = "aborted"
                 self.update_current(current_state, feature, suite, tc)
-                print("Thread ended")
+                self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "Run"
+                print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
                 return True
             time.sleep(5)
             line = subprocess.check_output(['tail', '-1', current_state["script_output"]])
@@ -340,8 +347,8 @@ class invoke:
         cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
         current_state["end_time"] = cur_time1
         self.update_current(current_state, feature, suite, tc)
-
-        print("Thread ended")
+        self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "Run"
+        print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
         return True
 
     def ensure_path(self, path, type="dir"):

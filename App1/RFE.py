@@ -60,3 +60,41 @@ def LoadTestSuite(request):
     except Exception as e:
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+@ensure_csrf_cookie
+def Run_instance(request):
+    global runner
+    try:
+        if request.method == "POST":
+            feature = request.POST["feature"]
+            try:
+                suite = request.POST["suite"]
+            except KeyError as k:
+                suite = None
+            try:
+                tc = request.POST["tc"]
+            except KeyError as k:
+                tc = None
+            return HttpResponse(runner.trigger(feature=feature, suite=suite, tc=tc))
+    except Exception as e:
+        # raise e
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+@ensure_csrf_cookie
+def Abort_instance(request):
+    global runner
+    try:
+        if request.method == "POST":
+            feature = request.POST["feature"]
+            try:
+                suite = request.POST["suite"]
+            except KeyError as k:
+                suite = None
+            try:
+                tc = request.POST["tc"]
+            except KeyError as k:
+                tc = None
+            return HttpResponse(runner.get_run_state(feature=feature, suite=suite, tc=tc))
+    except Exception as e:
+        # raise e
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
