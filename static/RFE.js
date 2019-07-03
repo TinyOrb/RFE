@@ -61,17 +61,19 @@ function get_suite_tree(feature_name){
 					htmlTable = "";
 					for(i = 0; i < data.suites.length; i++){
 						htmlTable += "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr>"
-						htmlTable += "<td><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td>"
+						htmlTable += "<td style=\"width:70%;\"><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td>"
 						htmlTable += "<td><h5 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+data.suites[i].status+"</h5></td>"
 						if(data.suites[i].status == "Running")
 						    htmlTable += "<td><h5 class=abort_handle feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">Abort</h5></td>"
+						htmlTable += "<td><h5 class=stat_viewer feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+"View"+"</h5></td>"
 						htmlTable += "</tr></table>" ;
 						for(j = 0; j < data.suites[i].tcs.length; j++){
 							htmlTable += "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr>"
-							htmlTable += "<td><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td>"
+							htmlTable += "<td style=\"width:70%;\"><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td>"
 							htmlTable += "<td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+data.suites[i].tcs[j].status+"</h6></td>"
 							if(data.suites[i].tcs[j].status == "Running")
 							    htmlTable += "<td><h6 class=abort_handle2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">Abort</h6></td>"
+							htmlTable += "<td><h6 class=stat_viewer2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+"View"+"</h6></td>"
 							htmlTable += "</tr></table>";
 						}
 					}
@@ -101,7 +103,7 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
                         if(this.innerHTML.toLowerCase() != "running"){
-                        invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), null)
+                        invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), null);
                         }
                     });
 
@@ -110,13 +112,16 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
                         console.log(this.getAttribute("tc"));
+                        if(this.innerHTML.toLowerCase() != "running"){
+                        invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
+                        }
                     });
 
                     $(".abort_handle").click(function(){
                         console.log(this.innerHTML);
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
-                        invoke("abort", this.getAttribute("feat"), this.getAttribute("suite"), null)
+                        invoke("abort", this.getAttribute("feat"), this.getAttribute("suite"), null);
                     });
 
                     $(".abort_handle2").click(function(){
@@ -124,6 +129,22 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
                         console.log(this.getAttribute("tc"));
+                        invoke("abort", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
+                    });
+
+                    $(".stat_viewer").click(function(){
+                        console.log(this.innerHTML);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                        window.open("/RFERUNSTATUS?feat="+this.getAttribute("feat")+"&suite="+this.getAttribute("suite"));
+                    });
+
+                    $(".stat_viewer2").click(function(){
+                        console.log(this);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                        console.log(this.getAttribute("tc"));
+                        window.open("/RFERUNSTATUS?feat="+this.getAttribute("feat")+"&suite="+this.getAttribute("suite")+"&tc="+this.getAttribute("tc"));
                     });
 				}
 				else{
@@ -200,7 +221,7 @@ function invoke(action, feature, suite, tc){
                     console.log(action + ": successful")
                 }
                 else{
-                console.log(action + ": failed")
+                    console.log(action + ": failed")
                 }
 			});
 		ajx.fail(function(jqXHR, textStatus){

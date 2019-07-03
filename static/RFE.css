@@ -7,6 +7,7 @@ height:100%
 
 #header{
 width:100%;
+margin:0;
 color:white;
 background:black;
 height:9%;
@@ -23,33 +24,11 @@ float:left;
 
 #testcase{
 margin:0 1% 0 1%;
-width:50%;
+width:64%;
 padding:1%;
 height:86%;
 background:#E3E3E3;
 float:left;
-}
-
-#ControlReport{
-margin:0 1% 0 1%;
-width:22%;
-padding:1%;
-height:86%;
-background:#E3E3E3;
-float:left;
-}
-
-#log{
-width:90%;
-margin:auto;
-background:white;
-height:48%;
-}
-#control{
-width:90%;
-margin:auto;
-background:white;
-height:48%;
 }
 
 h2{
