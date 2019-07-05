@@ -2,8 +2,8 @@ tc_head = ""
 current_feature = ""
 $(document).ready(function(){
 	console.log("loaded")
-	tc_head = $("#testcase").html()
-	current_feature = $(".suite_list")[0].innerHTML
+	tc_head = $("#testcase").html();
+	current_feature = $(".suite_list")[0].innerHTML;
 
         $(".suite_list").click(function(){
 		current_feature = this.innerHTML;

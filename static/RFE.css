@@ -53,3 +53,11 @@ background-size: auto;
 z-index:20;
 cursor:pointer;
 }
+
+.stat_list{
+    background:#aaaaaa;
+    cursor:pointer;
+    margin: 2px;
+    text-align:center;
+    border-radius: 2px;
+}

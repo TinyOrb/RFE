@@ -12,6 +12,7 @@ import App1.settings as meta
 
 runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
+
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
@@ -31,6 +32,36 @@ def initial():
         i = i + 1
     initial_loading["headrawscript$r"+str(i)] = "});"
     return HTMLLoader.htmlstructure(**initial_loading)
+
+
+def status_load(current, history):
+        initial_loading = {
+            "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
+                       "Robotframework Front End</h2></div>",
+            "body$b2": "<div id=suite name=suite><h2>STATS</h2></div>",
+            "body$b3": "<div id=testcase name=testcase><h2>Logs</h2></div>",
+            "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
+            "script$s2": "../static/he.js",
+            "style$t1": "../static/RFE.css",
+            "bscript$s1": "../static/FSTAT.js",
+        }
+        if current is None:
+            i = 1
+            initial_loading["headrawscript$r" + str(i)] = "$(document).ready(function(){ " \
+                                                          "tc_head = $(\"#testcase\").html(); " \
+                                                          "$(\"#testcase\").html(tc_head + \"No Logs\"); " \
+                                                          "});"
+            return HTMLLoader.htmlstructure(**initial_loading)
+        else:
+            initial_loading["headrawscript$r1"] = "$(document).ready(function(){"
+            initial_loading["headrawscript$r1"] += "$('#suite').html($('#suite').html()+'<div><h3>Current status</h3></div>');"
+            initial_loading["headrawscript$r1"] += "$('#suite').html($('#suite').html()+'<div class=stat_list>" + current["time"] + "</div>');"
+            initial_loading["headrawscript$r1"] += "$('#suite').html($('#suite').html()+'<div><h3>History status</h3></div>');"
+            for h in history:
+                initial_loading["headrawscript$r1"] += "$('#suite').html($('#suite').html()+'<div class=stat_list>" + h["time"] + "</div>');"
+            initial_loading["headrawscript$r1"] += "});"
+            #print(HTMLLoader.htmlstructure(**initial_loading))
+            return HTMLLoader.htmlstructure(**initial_loading)
 
 
 def fetchSuite(feature):
@@ -57,6 +88,7 @@ def LoadTestSuite(request):
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+
 @ensure_csrf_cookie
 def Run_instance(request):
     global runner
@@ -75,6 +107,7 @@ def Run_instance(request):
     except Exception as e:
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
 
 @ensure_csrf_cookie
 def Abort_instance(request):
@@ -95,6 +128,7 @@ def Abort_instance(request):
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+
 @ensure_csrf_cookie
 def Run_stat(request):
     global runner
@@ -110,10 +144,9 @@ def Run_stat(request):
             except KeyError as k:
                 tc = None
             print(feature, suite, tc)
-            return HttpResponse(json.dumps({"current": runner.fetch_current(feature, suite, tc),
-                                            "history": runner.fetch_history(feature, suite, tc)}))
+            return HttpResponse(status_load(runner.fetch_current(feature, suite, tc),
+                                                       runner.fetch_history(feature, suite, tc)))
         else:
             return HttpResponse("No attribute received")
     except Exception as e:
-        raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

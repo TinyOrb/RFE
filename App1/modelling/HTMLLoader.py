@@ -63,7 +63,7 @@ def headstructure(param):
     script_key_list.sort()
     st = ""
     for key in script_key_list:
-        print key
+        #print(key)
         st = st + "<script type=text/javascript src=" + param[key] + " ></script>"
     style_key_list = get_style_key_list(param)
     style_key_list.sort()
