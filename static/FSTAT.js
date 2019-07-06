@@ -23,16 +23,17 @@ $(document).ready(function(){
       catch ( e ) {
          tc = null;
       }
+     //console.log(start_time, feat, suite, tc)
     $(".stat_list").click(function(){
 		start_time = this.innerHTML;
-		load_run_stat(start_time)
+		load_run_stat(feat, suite, tc, start_time)
 	});
 
-    load_run_stat(start_time)
+    load_run_stat(feat, suite, tc, start_time)
 
     setInterval(function(){
         if(start_time != "")
-            load_run_stat(start_time)
+            load_run_stat(feat, suite, tc, start_time)
         }, 5000);
 });
 
@@ -75,6 +76,7 @@ function load_run_stat(feature, suite, tc, start_time){
 	    data = {feature:feature, suite:suite, tc:tc, time: start_time}
 	 }
 	}
+	//console.log(data)
 
 	var ajx = $.ajax({
 	url:"/RFELOADSTATUS",
@@ -83,6 +85,13 @@ function load_run_stat(feature, suite, tc, start_time){
 	});
 
 	ajx.done(function(msg){
+	 if(msg != "")
+	 {
+	    $("#testcase").html(tc_head + msg);
+	 }
+	 else{
+	    console.log("No log")
+	 }
 	});
 
 	ajx.fail(function(jqXHR, textStatus){

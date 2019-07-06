@@ -346,6 +346,8 @@ class invoke:
                 os.killpg(os.getpgid(process.pid), signal.SIGTERM)
                 process.kill()
                 current_state["status"] = "aborted"
+                with open(current_state["script_output"], "a") as out:
+                    subprocess.Popen("echo Script aborted!;", stdout=out, stderr=out, shell=True)
                 self.update_current(current_state, feature, suite, tc)
                 self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "Run"
                 print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
@@ -501,6 +503,15 @@ class invoke:
                             data_suite["tcs"].append(TC)
                             data["tc_count"] = data["tc_count"] + 1
 
+    def script_log(self, script_file):
+        with open(script_file, "r") as file:
+            log = file.read()
+            if "******end of script output******" in log:
+                return log.replace("******start of script output******", "").replace("******end of script output******", "") + "<br>Completed."
+            elif "Script aborted!" in log:
+                return log.replace("******start of script output******", "") + "<br>Aborted."
+            else:
+                return log.replace("******start of script output******", "") + "<br>Still Running..."
 
 if __name__ == "__main__":
     p_feature = "project2"

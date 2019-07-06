@@ -9,6 +9,7 @@ from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
 from robot_runner.invoke import invoke as invoke
 import App1.settings as meta
+import unicodedata
 
 runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
@@ -143,10 +144,64 @@ def Run_stat(request):
                 tc = request.GET["tc"]
             except KeyError as k:
                 tc = None
-            print(feature, suite, tc)
+            #print(feature, suite, tc)
             return HttpResponse(status_load(runner.fetch_current(feature, suite, tc),
                                                        runner.fetch_history(feature, suite, tc)))
         else:
             return HttpResponse("No attribute received")
+    except Exception as e:
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+
+def log_load(current, history, time):
+    global runner
+
+    info = {}
+
+    if current is not None:
+        if current["time"] == time:
+            info = current
+        else:
+            for h in history:
+                if h["time"] == time:
+                    info = h
+    if len(info) > 0:
+        output = ""
+        for s in str(runner.script_log(info["script_output"])).splitlines():
+            output += "<tr><td>%s</td></tr>" % s
+        initial_loading = {
+            "body$b1": "<br><br><table><tr><td><a href=\"%s\">Log</a></td></tr></table><br>" % ("static"+info["log"].replace(meta.STATICFILES_DIRS[0], "")),
+            "body$b2": "<table><tr><td><a href=\"%s\">Report</a></td></tr></table><br>" % ("static"+info["output"].replace(meta.STATICFILES_DIRS[0], "")),
+            "body$b3": "<table><tr><th>Script log</th></tr></table>",
+            "body$b4": "<table>%s</table>" % output
+        }
+    else:
+        initial_loading = {"body$b1": "Unable to Log"}
+    return HTMLLoader.htmlstructure(**initial_loading)
+
+
+@ensure_csrf_cookie
+def Log_stat(request):
+    global runner
+    try:
+        if request.method == "POST":
+
+            feature = request.POST["feature"]
+            try:
+                suite = request.POST["suite"]
+            except KeyError as k:
+                suite = None
+            try:
+                tc = request.POST["tc"]
+            except KeyError as k:
+                tc = None
+            try:
+                start_time = request.POST["time"]
+            except KeyError as k:
+                print("Not enough attribute")
+                return HttpResponse("")
+            #print(feature, suite, tc, start_time)
+            return HttpResponse(log_load(runner.fetch_current(feature, suite, tc),
+                                                       runner.fetch_history(feature, suite, tc), start_time))
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

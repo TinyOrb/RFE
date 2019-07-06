@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^RFETS$', RFE.LoadTestSuite, name="TS"),
     url(r'^RFERUN$', RFE.Run_instance, name="Run"),
     url(r'^RFEABORT$', RFE.Abort_instance, name="Abort"),
-    url(r'^RFERUNSTATUS/$', RFE.Run_stat, name="run_stat"),
-    url(r'^RFELOADSTATUS/$', RFE.Run_stat, name="load_stat")
+    url(r'^RFERUNSTATUS$', RFE.Run_stat, name="run_stat"),
+    url(r'^RFELOADSTATUS$', RFE.Log_stat, name="load_stat")
     #path(r'^App1/',Test.test1, name="index")
 ]
