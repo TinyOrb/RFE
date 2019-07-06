@@ -20,6 +20,7 @@ padding:1%;
 height:86%;
 background:#E3E3E3;
 float:left;
+overflow:auto;
 }
 
 #testcase{
@@ -29,6 +30,7 @@ padding:1%;
 height:86%;
 background:#E3E3E3;
 float:left;
+overflow:auto;
 }
 
 h2{

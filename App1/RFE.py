@@ -9,7 +9,6 @@ from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
 from robot_runner.invoke import invoke as invoke
 import App1.settings as meta
-import unicodedata
 
 runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
