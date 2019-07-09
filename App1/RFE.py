@@ -10,6 +10,8 @@ from Robot_loader import Al_robot_parser
 from robot_runner.invoke import invoke as invoke
 import App1.settings as meta
 
+import urllib
+
 runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
 
@@ -199,8 +201,8 @@ def Log_stat(request):
             except KeyError as k:
                 print("Not enough attribute")
                 return HttpResponse("")
-            #print(feature, suite, tc, start_time)
-            return HttpResponse(log_load(runner.fetch_current(feature, suite, tc),
-                                                       runner.fetch_history(feature, suite, tc), start_time))
+            #print(feature, suite, urllib.unquote(tc), start_time)
+            return HttpResponse(log_load(runner.fetch_current(feature, suite, urllib.unquote(tc)),
+                                                       runner.fetch_history(feature, suite, urllib.unquote(tc)), start_time))
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
