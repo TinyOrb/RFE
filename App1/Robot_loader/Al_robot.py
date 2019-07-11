@@ -16,13 +16,9 @@ limitations under the License.
 @author: Shad Hasan, Tinyorb.Org
 """
 
-Test_Suite_Folder = {
-    #"Highball":"C:\\RATF1\\Highball\\testcase",
-    #"Boss":"C:\\RATF1\\automation-boss\\TestCases",
-    #"CDR-BI":"C:\RATF1\CDR-BI\\Testcase"
-    'project1':'/home/shad/workspace_saisei/sample_robot',
-    'project2': '/home/shad/workspace_saisei/qa/robot/tests'
-    }
+import App1.settings as meta
+
+Test_Suite_Folder = meta.Test_Suite_Folder
 
 def list_robot_files(path):
     try:
