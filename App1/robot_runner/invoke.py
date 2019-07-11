@@ -1,3 +1,21 @@
+"""
+Copyright 2019, TinyOrb.org
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+@author: Shad Hasan, Tinyorb.Org
+"""
+
 import subprocess
 import json
 import datetime
@@ -159,7 +177,7 @@ class invoke:
                     for d_suite in d_feature["suites"]:
                         if d_suite["name"] == suite["name"]:
                             s_flag = 1
-                            if d_suite["current_status"]["status"].lower() == "running":
+                            if d_suite["current_status"].get("status") is not None and d_suite["current_status"].get("status").lower() == "running":
                                 suite["status"] = "Running"
                             else:
                                 suite["status"] = "Run"
@@ -168,7 +186,7 @@ class invoke:
                                 for d_tc in d_suite["tcs"]:
                                     if tc["name"] == d_tc["name"]:
                                         t_flag = 1
-                                        if d_tc["current_status"]["status"].lower() == "running":
+                                        if d_tc["current_status"].get("status") is not None and d_tc["current_status"].get("status").lower() == "running":
                                             tc["status"] = "Running"
                                         else:
                                             tc["status"] = "Run"
@@ -204,7 +222,7 @@ class invoke:
                         if data_suite["name"] == suite:
                             if tc is not None:
                                 for data_tc in data_suite["tcs"]:
-                                    if data_tc["name"] == tc:
+                                    if data_tc["name"].strip() == tc.strip():
                                         flag = 1
                                         status = data_tc["history_status"]
                             else:
@@ -234,7 +252,7 @@ class invoke:
                         if data_suite["name"] == suite:
                             if tc is not None:
                                 for data_tc in data_suite["tcs"]:
-                                    if data_tc["name"] == tc:
+                                    if data_tc["name"].strip() == tc.strip():
                                         flag = 1
                                         status = data_tc["current_status"]
                             else:
@@ -508,8 +526,8 @@ class invoke:
             log = file.read()
             if "******end of script output******" in log:
                 return log.replace("******start of script output******", "").replace("******end of script output******", "") + "<br>Completed."
-            elif "Script aborted!" in log:
-                return log.replace("******start of script output******", "") + "<br>Aborted."
+            elif "Script aborted!" in log or "signal will force exit" in log:
+                return log.replace("******start of script output******", "") + "<br>Aborted!!!"
             else:
                 return log.replace("******start of script output******", "") + "<br>Still Running..."
 

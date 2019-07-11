@@ -1,3 +1,21 @@
+"""
+Copyright 2019, TinyOrb.org
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+@author: Shad Hasan, Tinyorb.Org
+"""
+
 import json
 import os
 
@@ -146,6 +164,9 @@ def Run_stat(request):
             except KeyError as k:
                 tc = None
             #print(feature, suite, tc)
+            if tc != None:
+                tc = urllib.unquote(tc)
+            #print(feature, suite, tc)
             return HttpResponse(status_load(runner.fetch_current(feature, suite, tc),
                                                        runner.fetch_history(feature, suite, tc)))
         else:
@@ -201,8 +222,10 @@ def Log_stat(request):
             except KeyError as k:
                 print("Not enough attribute")
                 return HttpResponse("")
+            if tc != None:
+                tc = urllib.unquote(tc)
             #print(feature, suite, urllib.unquote(tc), start_time)
-            return HttpResponse(log_load(runner.fetch_current(feature, suite, urllib.unquote(tc)),
-                                                       runner.fetch_history(feature, suite, urllib.unquote(tc)), start_time))
+            return HttpResponse(log_load(runner.fetch_current(feature, suite, tc),
+                                                       runner.fetch_history(feature, suite, tc), start_time))
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

@@ -1,3 +1,20 @@
+/***************************************************************************
+Copyright 2019, TinyOrb.org
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+@author: Shad Hasan, Tinyorb.Org
+***************************************************************************/
 tc_head = ""
 current_feature = ""
 $(document).ready(function(){
@@ -62,7 +79,7 @@ function get_suite_tree(feature_name){
 					for(i = 0; i < data.suites.length; i++){
 						htmlTable += "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr>"
 						htmlTable += "<td style=\"width:70%;\"><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td>"
-						htmlTable += "<td><h5 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+data.suites[i].status+"</h5></td>"
+						htmlTable += "<td><h5 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+(typeof(data.suites[i].status) != "undefined" ? data.suites[i].status : "Wait")+"</h5></td>"
 						if(data.suites[i].status == "Running")
 						    htmlTable += "<td><h5 class=abort_handle feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">Abort</h5></td>"
 						htmlTable += "<td><h5 class=stat_viewer feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+"View"+"</h5></td>"
@@ -70,7 +87,7 @@ function get_suite_tree(feature_name){
 						for(j = 0; j < data.suites[i].tcs.length; j++){
 							htmlTable += "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr>"
 							htmlTable += "<td style=\"width:70%;\"><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td>"
-							htmlTable += "<td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+data.suites[i].tcs[j].status+"</h6></td>"
+							htmlTable += "<td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+(typeof(data.suites[i].tcs[j].status) != "undefined" ? data.suites[i].tcs[j].status : "Wait")+"</h6></td>"
 							if(data.suites[i].tcs[j].status == "Running")
 							    htmlTable += "<td><h6 class=abort_handle2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">Abort</h6></td>"
 							htmlTable += "<td><h6 class=stat_viewer2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+"View"+"</h6></td>"
@@ -102,7 +119,7 @@ function get_suite_tree(feature_name){
                         console.log(this.innerHTML);
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
-                        if(this.innerHTML.toLowerCase() != "running"){
+                        if(this.innerHTML.toLowerCase() == "run"){
                         invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), null);
                         }
                     });
@@ -112,7 +129,7 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("feat"));
                         console.log(this.getAttribute("suite"));
                         console.log(this.getAttribute("tc"));
-                        if(this.innerHTML.toLowerCase() != "running"){
+                        if(this.innerHTML.toLowerCase() == "run"){
                         invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
                         }
                     });
