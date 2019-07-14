@@ -36,9 +36,10 @@ runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(me
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
-        "body$b1":"<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
-        "body$b2":"<div id=suite name=suite><h2>Features</h2></div>",
-        "body$b3":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
+        "body$b1": "<div id=load_message name=load_message></div>",
+        "body$b2":"<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
+        "body$b3":"<div id=suite name=suite><h2>Features</h2></div>",
+        "body$b4":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
         "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
         "script$s2": "static/he.js",
         "bscript$s1":"static/RFE.js",

@@ -80,6 +80,8 @@ function get_suite_tree(feature_name){
 						htmlTable += "<table style=\"width:100%;margin:auto;background:#2F4F4F;color:white;\"><tr>"
 						htmlTable += "<td style=\"width:70%;\"><h3>" + he.escape(data.suites[i].name.toUpperCase()) + "</h3></td>"
 						htmlTable += "<td><h5 class=runnable feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+(typeof(data.suites[i].status) != "undefined" ? data.suites[i].status : "Wait")+"</h5></td>"
+						if(typeof(data.suites[i].status) != "undefined" && data.suites[i].status != "Running")
+						    htmlTable += "<td><h5 class=runnable_2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">Run with</h5></td>"
 						if(data.suites[i].status == "Running")
 						    htmlTable += "<td><h5 class=abort_handle feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">Abort</h5></td>"
 						htmlTable += "<td><h5 class=stat_viewer feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+"View"+"</h5></td>"
@@ -88,6 +90,8 @@ function get_suite_tree(feature_name){
 							htmlTable += "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr>"
 							htmlTable += "<td style=\"width:70%;\"><h4>" + he.escape(data.suites[i].tcs[j].name) + "</h4></td>"
 							htmlTable += "<td><h6 class=runnable2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+(typeof(data.suites[i].tcs[j].status) != "undefined" ? data.suites[i].tcs[j].status : "Wait")+"</h6></td>"
+							if(typeof(data.suites[i].tcs[j].status) != "undefined" && data.suites[i].tcs[j].status != "Running")
+							    htmlTable += "<td><h6 class=runnable2_2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">Run with</h6></td>"
 							if(data.suites[i].tcs[j].status == "Running")
 							    htmlTable += "<td><h6 class=abort_handle2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">Abort</h6></td>"
 							htmlTable += "<td><h6 class=stat_viewer2 feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" tc=\""+he.escape(data.suites[i].tcs[j].name) +"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].tcs[j].status != "Running"? "" : "color:#67032F;" )+ "\">"+"View"+"</h6></td>"
@@ -131,6 +135,25 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("tc"));
                         if(this.innerHTML.toLowerCase() == "run"){
                         invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
+                        }
+                    });
+
+                    $(".runnable_2").click(function(){
+                        console.log(this.innerHTML);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                        if(this.innerHTML.toLowerCase() == "run with"){
+                        select_message("run_with", this.getAttribute("feat"), this.getAttribute("suite"), null);
+                        }
+                    });
+
+                    $(".runnable2_2").click(function(){
+                        console.log(this);
+                        console.log(this.getAttribute("feat"));
+                        console.log(this.getAttribute("suite"));
+                        console.log(this.getAttribute("tc"));
+                        if(this.innerHTML.toLowerCase() == "run with"){
+                        select_message("run_with", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
                         }
                     });
 
@@ -244,4 +267,67 @@ function invoke(action, feature, suite, tc){
 		ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
 			});
+}
+
+function select_message(action, feat, suite, tc){
+    console.log(action, feat, suite, tc)
+    htmlTable = "<table>";
+    htmlTable += "<tr><td colspan='2' style='text-align:center;background:#2F4F4F;color:white'>Run with form</td></tr>";
+    htmlTable += "<tr><td>Variable file</td><td><input type='text' id='variable_file'></td></tr>";
+    htmlTable += "<tr><td>Variable</td><td><input type='text' id='variable_text'></td></tr>";
+    htmlTable += "<tr><td>Include tag</td><td><input type='text' id='include_tag'></td></tr>";
+    htmlTable += "<tr><td>Exclude tag</td><td><input type='text' id='exclude_tag'></td></tr>";
+    if(tc != null)
+    {
+        htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td id='run_with_td_info' feat='"+feat+"' suite='"+suite+"' tc='"+tc+"'><button id='post_run_with' name='post_run_with'>Run</button></td></tr>";
+    }
+    else{
+        htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td id='run_with_td_info' feat='"+feat+"' suite='"+suite+"'><button id='post_run_with' name='post_run_with'>Run</button></td></tr>";
+    }
+    htmlTable += "</table>";
+
+    $("#load_message").html(htmlTable);
+    $("#load_message").css({"position":"fixed", "top":"30%", "left":"40%", "display":"block", "z-index":"10", "background": "lightgrey"})
+
+    $("#post_run_with").click(function(){
+        variable_file = $("#variable_file").val();
+        variable = $("#variable_text").val();
+        include_tag = $("#include_tag").val();
+        exclude_tag = $("#exclude_tag").val();
+        feat = $("#run_with_td_info").attr("feat");
+        suite = $("#run_with_td_info").attr("suite");
+        try{
+            tc = $("#run_with_td_info").attr("tc");
+        }
+        catch(err){
+            tc = null;
+        }
+        invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, exclude_tag);
+        $("#load_message").html("");
+        $("#load_message").css({"display":"none", "z-index":"0"});
+    });
+    $("#cancel_run_with").click(function(){
+        $("#load_message").html("");
+        $("#load_message").css({"display":"none", "z-index":"0"});
+    });
+}
+
+function invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, exclude_tag){
+    var data = {};
+
+    data["feat"] = feat;
+    data["suite"] = suite
+    if(tc != null)
+    data["tc"] = tc
+    if(variable_file != "")
+    data["variableFile"] = variable_file
+    if(variable != "")
+    data["variable"] = variable
+    if(include_tag != "")
+    data["include_tag"] = include_tag
+    if(exclude_tag != "")
+    data["exclude_tag"] = exclude_tag
+
+    console.log(data)
+
 }

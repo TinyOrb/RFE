@@ -63,3 +63,6 @@ cursor:pointer;
     text-align:center;
     border-radius: 2px;
 }
+#load_message{
+    display:none;
+}
