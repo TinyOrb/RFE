@@ -130,3 +130,4 @@ Test_Suite_Folder = {
     'project1':'/home/shad/workspace_saisei/sample_robot',
     'project2': '/home/shad/workspace_saisei/qa/robot/tests'
     }
+

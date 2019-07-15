@@ -74,51 +74,37 @@ def get_testcases_list(feature, path):
     return sl_tc
 
 
-def get_tag_list(feature, path):
-    robot_fl = get_sub_suite(path)
-    sl_tc = {}
-    sl_tc["feature"] = feature
-    sl_tc["suites"] = []
-    for pl in robot_fl.keys():
+def get_tag_list(feature, path, suite):
 
-        tcs = []
+    fr = open(os.path.join(path, suite), "r")
+    content = fr.read()
+    fr.close()
+    tags = []
+    split_content = content.split("\n")
 
-        suite = {}
+    for li in range(len(split_content)):
+        if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(
+                split_content[li]):
+            suite_begin = li + 1
+            suite_end = None
 
-        suite["name"] = robot_fl[pl]
+            for lii in range(li + 1, len(split_content)):
+                if re.compile("[/\s]{0,1}[*]+", re.IGNORECASE).match(split_content[lii]):
+                    suite_end = lii
+                    break
 
-        fr = open(pl, "r")
-        content = fr.read()
-        fr.close()
+            if suite_end == None:
+                suite_end = len(split_content)
 
-        split_content = content.split("\n")
+            #            print pl, suite_begin, suite_end
 
-        for li in range(len(split_content)):
-            if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(
-                    split_content[li]):
-                suite_begin = li + 1
-                suite_end = None
-
-                for lii in range(li + 1, len(split_content)):
-                    if re.compile("[/\s]{0,1}[*]+", re.IGNORECASE).match(split_content[lii]):
-                        suite_end = lii
-                        break
-
-                if suite_end == None:
-                    suite_end = len(split_content)
-
-                #            print pl, suite_begin, suite_end
-
-                for xi in range(suite_begin, suite_end):
-                    if re.compile("[/\s]{0,1}[a-zA-Z0-1.:_$-]+[a-zA-Z/\s0-1.:_$#-]*").match(split_content[xi]):
-                        tcs.append({"name": split_content[xi]})
-
-        suite["tcs"] = tcs
-        sl_tc["suites"].append(suite)
-    # print sl_tc
-
-    return sl_tc
-
+            for xi in range(suite_begin, suite_end):
+                if re.compile("/\s{2,4}\[TAGS]/\s{2,4}[/\sa-zA-z0-9_-]+").match(split_content[xi]):
+                    possible_tag = split_content[xi].replace("[TAGS]", "").split("  ")
+                    for tag in possible_tag:
+                        if tag.strip() != "":
+                            tags.append(tag.strip())
+    return tags
 
 def get_sub_suite(path):
     robot_fl = get_all_robot_ext(path)
