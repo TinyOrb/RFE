@@ -271,6 +271,27 @@ function invoke(action, feature, suite, tc){
 
 function select_message(action, feat, suite, tc){
     console.log(action, feat, suite, tc)
+    data = {"feature": feat, "suite":suite, "tc": tc}
+    var ajx = $.ajax({
+				url:"/RFERUNWITHMETA",
+				method:"POST",
+				data:data
+				});
+    ajx.done(function(msg){
+        console.log(msg)
+        if(msg.toLowerCase() != "fail" && !msg.toLowerCase().includes("Some error occurred"))
+        {
+            var msg = JSON.parse(msg);
+            console.log(msg);
+        }
+        else{
+            console.log(action + ": failed")
+        }
+    });
+	ajx.fail(function(jqXHR, textStatus){
+            console.log(jqXHR, textStatus);
+        });
+
     htmlTable = "<table>";
     htmlTable += "<tr><td colspan='2' style='text-align:center;background:#2F4F4F;color:white'>Run with form</td></tr>";
     htmlTable += "<tr><td>Variable file</td><td><input type='text' id='variable_file'></td></tr>";
@@ -314,19 +335,19 @@ function select_message(action, feat, suite, tc){
 
 function invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, exclude_tag){
     var data = {};
-
+    console.log("invoke_run_with")
     data["feat"] = feat;
     data["suite"] = suite
     if(tc != null)
-    data["tc"] = tc
+        data["tc"] = tc
     if(variable_file != "")
-    data["variableFile"] = variable_file
+        data["variableFile"] = variable_file
     if(variable != "")
-    data["variable"] = variable
+        data["variable"] = variable
     if(include_tag != "")
-    data["include_tag"] = include_tag
+        data["include_tag"] = include_tag
     if(exclude_tag != "")
-    data["exclude_tag"] = exclude_tag
+        data["exclude_tag"] = exclude_tag
 
     console.log(data)
 

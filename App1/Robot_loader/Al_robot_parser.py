@@ -74,36 +74,38 @@ def get_testcases_list(feature, path):
     return sl_tc
 
 
-def get_tag_list(feature, path, suite):
+def get_tag_list(path, suite):
 
     fr = open(os.path.join(path, suite), "r")
     content = fr.read()
     fr.close()
     tags = []
     split_content = content.split("\n")
+    try:
+        for li in range(len(split_content)):
+            if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(
+                    split_content[li]):
+                suite_begin = li + 1
+                suite_end = None
 
-    for li in range(len(split_content)):
-        if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(
-                split_content[li]):
-            suite_begin = li + 1
-            suite_end = None
+                for lii in range(li + 1, len(split_content)):
+                    if re.compile("[/\s]{0,1}[*]+", re.IGNORECASE).match(split_content[lii]):
+                        suite_end = lii
+                        break
 
-            for lii in range(li + 1, len(split_content)):
-                if re.compile("[/\s]{0,1}[*]+", re.IGNORECASE).match(split_content[lii]):
-                    suite_end = lii
-                    break
+                if suite_end == None:
+                    suite_end = len(split_content)
 
-            if suite_end == None:
-                suite_end = len(split_content)
+                #print(suite_begin, suite_end)
 
-            #            print pl, suite_begin, suite_end
-
-            for xi in range(suite_begin, suite_end):
-                if re.compile("/\s{2,4}\[TAGS]/\s{2,4}[/\sa-zA-z0-9_-]+").match(split_content[xi]):
-                    possible_tag = split_content[xi].replace("[TAGS]", "").split("  ")
-                    for tag in possible_tag:
-                        if tag.strip() != "":
-                            tags.append(tag.strip())
+                for xi in range(suite_begin, suite_end):
+                    if re.compile("[/\s]{2,4}\[TAGS][/\s]{2,4}[/\sa-zA-Z0-9_-]+", re.IGNORECASE).match(split_content[xi]):
+                        possible_tag = split_content[xi].replace("[TAGS]", "").split("  ")
+                        for tag in possible_tag:
+                            if tag.strip() != "":
+                                tags.append(tag.strip())
+    except Exception as e:
+        print("Exception as %s" % str(e))
     return tags
 
 def get_sub_suite(path):

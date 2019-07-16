@@ -131,3 +131,14 @@ Test_Suite_Folder = {
     'project2': '/home/shad/workspace_saisei/qa/robot/tests'
     }
 
+Variable_File = {
+    "project2": "/home/shad/workspace_saisei/qa/robot/testbeds",
+    "project1": None
+}
+
+Python_Path = {
+    "project2": [
+        "/home/shad/workspace_saisei/qa/robot/lib"
+    ],
+    "project1": []
+}

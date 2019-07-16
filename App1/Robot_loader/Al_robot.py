@@ -15,16 +15,18 @@ limitations under the License.
 
 @author: Shad Hasan, Tinyorb.Org
 """
-
+import os
+import re
 import App1.settings as meta
 
 Test_Suite_Folder = meta.Test_Suite_Folder
+
 
 def list_robot_files(path):
     try:
         files = [f for f in os.listdir(path) if os.path.isfile(f)]
         wkd = os.path.dirname(os.path.realpath(__file__))
-        robot_file = re.compile("^[a-zA-Z0-9_]+.robot$")
+        robot_file = re.compile("^[a-zA-Z0-9_-]+.robot$")
         l = []
         count = 1
         for f in files:
@@ -35,6 +37,20 @@ def list_robot_files(path):
     except Exception as e:
         return "Error! " + str(e)
 
+
+def list_variable_files(path):
+    try:
+        files = os.listdir(path)
+        variable_file = re.compile("^[a-zA-Z0-9_-]+.py$")
+        vl = []
+        for f in files:
+            if variable_file.match(f) is not None:
+                vl.append(f)
+        return vl
+    except Exception as e:
+        return "Error! " + str(e)
+
+
 def fetch_All_suite():
     try:
         l = len(Test_Suite_Folder)
@@ -42,11 +58,13 @@ def fetch_All_suite():
     except Exception as e:
         return "Error! " + str(e)
 
+
 def fetch_suite_test_cases(suite):
     try:
         path = Test_Suite_Folder[suite]
     except Exception as e:
         return "Error! " + str(e)
+
 
 def fetch_suite_content(path):
     try:
@@ -54,11 +72,13 @@ def fetch_suite_content(path):
     except Exception as e:
         return "Error! " + str(e)
 
+
 def update_test_suite(path, content):
     try:
         pass
     except Exception as e:
         return "Error! " + str(e)
+
 
 def execute_scenarios(path, cases):
     try:

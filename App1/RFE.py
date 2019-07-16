@@ -223,10 +223,42 @@ def Log_stat(request):
             except KeyError as k:
                 print("Not enough attribute")
                 return HttpResponse("")
-            if tc != None:
+            if tc is not None:
                 tc = urllib.unquote(tc)
             #print(feature, suite, urllib.unquote(tc), start_time)
             return HttpResponse(log_load(runner.fetch_current(feature, suite, tc),
                                                        runner.fetch_history(feature, suite, tc), start_time))
+    except Exception as e:
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+@ensure_csrf_cookie
+def load_meta_run_with(request):
+    global runner
+    try:
+        if request.method == "POST":
+            feature = request.POST["feature"]
+            try:
+                suite = request.POST["suite"]
+            except KeyError as k:
+                suite = None
+            try:
+                tc = request.POST["tc"]
+            except KeyError as k:
+                tc = None
+            if tc is not None:
+                tc = urllib.unquote(tc)
+            tags = Al_robot_parser.get_tag_list(Al_robot.fetch_All_suite()[feature], suite)
+
+            if meta.Variable_File[feature] is not None:
+                variable_file = Al_robot.list_variable_files(meta.Variable_File[feature])
+                if type(variable_file) is not list:
+                    print("Error", variable_file)
+                else:
+                    pass
+            else:
+                variable_file = []
+            return HttpResponse(json.dumps({"tags": tags, "vf": variable_file}))
+        else:
+            return HttpResponse("fail")
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
