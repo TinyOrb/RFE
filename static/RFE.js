@@ -272,83 +272,116 @@ function invoke(action, feature, suite, tc){
 function select_message(action, feat, suite, tc){
     console.log(action, feat, suite, tc)
     data = {"feature": feat, "suite":suite, "tc": tc}
+    f_data = ""
     var ajx = $.ajax({
 				url:"/RFERUNWITHMETA",
 				method:"POST",
 				data:data
 				});
     ajx.done(function(msg){
-        console.log(msg)
+        //console.log(msg)
         if(msg.toLowerCase() != "fail" && !msg.toLowerCase().includes("Some error occurred"))
         {
-            var msg = JSON.parse(msg);
-            console.log(msg);
+            f_data = JSON.parse(msg);
+            //console.log(f_data);
+
+            htmlTable = "<table>";
+            htmlTable += "<tr><td colspan='2' style='text-align:center;background:#2F4F4F;color:white'>Run with form</td></tr>";
+            htmlTable += "<tr><td>Variable</td><td><input type='text' id='variable_text'></td></tr>";
+            htmlTable += "<tr><td>Variable file</td><td><select id='selected_variable_file'>"
+            htmlTable += "<option 'selected'>--select--</option>"
+            for(i = 0; i < f_data.vf.length; i++){
+                htmlTable += "<option>" + f_data.vf[i] + "</option>"
+            }
+            htmlTable += "</select></td></tr>";
+            htmlTable += "<tr><td>Include tag</td><td><select id='selected_include_tag'>"
+            htmlTable += "<option 'selected'>--select--</option>"
+            for(i = 0; i< f_data.tags.length; i++){
+            htmlTable += "<option>" + f_data.tags[i] + "</option>"
+            }
+            htmlTable += "</select></td></tr>";
+            htmlTable += "<tr><td>Exclude tag</td><td><select id='selected_exclude_tag'>"
+            htmlTable += "<option 'selected'>--select--</option>"
+            for(i = 0; i< f_data.tags.length; i++){
+            htmlTable += "<option>" + f_data.tags[i] + "</option>"
+            }
+            htmlTable += "</select></td></tr>";
+            if(tc != null)
+            {
+                htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td id='run_with_td_info' feat='"+feat+"' suite='"+suite+"' tc='"+tc+"'><button id='post_run_with' name='post_run_with'>Run</button></td></tr>";
+            }
+            else{
+                htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td id='run_with_td_info' feat='"+feat+"' suite='"+suite+"' style='text-align:right'><button id='post_run_with' name='post_run_with'>Run</button></td></tr>";
+            }
+            htmlTable += "</table>";
+
+            $("#load_message").html(htmlTable);
+            $("#load_message").css({"position":"fixed", "top":"30%", "left":"40%", "display":"block", "z-index":"10", "background": "lightgrey", "border-width":"2px", "border-color":"#2F4F4F", "border-style": "solid"})
+
+            $("#post_run_with").click(function(){
+                variable_file = $( "#selected_variable_file option:selected" ).text();
+                variable = $("#variable_text").val();
+                include_tag = $( "#selected_include_tag option:selected" ).text();
+                exclude_tag = $( "#selected_exclude_tag option:selected" ).text();
+                feat = $("#run_with_td_info").attr("feat");
+                suite = $("#run_with_td_info").attr("suite");
+                try{
+                    tc = $("#run_with_td_info").attr("tc");
+                }
+                catch(err){
+                    tc = null;
+                }
+                invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, exclude_tag);
+                $("#load_message").html("");
+                $("#load_message").css({"display":"none", "z-index":"0"});
+            });
+            $("#cancel_run_with").click(function(){
+                $("#load_message").html("");
+                $("#load_message").css({"display":"none", "z-index":"0"});
+            });
         }
         else{
-            console.log(action + ": failed")
+            console.log("Fetch: failed")
         }
     });
 	ajx.fail(function(jqXHR, textStatus){
             console.log(jqXHR, textStatus);
         });
-
-    htmlTable = "<table>";
-    htmlTable += "<tr><td colspan='2' style='text-align:center;background:#2F4F4F;color:white'>Run with form</td></tr>";
-    htmlTable += "<tr><td>Variable file</td><td><input type='text' id='variable_file'></td></tr>";
-    htmlTable += "<tr><td>Variable</td><td><input type='text' id='variable_text'></td></tr>";
-    htmlTable += "<tr><td>Include tag</td><td><input type='text' id='include_tag'></td></tr>";
-    htmlTable += "<tr><td>Exclude tag</td><td><input type='text' id='exclude_tag'></td></tr>";
-    if(tc != null)
-    {
-        htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td id='run_with_td_info' feat='"+feat+"' suite='"+suite+"' tc='"+tc+"'><button id='post_run_with' name='post_run_with'>Run</button></td></tr>";
-    }
-    else{
-        htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td id='run_with_td_info' feat='"+feat+"' suite='"+suite+"'><button id='post_run_with' name='post_run_with'>Run</button></td></tr>";
-    }
-    htmlTable += "</table>";
-
-    $("#load_message").html(htmlTable);
-    $("#load_message").css({"position":"fixed", "top":"30%", "left":"40%", "display":"block", "z-index":"10", "background": "lightgrey"})
-
-    $("#post_run_with").click(function(){
-        variable_file = $("#variable_file").val();
-        variable = $("#variable_text").val();
-        include_tag = $("#include_tag").val();
-        exclude_tag = $("#exclude_tag").val();
-        feat = $("#run_with_td_info").attr("feat");
-        suite = $("#run_with_td_info").attr("suite");
-        try{
-            tc = $("#run_with_td_info").attr("tc");
-        }
-        catch(err){
-            tc = null;
-        }
-        invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, exclude_tag);
-        $("#load_message").html("");
-        $("#load_message").css({"display":"none", "z-index":"0"});
-    });
-    $("#cancel_run_with").click(function(){
-        $("#load_message").html("");
-        $("#load_message").css({"display":"none", "z-index":"0"});
-    });
 }
 
 function invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, exclude_tag){
     var data = {};
     console.log("invoke_run_with")
-    data["feat"] = feat;
+    data["feature"] = feat;
     data["suite"] = suite
     if(tc != null)
         data["tc"] = tc
-    if(variable_file != "")
+    if(variable_file != "--select--")
         data["variableFile"] = variable_file
     if(variable != "")
         data["variable"] = variable
-    if(include_tag != "")
+    if(include_tag != "--select--")
         data["include_tag"] = include_tag
-    if(exclude_tag != "")
+    if(exclude_tag != "--select--")
         data["exclude_tag"] = exclude_tag
 
-    console.log(data)
+    var ajx = $.ajax({
+				url:"/RFERUN",
+				method:"POST",
+				data:data
+				});
+		ajx.done(function(msg){
+                if(msg.toLowerCase() == "success")
+                {
+                    console.log("Run with: successful")
+                }
+                else{
+                    console.log("Run with: failed")
+                }
+			});
+		ajx.fail(function(jqXHR, textStatus){
+				console.log(jqXHR, textStatus);
+			});
+    //console.log(data)
 
 }

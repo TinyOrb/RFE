@@ -124,9 +124,27 @@ def Run_instance(request):
                 tc = request.POST["tc"]
             except KeyError as k:
                 tc = None
-            return HttpResponse(runner.trigger(feature=feature, suite=suite, tc=tc))
+            try:
+                include_tag = request.POST["include_tag"]
+            except KeyError as k:
+                include_tag = None
+            try:
+                exclude_tag = request.POST["exclude_tag"]
+            except KeyError as k:
+                exclude_tag = None
+            try:
+                variable_file = os.path.join(meta.Variable_File[feature], request.POST["variableFile"])
+            except KeyError as k:
+                variable_file = None
+            try:
+                variable = request.POST["variable"]
+            except KeyError as k:
+                variable = None
+            runner.Python_Path = meta.ENV_Path[feature]
+            runner.cd_path = meta.Test_Suite_Folder[feature]
+            return HttpResponse(runner.trigger(feature=feature, suite=suite, tc=tc, variable=variable, variablefile=variable_file, include_tags=include_tag, exclude_tags=exclude_tag))
     except Exception as e:
-        # raise e
+        #raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
 
@@ -257,7 +275,7 @@ def load_meta_run_with(request):
                     pass
             else:
                 variable_file = []
-            return HttpResponse(json.dumps({"tags": tags, "vf": variable_file}))
+            return HttpResponse(json.dumps({"tags": list(set(tags)), "vf": variable_file}))
         else:
             return HttpResponse("fail")
     except Exception as e:

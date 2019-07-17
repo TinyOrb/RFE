@@ -136,9 +136,10 @@ Variable_File = {
     "project1": None
 }
 
-Python_Path = {
-    "project2": [
-        "/home/shad/workspace_saisei/qa/robot/lib"
-    ],
+ENV_Path = {
+    "project2": {
+        "PYTHONPATH": ["/home/shad/workspace_saisei/qa/robot/lib"],
+        "PATH": ["/home/shad/workspace_saisei/qa/robot/lib/geckodriver"]
+    },
     "project1": []
 }

@@ -70,7 +70,7 @@ class invoke:
                 if variable is not None:
                     current_state["cmd"] += "--variable==\"%s\" " % variable
                 if variablefile is not None:
-                    current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+                    current_state["cmd"] += "--variablefile=\"%s\" " % variablefile
                 current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
                 current_state["cmd"] += "-t \"%s\" " % tc
                 current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
@@ -99,7 +99,7 @@ class invoke:
                 if variable is not None:
                     current_state["cmd"] += "--variable==\"%s\" " % variable
                 if variablefile is not None:
-                    current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+                    current_state["cmd"] += "--variablefile=\"%s\" " % variablefile
                 current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
                 current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
                 self.update_current(current_state, feature, suite, tc)
@@ -126,7 +126,7 @@ class invoke:
                 if variable is not None:
                     current_state["cmd"] += "--variable==\"%s\" " % variable
                 if variablefile is not None:
-                    current_state["cmd"] += "--variablefile==\"%s\" " % variablefile
+                    current_state["cmd"] += "--variablefile=\"%s\" " % variablefile
                 current_state["cmd"] += "--outputdir \"%s\" " % current_state["dir"]
                 current_state["cmd"] += Al_robot.fetch_All_suite()[feature]
                 self.update_current(current_state, feature, suite, tc)
@@ -346,13 +346,20 @@ class invoke:
             return False
 
     def run(self, current_state, feature, suite, tc):
+        envs = self.Python_Path
+        path_cmd = ""
+        for env in envs.keys():
+            path_cmd = "%s export %s=$%s" % (path_cmd, env, env)
+            for path in envs[env]:
+                path_cmd = "%s:%s"%(path_cmd, path)
+            path_cmd = "%s;" % path_cmd
         if not self.ensure_path(current_state["script_output"], type="file"):
             print("Failed to create script output file")
             return False
         with open(current_state["script_output"], "wb") as out:
-            process = subprocess.Popen(["echo ******start of script output******; %s ; "
+            process = subprocess.Popen(["%s echo ******start of script output******; %s ; "
                                         "echo ******end of script output****** " %
-                                        current_state["cmd"]], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
+                                        (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
 
         current_state["status"] = "running"
         self.update_current(current_state, feature, suite, tc)
