@@ -30,6 +30,8 @@ import App1.settings as meta
 
 import urllib
 
+import time
+
 runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
 
@@ -221,6 +223,7 @@ def log_load(current, history, time):
     return HTMLLoader.htmlstructure(**initial_loading)
 
 
+
 @ensure_csrf_cookie
 def Log_stat(request):
     global runner
@@ -244,8 +247,7 @@ def Log_stat(request):
             if tc is not None:
                 tc = urllib.unquote(tc)
             #print(feature, suite, urllib.unquote(tc), start_time)
-            return HttpResponse(log_load(runner.fetch_current(feature, suite, tc),
-                                                       runner.fetch_history(feature, suite, tc), start_time))
+            return HttpResponse(log_load(runner.fetch_current(feature, suite, tc), runner.fetch_history(feature, suite, tc), start_time))
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
@@ -278,5 +280,79 @@ def load_meta_run_with(request):
             return HttpResponse(json.dumps({"tags": list(set(tags)), "vf": variable_file}))
         else:
             return HttpResponse("fail")
+    except Exception as e:
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+def editor_load():
+        initial_loading = {
+            "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
+                       "Robotframework Front End</h2></div>",
+            "body$b2": "<div ><textarea id=\"editor\"></textarea></div>",
+            "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
+            "script$s2": "../static/he.js",
+            "style$t1": "../static/RFE.css",
+            "bscript$s1": "../static/rfeedit.js",
+        }
+        return HTMLLoader.htmlstructure(**initial_loading)
+
+@ensure_csrf_cookie
+def Core_Editor(request):
+    try:
+        if(request.method == "POST"):
+            feature = request.POST["feature"]
+            try:
+                suite = request.POST["suite"]
+            except KeyError as k:
+                suite = None
+            try:
+                tc = request.POST["tc"]
+                tc = urllib.unquote(tc)
+            except KeyError as k:
+                tc = None
+            try:
+                action = request.POST["action"]
+            except KeyError as k:
+                action = None
+
+            if suite is not None and tc is None:
+                suite_path = os.path.join(meta.Test_Suite_Folder["feature"], suite)
+
+                if action is "read":
+                    content = Al_robot_parser.read_robot_content(suite_path)
+                    return HttpResponse(json.dumps(content), status=200)
+
+                elif action is "write":
+                    try:
+                        content = request.POST["content"]
+
+                        wstatus = Al_robot_parser.write_robot_content(suite_path, content)
+                        if wstatus is not None:
+                            return HttpResponse("success", status=200)
+                        else:
+                            return HttpResponse("fail", status=500)
+
+                    except KeyError as k:
+                        return HttpResponse("fail", status=500)
+                else:
+                    print("unknown action provided")
+                    return HttpResponse("fail", status=400)
+
+            else:
+                print("Either suite is missing and extra tc info provided")
+                return HttpResponse("fail", status=400)
+        elif(request.method == "GET"):
+            return HttpResponse(editor_load(), status=400)
+        else:
+            return HttpResponse("fail", status=400)
+    except Exception as e:
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+@ensure_csrf_cookie
+def get_time(request):
+    try:
+        if(request.method == "POST"):
+            return HttpResponse(str(time.time() * 1000))
+        else:
+            return HttpResponse("fail", status=400)
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

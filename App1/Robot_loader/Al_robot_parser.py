@@ -118,3 +118,24 @@ def get_sub_suite(path):
             if re.compile("[*]{3}[/\s]{0,1}Test[/\s]{0,1}Case[s]{0,1}[/\s]{0,1}[*]{3}[/\s]*", re.IGNORECASE).match(cont):
                 sl[pl] = robot_fl[pl]
     return sl
+
+
+def read_robot_content(path):
+    try:
+        fr = open(os.path.join(path), "r")
+        content = fr.read()
+        fr.close()
+        mtime = os.stat(path).st_mtime
+        return {"data": content, "mtime": mtime}
+    except Exception as e:
+        print("Error as %s" % str(e))
+        return None
+
+def write_robot_content(path, content):
+    try:
+        f = open(path, "w")
+        f.write(content)
+        f.close()
+    except Exception as e:
+        print("Error as %s" % str(e))
+        return  None

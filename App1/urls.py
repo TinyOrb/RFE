@@ -29,6 +29,8 @@ urlpatterns = [
     url(r'^RFEABORT$', RFE.Abort_instance, name="Abort"),
     url(r'^RFERUNSTATUS$', RFE.Run_stat, name="run_stat"),
     url(r'^RFELOADSTATUS$', RFE.Log_stat, name="load_stat"),
-    url(r'^RFERUNWITHMETA$', RFE.load_meta_run_with, name="load_meta_run_with")
+    url(r'^RFERUNWITHMETA$', RFE.load_meta_run_with, name="load_meta_run_with"),
+    url(r'^RFEEDITOR$', RFE.Core_Editor, name="editor"),
+    url(r'^GETNOW$', RFE.get_time, name="ctime")
     #path(r'^App1/',Test.test1, name="index")
 ]
