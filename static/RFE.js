@@ -52,7 +52,6 @@ function getCookie(name) {
     return cookieValue;
 }
 
-
 function get_suite_tree(feature_name){
 	//console.log(feature_name)
 
