@@ -31,6 +31,6 @@ urlpatterns = [
     url(r'^RFELOADSTATUS$', RFE.Log_stat, name="load_stat"),
     url(r'^RFERUNWITHMETA$', RFE.load_meta_run_with, name="load_meta_run_with"),
     url(r'^RFEEDITOR$', RFE.Core_Editor, name="editor"),
-    url(r'^GETNOW$', RFE.get_time, name="ctime")
+    url(r'^GETSERVERNOW$', RFE.get_time, name="ctime")
     #path(r'^App1/',Test.test1, name="index")
 ]

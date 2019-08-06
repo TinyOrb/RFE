@@ -126,7 +126,7 @@ def read_robot_content(path):
         content = fr.read()
         fr.close()
         mtime = os.stat(path).st_mtime
-        return {"data": content, "mtime": mtime}
+        return {"data": content, "mtime": mtime*1000}
     except Exception as e:
         print("Error as %s" % str(e))
         return None
