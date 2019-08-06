@@ -136,6 +136,7 @@ def write_robot_content(path, content):
         f = open(path, "w")
         f.write(content)
         f.close()
+        return True
     except Exception as e:
         print("Error as %s" % str(e))
         return  None

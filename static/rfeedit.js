@@ -5,11 +5,9 @@ ts = null
 tc = null
 ms = null
 mc = null
-_ts = null
-_ms = null
 
 fetch_fail = 0
-update_fail = 0
+do_update = 0
 
 $(document).ready(function(){
 	console.log("loaded")
@@ -40,51 +38,38 @@ function run_sync(){
     sync()
 }
 
-async function sync(){
+function sync(){
+    console.log(ts, tc, ms, mc)
     if(ts == null){
-            var {tx, mx} = fetch_sync_content();
-            ts = tx;
-            ms = mx;
-            tc = tx;
-            mc = mx;
-            $("#editor").text(mx);
+            console.log("updating client");
+            fetch_content();
+            do_update = 1
      } else{
         if(tc == null || tc == ts){
+            fetch_content();
             if(ms == mc){
             // Do nothing
             }
             else{
-            var {tx, mx} = fetch_sync_content();
-                if(tx >= tc){
-                     ts = tx
-                     tc = tx
-                     ms = mx
-                     mc = mx
-                     $("#editor").text(mx);
+                if(ts >= tc){
+                    do_update = 1
                     }
                     else{
-                        if(update_sync_content() == 2){
-                            ts = tc
-                            ms = mc
-                        }
+                        do_update = 0
+                        update_content();
                     }
             }
         }
         else{
+
          if(tc != null && tc != ts){
-            var {tx, mx} = fetch_sync_content();
-            if(tx >= tc){
-                 ts = tx
-                 tc = tx
-                 ms = mx
-                 mc = mx
-                 $("#editor").text(mx);
+            fetch_content();
+            if(ts >= tc){
+                 do_update = 1
                 }
                 else{
-                    if(update_sync_content() == 2){
-                        ts = tc
-                        ms = mc
-                    }
+                    do_update = 0
+                    update_content();
                 }
          }
         }
@@ -92,9 +77,12 @@ async function sync(){
 }
 
 function client_gather(){
-  if(mc != $("#editor").text()){
+  console.log("getting client state change");
+  var valu = $("#editor").val();
+  if(mc != valu){
       tc = new Date().getTime();
-      mc = $("#editor").text();
+      console.log(tc)
+      mc = valu;
   }else{
     // Do nothing
   }
@@ -159,6 +147,19 @@ function fetch_content(){
                     f_data = JSON.parse(msg);
                     _ts = parseFloat(f_data.mtime) - lag
                     _ms = f_data.data
+                    ts = _ts;
+                    ms = _ms;
+                    if(do_update == 1){
+                        tc = _ts;
+                        mc = _ms;
+                        $("#editor").val(_ms);
+                        console.log("read success");
+                    }
+                    {
+                        ts = _ts;
+                        ms = _ms;
+                    }
+                    do_update = 0;
                  }
                 else{
                     fetch_fail = 1
@@ -166,7 +167,6 @@ function fetch_content(){
                 }
 			});
 		ajx.fail(function(jqXHR, textStatus){
-		        fail = 1
 				console.log(jqXHR, textStatus);
 			});
 }
@@ -193,9 +193,12 @@ function update_content(){
                     data:data
                  });
             ajx.done(function(msg){
+                    console.log(msg);
                     if(msg == "success"){
-                       update_content = 2
+                            ts = tc
+                            ms = mc
                        console.log("write succeed");
+                       update_fail = 2
                    }
                    else{
                    update_fail = 1

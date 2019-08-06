@@ -315,13 +315,13 @@ def Core_Editor(request):
                 action = None
 
             if suite is not None and tc is None:
-                suite_path = os.path.join(meta.Test_Suite_Folder["feature"], suite)
+                suite_path = os.path.join(meta.Test_Suite_Folder[feature], suite)
 
-                if action is "read":
+                if action == "read":
                     content = Al_robot_parser.read_robot_content(suite_path)
                     return HttpResponse(json.dumps(content), status=200)
 
-                elif action is "write":
+                elif action == "write":
                     try:
                         content = request.POST["content"]
 
@@ -345,6 +345,7 @@ def Core_Editor(request):
         else:
             return HttpResponse("fail", status=400)
     except Exception as e:
+        raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
 @ensure_csrf_cookie
