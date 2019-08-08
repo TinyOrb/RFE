@@ -22,6 +22,8 @@ url = ""
 feat = ""
 suite = ""
 tc = ""
+isOnDiv=false
+old_msg = null
 
 $(document).ready(function(){
 	console.log("loaded")
@@ -53,6 +55,9 @@ $(document).ready(function(){
         if(start_time != "")
             load_run_stat(feat, suite, tc, start_time)
         }, 5000);
+
+    $("#testcase").mouseenter(function(){isOnDiv=true;});
+    $("#testcase").mouseleave(function(){isOnDiv=false;});
 });
 
 
@@ -105,7 +110,12 @@ function load_run_stat(feature, suite, tc, start_time){
 	ajx.done(function(msg){
 	 if(msg != "")
 	 {
-	    $("#testcase").html(tc_head + msg);
+	    if(old_msg != msg){
+            $("#testcase").html(tc_head + msg);
+            if(isOnDiv==false)
+            $("#testcase").scrollTop($("#testcase")[0].scrollHeight-10);
+            old_msg = msg
+	    }
 	 }
 	 else{
 	    console.log("No log")

@@ -143,7 +143,10 @@ def Run_instance(request):
             except KeyError as k:
                 variable = None
             runner.Python_Path = meta.ENV_Path[feature]
-            runner.cd_path = meta.Test_Suite_Folder[feature]
+            try:
+                runner.cd_path = meta.CWD[feature]
+            except:
+                runner.cd_path = None
             return HttpResponse(runner.trigger(feature=feature, suite=suite, tc=tc, variable=variable, variablefile=variable_file, include_tags=include_tag, exclude_tags=exclude_tag))
     except Exception as e:
         #raise e
@@ -287,7 +290,7 @@ def editor_load():
         initial_loading = {
             "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
                        "Robotframework Front End</h2></div>",
-            "body$b2": "<div ><textarea id=\"editor\"></textarea></div>",
+            "body$b2": "<div style=\"width:97%;padding:1%; height:84%; margin-left:0.5%; margin-right:0.5%; margin-top:0.5%;\"><textarea style=\"width:98%;height:98%;resize: none;\" id=\"editor\"></textarea></div>",
             "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
             "script$s2": "../static/he.js",
             "style$t1": "../static/RFE.css",

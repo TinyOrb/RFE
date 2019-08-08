@@ -136,10 +136,15 @@ Variable_File = {
     "project1": None
 }
 
+CWD = {
+    "project2": "/home/shad/workspace_saisei",
+    "project1": None
+}
+
 ENV_Path = {
     "project2": {
         "PYTHONPATH": ["/home/shad/workspace_saisei/qa/robot/lib"],
         "PATH": ["/home/shad/workspace_saisei/qa/robot/lib/geckodriver"]
     },
-    "project1": []
+    "project1": {}
 }

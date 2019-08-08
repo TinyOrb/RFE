@@ -34,6 +34,8 @@ class invoke:
     def __init__(self, track, result_dir):
         self.track = track
         self.result_dir = result_dir
+        self.cd_path = None
+        self.Python_Path = None
 
     def trigger(self, feature, suite=None, tc=None, variable=None, variablefile=None, include_tags=None, exclude_tags=None):
         try:
@@ -148,12 +150,16 @@ class invoke:
 
     def abort_run(self, feature, suite=None, tc=None):
         try:
-            self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "abort"
-            time.sleep(5)
-            if self.fetch_current(feature, suite, tc)["status"].lower() != "running":
+            if self.thread_list.get("%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)) is None:
+                print("No tracked process")
+                current = self.fetch_current(feature, suite, tc)
+                current["status"] = "unknown"
+                self.update_current(current, feature, suite, tc)
                 return "success"
             else:
-                return "fail"
+                self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "abort"
+                print("Mark process abortion")
+                return "success"
         except Exception as e:
             print("Exception occurred %s" % str(e))
             return "fail"
@@ -357,10 +363,15 @@ class invoke:
             print("Failed to create script output file")
             return False
         with open(current_state["script_output"], "wb") as out:
-            process = subprocess.Popen(["%s echo ******start of script output******; %s ; "
-                                        "echo ******end of script output****** " %
-                                        (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
-
+            if self.cd_path is None:
+                process = subprocess.Popen(["%s echo ******start of script output******; %s ; "
+                                            "echo ******end of script output****** " %
+                                            (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
+            else:
+                process = subprocess.Popen(["%s echo ******start of script output******; %s ; "
+                                            "echo ******end of script output****** " %
+                                            (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True,
+                                           cwd=self.cd_path, preexec_fn=os.setsid)
         current_state["status"] = "running"
         self.update_current(current_state, feature, suite, tc)
 

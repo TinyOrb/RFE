@@ -84,6 +84,7 @@ function get_suite_tree(feature_name){
 						if(data.suites[i].status == "Running")
 						    htmlTable += "<td><h5 class=abort_handle feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">Abort</h5></td>"
 						htmlTable += "<td><h5 class=stat_viewer feat=\""+data.feature+"\" suite=\""+data.suites[i].name+"\" style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+"View"+"</h5></td>"
+						htmlTable += "<td><a target=_blank style=\" text-decoration: none; color: inherit\" href=\"/RFEEDITOR?feat="+data.feature+"&suite="+data.suites[i].name+"\"><h5 style=\"text-align:right; cursor:pointer; "+ (data.suites[i].status != "Running"? "" :"color:#E39FF6;") +"\">"+"Edit"+"</h5></td>"
 						htmlTable += "</tr></table>" ;
 						for(j = 0; j < data.suites[i].tcs.length; j++){
 							htmlTable += "<table style=\"width:100%;margin:auto;background:lightgrey;\"><tr>"
