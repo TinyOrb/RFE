@@ -1,2 +1,4 @@
 *.pyc
 *.swp
+static/RFE_RESULT/*
+App1/settings.py

@@ -127,24 +127,24 @@ Test_Suite_Folder = {
     #"Highball":"C:\\RATF1\\Highball\\testcase",
     #"Boss":"C:\\RATF1\\automation-boss\\TestCases",
     #"CDR-BI":"C:\RATF1\CDR-BI\\Testcase"
-    'project1':'/home/shad/workspace_saisei/sample_robot',
-    'project2': '/home/shad/workspace_saisei/qa/robot/tests'
+    'project1':'/home/shad/saisei/sample_robot',
+    'project2': '/home/shad/saisei/qa/robot/tests'
     }
 
 Variable_File = {
-    "project2": "/home/shad/workspace_saisei/qa/robot/testbeds",
+    "project2": "/home/shad/saisei/qa/robot/testbeds",
     "project1": None
 }
 
 CWD = {
-    "project2": "/home/shad/workspace_saisei",
+    "project2": "/home/shad/saisei",
     "project1": None
 }
 
 ENV_Path = {
     "project2": {
-        "PYTHONPATH": ["/home/shad/workspace_saisei/qa/robot/lib"],
-        "PATH": ["/home/shad/workspace_saisei/qa/robot/lib/geckodriver"]
+        "PYTHONPATH": ["/home/shad/saisei/qa/robot/lib"],
+        "PATH": ["/home/shad/saisei/qa/robot/lib/geckodriver"]
     },
     "project1": {}
-}
+    }
