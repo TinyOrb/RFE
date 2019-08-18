@@ -196,7 +196,7 @@ class invoke:
                                             tc["status"] = "Running"
                                         else:
                                             tc["status"] = "Run"
-                                    break
+                                        break
                                 if t_flag == 0:
                                     tc["status"] = "Run"
                             break
@@ -364,20 +364,20 @@ class invoke:
             return False
         with open(current_state["script_output"], "wb") as out:
             if self.cd_path is None:
-                process = subprocess.Popen(["%s echo ******start of script output******; %s ; "
-                                            "echo ******end of script output****** " %
+                process = subprocess.Popen(["%s echo >>>>>>start of script output<<<<<<; %s ; "
+                                            "echo >>>>>>end of script output<<<<<< " %
                                             (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
             else:
-                process = subprocess.Popen(["%s echo ******start of script output******; %s ; "
-                                            "echo ******end of script output****** " %
+                process = subprocess.Popen(["%s echo >>>>>>start of script output<<<<<<; %s ; "
+                                            "echo >>>>>>end of script output<<<<<< " %
                                             (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True,
                                            cwd=self.cd_path, preexec_fn=os.setsid)
         current_state["status"] = "running"
         self.update_current(current_state, feature, suite, tc)
 
-        line = subprocess.check_output(['tail', '-1', current_state["script_output"]])
-
-        while "******end of script output******" not in str(line):
+        line = subprocess.check_output(['tail','-1', current_state["script_output"]])
+        
+        while ">>>>>>end of script output<<<<<<" not in str(line):
             if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] == "abort":
                 os.killpg(os.getpgid(process.pid), signal.SIGTERM)
                 process.kill()
@@ -389,7 +389,7 @@ class invoke:
                 print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
                 return True
             time.sleep(5)
-            line = subprocess.check_output(['tail', '-1', current_state["script_output"]])
+            line = subprocess.check_output(['tail','-1',  current_state["script_output"]])
 
         current_state["status"] = "done"
         cur_time = str(datetime.datetime.now())
