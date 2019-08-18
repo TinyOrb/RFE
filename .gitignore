@@ -2,3 +2,5 @@
 *.swp
 static/RFE_RESULT/*
 App1/settings.py
+App1/robot_runner/track.json
+*track.json
