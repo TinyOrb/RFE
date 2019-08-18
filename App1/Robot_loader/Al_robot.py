@@ -17,6 +17,8 @@ limitations under the License.
 """
 import os
 import re
+from binaryornot.check import is_binary
+
 import App1.settings as meta
 
 Test_Suite_Folder = meta.Test_Suite_Folder
@@ -37,6 +39,15 @@ def list_robot_files(path):
     except Exception as e:
         return "Error! " + str(e)
 
+def list_non_binary_files(path):
+    try:
+        if os.path.isdir(path):
+            files = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path, f)) and not is_binary(os.path.join(path, f)) ]
+            return files
+        else:
+            return []
+    except Exception as e:
+        return "Error! " + str(e)
 
 def list_variable_files(path):
     try:

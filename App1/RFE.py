@@ -40,7 +40,7 @@ def initial():
     initial_loading = {
         "body$b1": "<div id=load_message name=load_message></div>",
         "body$b2":"<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
-        "body$b3":"<div id=suite name=suite><h2>Features</h2></div>",
+        "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite><button id=edit_suite_btn>Edit Project</button></div></div>",
         "body$b4":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
         "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
         "script$s2": "static/he.js",
@@ -111,6 +111,19 @@ def LoadTestSuite(request):
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+@ensure_csrf_cookie
+def GetAllSuites(request):
+    global runner
+    try:
+        if request.method == "POST":
+            all = {}
+            features = meta.Test_Suite_Folder
+            for feature in features.keys():
+                all[feature]=Al_robot.list_non_binary_files(meta.Test_Suite_Folder[feature])
+            return HttpResponse(json.dumps(all))
+    except Exception as e:
+        # raise e
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
 @ensure_csrf_cookie
 def Run_instance(request):

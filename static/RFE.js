@@ -27,6 +27,10 @@ $(document).ready(function(){
 		get_suite_tree(current_feature)
 	});
 
+	$("#edit_suite_btn").click(function(){
+		get_all_suite();
+	});
+
     get_suite_tree(current_feature)
 
     setInterval(function(){
@@ -35,6 +39,32 @@ $(document).ready(function(){
         }, 5000);
 })
 
+function get_all_suite(){
+	$.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                 }
+        });
+
+        var ajx = $.ajax({
+                     url:"/GETALLSUITES",
+                     method:"POST",
+                     });
+
+	ajx.done(function(msg){
+		if(msg != "" && msg.toLowerCase() != "none"){
+                    var data = JSON.parse(msg);
+			console.log(msg);
+		}
+	});
+
+	ajx.fail(function(jqXHR, textStatus){
+            console.log(jqXHR, textStatus);
+          });
+}
 
 function getCookie(name) {
     var cookieValue = null;
@@ -385,3 +415,4 @@ function invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, 
     //console.log(data)
 
 }
+

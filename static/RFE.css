@@ -13,13 +13,29 @@ background:black;
 height:9%;
 }
 
-#suite{
+#feature{
+float:left;
+height:86%;
 margin:0 1% 0 1%;
-width:15%;
+width:17%;
+}
+
+#edit_suite{
+width:96%;
+padding:1%;
+height:10%;
+margin:1%;
+text-align:center;
+}
+
+#edit_suite_btn{
+}
+
+#suite{
+width:98%;
 padding:1%;
 height:86%;
 background:#E3E3E3;
-float:left;
 overflow:auto;
 }
 
