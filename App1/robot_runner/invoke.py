@@ -364,12 +364,12 @@ class invoke:
             return False
         with open(current_state["script_output"], "wb") as out:
             if self.cd_path is None:
-                process = subprocess.Popen(["%s echo >>>>>>start of script output<<<<<<; %s ; "
-                                            "echo >>>>>>end of script output<<<<<< " %
+                process = subprocess.Popen(["%s echo start of script output; %s ; "
+                                            "echo end of script output " %
                                             (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
             else:
-                process = subprocess.Popen(["%s echo >>>>>>start of script output<<<<<<; %s ; "
-                                            "echo >>>>>>end of script output<<<<<< " %
+                process = subprocess.Popen(["%s echo start of script output; %s ; "
+                                            "echo end of script output " %
                                             (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True,
                                            cwd=self.cd_path, preexec_fn=os.setsid)
         current_state["status"] = "running"
@@ -377,7 +377,7 @@ class invoke:
 
         line = subprocess.check_output(['tail','-1', current_state["script_output"]])
         
-        while ">>>>>>end of script output<<<<<<" not in str(line):
+        while "end of script output" not in str(line):
             if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] == "abort":
                 os.killpg(os.getpgid(process.pid), signal.SIGTERM)
                 process.kill()
@@ -542,12 +542,12 @@ class invoke:
     def script_log(self, script_file):
         with open(script_file, "r") as file:
             log = file.read()
-            if "******end of script output******" in log:
-                return log.replace("******start of script output******", "").replace("******end of script output******", "") + "<br>Completed."
+            if "end of script output" in log:
+                return log.replace("start of script output", "").replace("end of script output", "") + "<br>Completed."
             elif "Script aborted!" in log or "signal will force exit" in log:
-                return log.replace("******start of script output******", "") + "<br>Aborted!!!"
+                return log.replace("start of script output", "") + "<br>Aborted!!!"
             else:
-                return log.replace("******start of script output******", "") + "<br>Still Running..."
+                return log.replace("start of script output", "") + "<br>Still Running..."
 
 if __name__ == "__main__":
     p_feature = "project2"
