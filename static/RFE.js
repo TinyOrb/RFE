@@ -56,8 +56,75 @@ function get_all_suite(){
 
 	ajx.done(function(msg){
 		if(msg != "" && msg.toLowerCase() != "none"){
-                    var data = JSON.parse(msg);
-			console.log(msg);
+                    	var data = JSON.parse(msg);
+			htmlTable="<table>"
+			htmlTable+="<tr><td>Feature: </td><td><select id=pedit_feat name=pedit_feat>"
+			for(var f in data){
+				htmlTable+="<option>"+f+"</option>"
+			}
+			htmlTable+="</select></td></tr>"
+			htmlTable+="<tr><td>File: <td><td><select id=pedit_action name=pedit_action>"
+			htmlTable+="<option 'selected'>select</option><option>add</option><option>edit</option><option>delete</option>"
+			htmlTable+="</select></td></tr>"
+			htmlTable+="<tr><td>File: </td><td id=pedit_file_td><input type=text id=pedit_file></td></tr>"
+			htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td style='text-align:right'><button id='post_run_with' name='post_run_with'>Action</button></td></tr>";
+			htmlTable+="</table>"
+			$("#load_message").html(htmlTable);
+                        $("#load_message").css({"position":"fixed", "top":"30%", "left":"40%", "display":"block", "z-index":"10", "background": "lightgrey", "border-width":"2px", "border-color":"#2F4F4F", "border-style": "solid"})
+			$("#pedit_action").change(function(){
+				switch($("#pedit_action option:selected").text()){
+					case "select":
+						$("#pedit_file_td").html("<input type=text id=pedit_file>")
+						break;
+					case "add":
+						$("#pedit_file_td").html("<input type=text id=pedit_file>")
+						break;
+					case "edit":
+						htmlTemp="<select id=pedit_sel_file>"
+						for(var s in data[$("#pedit_feat option:selected").text()]){
+							htmlTemp+="<option>"+data[$("#pedit_feat option:selected").text()][s]+"</option>"
+						}
+						htmlTemp+="</select>"
+						$("#pedit_file_td").html(htmlTemp);
+						break;
+					case "delete":
+						htmlTemp="<select id=pedit_sel_file>"
+                                                for(var s in data[$("#pedit_feat option:selected").text()]){
+                                                        htmlTemp+="<option>"+data[$("#pedit_feat option:selected").text()][s]+"</option>"
+                                                }
+                                                htmlTemp+="</select>"
+                                                $("#pedit_file_td").html(htmlTemp);
+						break;
+				}
+			});
+
+            		$("#post_run_with").click(function(){
+                		feat = $("#pedit_feat option:selected").text();
+				action=$("#pedit_action option:selected").text();
+				switch($("#pedit_action option:selected").text()){
+                                        case "select":
+                                                break;
+                                        case "add":
+                                                suite = $("#pedit_file").val();
+                                                break;
+                                        case "edit":
+                                                suite = $("#pedit_sel_file option:selected").text();
+						var win = window.open("RFEEDITOR?feat="+feat+"&suite="+suite, '_blank');
+  						win.focus();
+                                                break;
+                                        case "delete":
+                                                suite = $("#pedit_sel_file option:selected").text();
+						break;
+                                }
+
+                		$("#load_message").html("");
+                		$("#load_message").css({"display":"none", "z-index":"0"});
+            		});
+            		$("#cancel_run_with").click(function(){
+                		$("#load_message").html("");
+                		$("#load_message").css({"display":"none", "z-index":"0"});
+            		});
+
 		}
 	});
 
@@ -100,7 +167,7 @@ function get_suite_tree(feature_name){
 				data:{feature:feature_name}
 				});
 			ajx.done(function(msg){
-				if(msg != "" && msg.toLowerCase() != "none"){
+				if( !msg.includes("Some error occurred") && msg != "" && msg.toLowerCase() != "none"){
 					var data = JSON.parse(msg);
 					//console.log(data);
 					//console.log(msg);
@@ -310,7 +377,7 @@ function select_message(action, feat, suite, tc){
 				});
     ajx.done(function(msg){
         //console.log(msg)
-        if(msg.toLowerCase() != "fail" && !msg.toLowerCase().includes("Some error occurred"))
+        if(msg.toLowerCase() != "fail" && !msg.toLowerCase().includes("some error occurred"))
         {
             f_data = JSON.parse(msg);
             //console.log(f_data);
