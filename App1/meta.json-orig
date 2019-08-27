@@ -1,0 +1,17 @@
+{
+"Test_Suite_Folder": {
+    "project1":"workspace/suite1"
+    },
+
+"Variable_File" :{
+    "project1": null
+},
+
+"CWD" : {
+    "project1": null
+},
+
+"ENV_Path": {
+    "project1": {}
+    }
+}

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -123,28 +124,13 @@ STATICFILES_DIRS = [
 
 STATIC_URL = '/static/'
 
-Test_Suite_Folder = {
-    #"Highball":"C:\\RATF1\\Highball\\testcase",
-    #"Boss":"C:\\RATF1\\automation-boss\\TestCases",
-    #"CDR-BI":"C:\RATF1\CDR-BI\\Testcase"
-    'project1':'/home/shad/saisei/sample_robot',
-    'project2': '/home/shad/saisei/qa/robot/tests'
-    }
+with open("App1/meta.json") as json_file:
+    data = json.load(json_file)
 
-Variable_File = {
-    "project2": "/home/shad/saisei/qa/robot/testbeds",
-    "project1": None
-}
+Test_Suite_Folder = data["Test_Suite_Folder"]
 
-CWD = {
-    "project2": "/home/shad/saisei",
-    "project1": None
-}
+Variable_File = data["Variable_File"] 
 
-ENV_Path = {
-    "project2": {
-        "PYTHONPATH": ["/home/shad/saisei/qa/robot/lib"],
-        "PATH": ["/home/shad/saisei/qa/robot/lib/geckodriver"]
-    },
-    "project1": {}
-    }
+ENV_Path = data["ENV_Path"]
+
+CWD = data["CWD"]

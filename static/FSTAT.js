@@ -26,9 +26,12 @@ isOnDiv=false
 old_msg = null
 
 $(document).ready(function(){
-	console.log("loaded")
-	tc_head = $("#testcase").html();
-	start_time = $(".stat_list")[0].innerHTML;
+   tc_head = $("#testcase").html();
+   try{
+   start_time = $(".stat_list")[0].innerHTML;
+   }catch(err){
+	   console.log(err);
+   }
     url = window.location.href
     feat = url.split("RFERUNSTATUS")[1].replace("/?", "").split("&")[0].split("=")[1]
     try{
@@ -58,6 +61,8 @@ $(document).ready(function(){
 
     $("#testcase").mouseenter(function(){isOnDiv=true;});
     $("#testcase").mouseleave(function(){isOnDiv=false;});
+
+    $("#suite").css({"margin":"0 1% 0 1%", "width":"15%", "padding":"1%", "background":"#E3E3E3", "height":"86%", "float":"left", "overflow":"auto"});
 });
 
 

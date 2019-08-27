@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generated="20190827 20:02:45.493" generator="Robot 3.0.4 (Python 2.7.16 on linux2)">
+<suite source="/home/shad/RFE-Work/workspace/suite1" id="s1" name="Suite1">
+<suite source="/home/shad/RFE-Work/workspace/suite1/sample.robot" id="s1-s1" name="Sample">
+<test id="s1-s1-t1" name="TC001 Verify animal is lion">
+<kw name="Verifying animal is">
+<arguments>
+<arg>animal=Lion</arg>
+</arguments>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${animal}</arg>
+<arg>${expected_animal}</arg>
+</arguments>
+<status status="PASS" endtime="20190827 20:02:45.519" starttime="20190827 20:02:45.518"></status>
+</kw>
+<status status="PASS" endtime="20190827 20:02:45.519" starttime="20190827 20:02:45.518"></status>
+</kw>
+<status status="PASS" endtime="20190827 20:02:45.519" critical="yes" starttime="20190827 20:02:45.517"></status>
+</test>
+<test id="s1-s1-t2" name="TC002 Verify animal is lion">
+<kw name="Verifying animal is">
+<arguments>
+<arg>animal=Tiger</arg>
+</arguments>
+<kw name="Should Be Equal" library="BuiltIn">
+<doc>Fails if the given objects are unequal.</doc>
+<arguments>
+<arg>${animal}</arg>
+<arg>${expected_animal}</arg>
+</arguments>
+<msg timestamp="20190827 20:02:45.521" level="FAIL">Tiger != Lion</msg>
+<status status="FAIL" endtime="20190827 20:02:45.521" starttime="20190827 20:02:45.521"></status>
+</kw>
+<status status="FAIL" endtime="20190827 20:02:45.522" starttime="20190827 20:02:45.520"></status>
+</kw>
+<status status="FAIL" endtime="20190827 20:02:45.522" critical="yes" starttime="20190827 20:02:45.520">Tiger != Lion</status>
+</test>
+<status status="FAIL" endtime="20190827 20:02:45.522" starttime="20190827 20:02:45.515"></status>
+</suite>
+<status status="FAIL" endtime="20190827 20:02:45.524" starttime="20190827 20:02:45.495"></status>
+</suite>
+<statistics>
+<total>
+<stat fail="1" pass="1">Critical Tests</stat>
+<stat fail="1" pass="1">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat fail="1" id="s1" name="Suite1" pass="1">Suite1</stat>
+<stat fail="1" id="s1-s1" name="Sample" pass="1">Suite1.Sample</stat>
+</suite>
+</statistics>
+<errors>
+<msg timestamp="20190827 20:02:45.491" level="ERROR">Error in file '/home/shad/RFE-Work/workspace/suite1/sample.robot': Non-existing setting 'Documentations'.</msg>
+</errors>
+</robot>
