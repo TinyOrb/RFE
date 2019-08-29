@@ -256,3 +256,7 @@ function get_time(){
 				console.log(jqXHR, textStatus);
 			});
 }
+
+function f_action(action){
+
+}

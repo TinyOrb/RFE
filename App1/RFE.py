@@ -111,6 +111,7 @@ def LoadTestSuite(request):
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+
 @ensure_csrf_cookie
 def GetAllSuites(request):
     global runner
@@ -124,6 +125,7 @@ def GetAllSuites(request):
     except Exception as e:
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
 
 @ensure_csrf_cookie
 def Run_instance(request):
@@ -239,7 +241,6 @@ def log_load(current, history, time):
     return HTMLLoader.htmlstructure(**initial_loading)
 
 
-
 @ensure_csrf_cookie
 def Log_stat(request):
     global runner
@@ -337,6 +338,20 @@ def Core_Editor(request):
                     content = Al_robot_parser.read_robot_content(suite_path)
                     return HttpResponse(json.dumps(content), status=200)
 
+                elif action == "add":
+                    msg = Al_robot_parser.add_content(suite_path, "file")
+                    if msg:
+                        return HttpResponse("success", status=200)
+                    else:
+                        return HttpResponse("fail", status=500)
+
+                elif action == "delete":
+                    msg = Al_robot_parser.delete_content(suite_path, "file")
+                    if msg:
+                        return HttpResponse("success", status=200)
+                    else:
+                        return HttpResponse("fail", status=500)
+
                 elif action == "write":
                     try:
                         content = request.POST["content"]
@@ -361,7 +376,7 @@ def Core_Editor(request):
         else:
             return HttpResponse("fail", status=400)
     except Exception as e:
-        raise e
+        #raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
 @ensure_csrf_cookie

@@ -108,6 +108,7 @@ def get_tag_list(path, suite):
         print("Exception as %s" % str(e))
     return tags
 
+
 def get_sub_suite(path):
     robot_fl = get_all_robot_ext(path)
     sl = {}
@@ -131,6 +132,7 @@ def read_robot_content(path):
         print("Error as %s" % str(e))
         return None
 
+
 def write_robot_content(path, content):
     try:
         f = open(path, "w")
@@ -139,4 +141,37 @@ def write_robot_content(path, content):
         return True
     except Exception as e:
         print("Error as %s" % str(e))
-        return  None
+        return None
+
+
+def delete_content(path, ftype):
+    try:
+        if os.path.isdir(path) and ftype == "file":
+            os.rmdir(path)
+            status = True
+        elif os.path.isfile(path) and ftype == "folder":
+            os.remove(path)
+            status = True
+        else:
+            status = False
+    except Exception as e:
+        print("Error as %s" % str(e))
+        status = False
+    return status
+
+
+def add_content(path, ftype):
+    try:
+        if ftype == "file":
+            with open(path, "w+") as f:
+                f.close()
+            status = True
+        elif ftype == "folder":
+            os.mkdir(path)
+            status = True
+        else:
+            status = False
+    except Exception as e:
+        print("Error as %s" % str(e))
+        status = False
+    return status

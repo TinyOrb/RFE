@@ -5,4 +5,5 @@ App1/settings.py
 App1/robot_runner/track.json
 *track.json
 *meta.json
+.idea
 
