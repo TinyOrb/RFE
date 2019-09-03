@@ -1,0 +1,24 @@
+{
+"Test_Suite_Folder": {
+    "project1":"workspace/suite1",
+    "project2": "/home/shad/saisei/qa/robot/tests"
+    },
+
+"Variable_File":  {
+    "project2": "/home/shad/saisei/qa/robot/testbeds",
+    "project1": null
+},
+
+"CWD" : {
+    "project2": "/home/shad/saisei",
+    "project1": null
+},
+
+"ENV_Path": {
+    "project2": {
+        "PYTHONPATH": ["/home/shad/saisei/qa/robot/lib"],
+        "PATH": ["/home/shad/saisei/qa/robot/lib/geckodriver"]
+    },
+    "project1": {}
+    }
+}

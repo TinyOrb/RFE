@@ -30,6 +30,14 @@ $(document).ready(function(){
 	console.log("loaded")
     get_time()
     run_sync()
+
+    $.getScript( "static/ingen.js", function( data, textStatus, jqxhr ) {
+        console.log( data ); // Data returned
+        console.log( textStatus ); // Success
+        console.log( jqxhr.status ); // 200
+        console.log( "Load was performed." );
+    });
+
     setInterval(function(){
             run_sync()
         }, 5000);
@@ -215,7 +223,8 @@ function update_content(){
                     if(msg == "success"){
                             ts = tc
                             ms = mc
-                       console.log("write succeed");
+                       prompt_msg("Saved successfully");
+                       //console.log("write succeed");
                        update_fail = 2
                    }
                    else{
@@ -257,6 +266,3 @@ function get_time(){
 			});
 }
 
-function f_action(action){
-
-}

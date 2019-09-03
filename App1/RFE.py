@@ -302,9 +302,10 @@ def load_meta_run_with(request):
 
 def editor_load():
         initial_loading = {
-            "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
+            "body$b1": "<div id=load_message name=load_message></div>",
+            "body$b2": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
                        "Robotframework Front End</h2></div>",
-            "body$b2": "<div style=\"width:97%;padding:1%; height:84%; margin-left:0.5%; margin-right:0.5%; margin-top:0.5%;\"><textarea style=\"width:98%;height:98%;resize: none;\" id=\"editor\"></textarea></div>",
+            "body$b3": "<div style=\"width:97%;padding:1%; height:84%; margin-left:0.5%; margin-right:0.5%; margin-top:0.5%;\"><textarea style=\"width:98%;height:98%;resize: none;\" id=\"editor\"></textarea></div>",
             "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
             "script$s2": "../static/he.js",
             "style$t1": "../static/RFE.css",
@@ -338,14 +339,14 @@ def Core_Editor(request):
                     content = Al_robot_parser.read_robot_content(suite_path)
                     return HttpResponse(json.dumps(content), status=200)
 
-                elif action == "add":
+                elif action == "add_fl":
                     msg = Al_robot_parser.add_content(suite_path, "file")
                     if msg:
                         return HttpResponse("success", status=200)
                     else:
                         return HttpResponse("fail", status=500)
 
-                elif action == "delete":
+                elif action == "delete_fl":
                     msg = Al_robot_parser.delete_content(suite_path, "file")
                     if msg:
                         return HttpResponse("success", status=200)

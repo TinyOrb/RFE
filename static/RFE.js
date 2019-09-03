@@ -33,6 +33,13 @@ $(document).ready(function(){
 
     get_suite_tree(current_feature)
 
+    $.getScript( "static/ingen.js", function( data, textStatus, jqxhr ) {
+        console.log( data ); // Data returned
+        console.log( textStatus ); // Success
+        console.log( jqxhr.status ); // 200
+        console.log( "Load was performed." );
+    });
+
     setInterval(function(){
         if(current_feature != "")
             get_suite_tree(current_feature)
@@ -99,22 +106,24 @@ function get_all_suite(){
 			});
 
             		$("#post_run_with").click(function(){
-                		feat = $("#pedit_feat option:selected").text();
-				action=$("#pedit_action option:selected").text();
-				switch($("#pedit_action option:selected").text()){
-                                        case "select":
-                                                break;
-                                        case "add":
-                                                suite = $("#pedit_file").val();
-                                                break;
-                                        case "edit":
-                                                suite = $("#pedit_sel_file option:selected").text();
-						var win = window.open("RFEEDITOR?feat="+feat+"&suite="+suite, '_blank');
-  						win.focus();
-                                                break;
-                                        case "delete":
-                                                suite = $("#pedit_sel_file option:selected").text();
-						break;
+                		    feat = $("#pedit_feat option:selected").text();
+				            //action=$("#pedit_action option:selected").text();
+				            switch($("#pedit_action option:selected").text()){
+                                case "select":
+                                    break;
+                                case "add":
+                                    suite = $("#pedit_file").val();
+                                    f_action(feat, suite, "add_fl");
+                                    break;
+                                case "edit":
+                                    suite = $("#pedit_sel_file option:selected").text();
+                                    var win = window.open("RFEEDITOR?feat="+feat+"&suite="+suite, '_blank');
+                                    win.focus();
+                                    break;
+                                case "delete":
+                                    suite = $("#pedit_sel_file option:selected").text();
+                                    f_action(feat, suite, "delete_fl");
+						            break;
                                 }
 
                 		$("#load_message").html("");
@@ -483,3 +492,29 @@ function invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, 
 
 }
 
+function f_action(feat, fl, action){
+    $.ajaxSetup({
+    		beforeSend: function(xhr, settings) {
+        		if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            		// Only send the token to relative URLs i.e. locally.
+            		xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+			}
+   		 }
+	});
+    var ajx = $.ajax({
+				url:"/RFEEDITOR",
+				method:"POST",
+				data:{"feature":feat, "action":action, "suite":fl}
+				});
+		ajx.done(function(msg){
+		    if(msg == "success"){
+		        prompt_msg(msg);
+		    }
+		    else{
+		        prompt_msg(msg);
+		    }
+		});
+	ajx.fail(function(jqXHR, textStatus){
+				console.log(jqXHR, textStatus);
+			});
+}

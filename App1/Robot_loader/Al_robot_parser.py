@@ -146,10 +146,10 @@ def write_robot_content(path, content):
 
 def delete_content(path, ftype):
     try:
-        if os.path.isdir(path) and ftype == "file":
+        if os.path.isdir(path) and ftype == "folder":
             os.rmdir(path)
             status = True
-        elif os.path.isfile(path) and ftype == "folder":
+        elif os.path.isfile(path) and ftype == "file":
             os.remove(path)
             status = True
         else:
