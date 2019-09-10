@@ -17,7 +17,7 @@ limitations under the License.
 """
 import os
 import re
-
+import json
 
 def get_all_robot_ext(path):
     all_file = os.listdir(path)
@@ -171,6 +171,41 @@ def add_content(path, ftype):
             status = True
         else:
             status = False
+    except Exception as e:
+        print("Error as %s" % str(e))
+        status = False
+    return status
+
+def deploy_feat(template, feat_name, workspace):
+    try:
+        print("deploying project from template: %s"%template)
+        with open("App1/project_template.json") as json_file:
+            data = json.load(json_file)
+        structure = data["templates"][template]
+        folder_path = {}
+        file_path = {}
+        code_data = {}
+        folder_path[0] = os.path.join(workspace, feat_name)
+        for folder_key in structure["folder"].keys().sort():
+            parent = int(re.findall("\$d([0-9]+)/", structure["folder"][folder_key])[0])
+            sub = structure["folder"][folder_key].split("/")[1]
+            folder_path[folder_key] = os.path.join(folder_path[parent], sub)
+        for file_key in structure["file"].keys().sort():
+            parent = int(re.findall("\$d([0-9]+)/", structure["file"][file_key])[0])
+            sub = structure["file"][file_key].split("/")[1]
+            file_path[file_key] = os.path.join(folder_path[parent], sub)
+        for data_key in structure["sampleCode"].keys().sort():
+            findex = int(re.findall("\$f([0-9]+)/", data_key)[0])
+            code_data[file_path[findex]] = structure["sampleCode"][data_key]
+
+        for key in folder_path:
+            add_content(folder_path[key], "folder")
+        for key in file_path:
+            add_content(file_path[key], "filer")
+        for key in code_data:
+            write_robot_content(key, code_data[key])
+
+        print("Template deployed successfully")
     except Exception as e:
         print("Error as %s" % str(e))
         status = False

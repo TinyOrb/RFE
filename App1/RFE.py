@@ -389,3 +389,23 @@ def get_time(request):
             return HttpResponse("fail", status=400)
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
+@ensure_csrf_cookie
+def manage_feat(request):
+    try:
+        if(request.method == "POST"):
+            action = request.POST["action"]
+            if action == "add":
+                pass
+            elif action == "delete":
+                pass
+            elif action == "rename":
+                pass
+            elif action == "template":
+                pass
+            else:
+                return HttpResponse("fail", status=400)
+        else:
+            return HttpResponse("fail", status=400)
+    except Exception as e:
+        return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
