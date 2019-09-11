@@ -158,6 +158,9 @@ class invoke:
                 return "success"
             else:
                 self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "abort"
+##                current = self.fetch_current(feature, suite, tc)
+##                current["status"] = "Aborted"
+##                self.update_current(current, feature, suite, tc)
                 print("Mark process abortion")
                 return "success"
         except Exception as e:
@@ -362,34 +365,56 @@ class invoke:
         if not self.ensure_path(current_state["script_output"], type="file"):
             print("Failed to create script output file")
             return False
-        with open(current_state["script_output"], "wb") as out:
+        with open(self.normal_path(current_state["script_output"]), "wb") as out:
             if self.cd_path is None:
-                process = subprocess.Popen(["%s echo start of script output; %s ; "
+                if platform == "linux" or platform == "linux2":
+                    process = subprocess.Popen(["%s echo start of script output; %s ; "
                                             "echo end of script output " %
                                             (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, preexec_fn=os.setsid)
-            else:
-                process = subprocess.Popen(["%s echo start of script output; %s ; "
+                elif platform == "darwin":
+                    print("darwin has no action")
+                elif platform == "win32":
+                    process = subprocess.Popen("%s echo start of script output & %s &"
                                             "echo end of script output " %
-                                            (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True,
-                                           cwd=self.cd_path, preexec_fn=os.setsid)
+                                            (path_cmd, current_state["cmd"]), stdout=out, stderr=out, shell=True)
+            else:
+                if platform == "linux" or platform == "linux2":
+                    process = subprocess.Popen(["%s echo start of script output; %s ; "
+                                            "echo end of script output " %
+                                            (path_cmd, current_state["cmd"])], stdout=out, stderr=out, shell=True, cwd=self.cd_path, preexec_fn=os.setsid)
+                elif platform == "darwin":
+                    print("darwin has no action")
+                elif platform == "win32":
+                    process = subprocess.Popen("%s echo start of script output & %s & "
+                                            "echo end of script output " %
+                                            (path_cmd, current_state["cmd"]), stdout=out, stderr=out, shell=True, cwd=self.cd_path)
         current_state["status"] = "running"
         self.update_current(current_state, feature, suite, tc)
-
-        line = subprocess.check_output(['tail','-1', current_state["script_output"]])
+        ## line = subprocess.check_output(['tail','-1', self.normal_path(current_state["script_output"])])
+        line = self.get_last_line(self.normal_path(current_state["script_output"]))
         
         while "end of script output" not in str(line):
             if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] == "abort":
-                os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-                process.kill()
+                if platform == "linux" or platform == "linux2":
+                    os.killpg(os.getpgid(process.pid), signal.SIGTERM)
+                    process.kill()
+                elif platform == "darwin":
+                    print("darwin has no action")
+                elif platform == "win32":
+                    process.kill()
+                    process.terminate()
+                    os.kill(process.pid, signal.CTRL_C_EVENT)
+                    
                 current_state["status"] = "aborted"
-                with open(current_state["script_output"], "a") as out:
+                with open(self.normal_path(current_state["script_output"]), "a") as out:
                     subprocess.Popen("echo Script aborted!;", stdout=out, stderr=out, shell=True)
                 self.update_current(current_state, feature, suite, tc)
                 self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "Run"
                 print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
                 return True
             time.sleep(5)
-            line = subprocess.check_output(['tail','-1',  current_state["script_output"]])
+            ## line = subprocess.check_output(['tail','-1',  self.normal_path(current_state["script_output"])])
+            line = self.get_last_line(self.normal_path(current_state["script_output"]))
 
         current_state["status"] = "done"
         cur_time = str(datetime.datetime.now())
@@ -399,6 +424,25 @@ class invoke:
         self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "Run"
         print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
         return True
+
+    def normal_path(self, path):
+        if platform == "linux" or platform == "linux2":
+            pass
+        elif platform == "darwin":
+            pass
+        elif platform == "win32":
+            path = os.path.normpath(path)
+        return path
+
+    def get_last_line(self, path):
+        try:
+            with open(path) as f:
+                data = f.readlines()
+            lastline = data[-1]
+            return lastline
+        except Exception as e:
+            print("Exception occured as %s" % str(e))
+            return ""
 
     def ensure_path(self, path, type="dir"):
         try:
