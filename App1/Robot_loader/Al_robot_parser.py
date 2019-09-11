@@ -176,6 +176,7 @@ def add_content(path, ftype):
         status = False
     return status
 
+
 def deploy_feat(template, feat_name, workspace):
     try:
         print("deploying project from template: %s"%template)
@@ -205,6 +206,7 @@ def deploy_feat(template, feat_name, workspace):
         for key in code_data:
             write_robot_content(key, code_data[key])
 
+        status = True
         print("Template deployed successfully")
     except Exception as e:
         print("Error as %s" % str(e))
