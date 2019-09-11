@@ -23,6 +23,7 @@ import time
 import os
 import signal
 import threading
+from sys import platform
 
 import App1.Robot_loader.Al_robot as Al_robot
 
@@ -59,7 +60,7 @@ class invoke:
                 cur_time = str(datetime.datetime.now())
                 cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
                 current_state["time"] = cur_time1
-                current_state["dir"] = os.path.join(os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc), cur_time1)
+                current_state["dir"] = os.path.join(os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc), cur_time1.replace(":","-"))
                 current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
                 current_state["log"] = os.path.join(current_state["dir"], "log.html")
                 current_state["output"] = os.path.join(current_state["dir"], "report.html")
@@ -88,7 +89,7 @@ class invoke:
                 cur_time = str(datetime.datetime.now())
                 cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
                 current_state["time"] = cur_time1
-                current_state["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), cur_time1)
+                current_state["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), cur_time1.replace(":","-"))
                 current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
                 current_state["log"] = os.path.join(current_state["dir"], "log.html")
                 current_state["output"] = os.path.join(current_state["dir"], "report.html")
@@ -106,7 +107,7 @@ class invoke:
                 current_state["cmd"] += os.path.join(Al_robot.fetch_All_suite()[feature], suite)
                 self.update_current(current_state, feature, suite, tc)
 
-            elif suite is not None:
+            elif feature is not None:
                 current_state = self.fetch_current(feature, suite, tc)
                 if len(current_state) != 0:
                     self.update_history(current_state, feature, suite, tc)
@@ -115,7 +116,7 @@ class invoke:
                 cur_time = str(datetime.datetime.now())
                 cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
                 current_state["time"] = cur_time1
-                current_state["dir"] = os.path.join(os.path.join(self.result_dir, feature), cur_time1)
+                current_state["dir"] = os.path.join(os.path.join(self.result_dir, feature), cur_time1.replace(":","-"))
                 current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
                 current_state["log"] = os.path.join(current_state["dir"], "log.html")
                 current_state["output"] = os.path.join(current_state["dir"], "report.html")
@@ -136,7 +137,6 @@ class invoke:
             else:
                 print("No enough input provided")
                 return "Fail"
-
             print("Main    : before creating thread")
             self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] = "continue"
             x = threading.Thread(target=self.run, args=(current_state, feature, suite, tc,))
@@ -402,6 +402,13 @@ class invoke:
 
     def ensure_path(self, path, type="dir"):
         try:
+            if platform == "linux" or platform == "linux2":
+                pass
+            elif platform == "darwin":
+                pass
+            elif platform == "win32":
+                path = os.path.normpath(path)
+                
             if type == "dir":
                 if not os.path.exists(path):
                     os.makedirs(path)
@@ -414,7 +421,7 @@ class invoke:
                     print("Directory all ready exist")
             return True
         except Exception as e:
-            print("Some unknown error", str(e))
+            print("Some unknown error occured: %s" % str(e))
             return False
 
     def fetch_detail_traverse_data(self, data, feature, suite, tc):
