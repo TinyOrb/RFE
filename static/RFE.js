@@ -40,11 +40,69 @@ $(document).ready(function(){
         console.log( "Load was performed." );
     });
 
+    $("#add_feat").click(function(){
+    });
+
+    $("#del_feat").click(function(){
+    });
+
     setInterval(function(){
         if(current_feature != "")
             get_suite_tree(current_feature)
         }, 5000);
 })
+
+function add_feat(){
+    $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                 }
+        });
+
+        var ajx = $.ajax({
+         url:"/MFEAT",
+         method:"POST",
+         data:{action:"template"}
+         });
+
+        ajx.done(function(msg){
+		if(msg != "" || msg.toLowerCase() != null){
+            var data = JSON.parse(msg);
+
+            htmlTable="<table>"
+			htmlTable+="<tr><td>Project Type: </td><td><select id=type_feat name=type_feat>"
+			for(var f in data.template){
+				htmlTable+="<option>"+f+"</option>"
+			}
+			htmlTable+="</select></td></tr>"
+            }
+            htmlTable+="<tr><td>Project name: </td><td id=feat_name><input type=text id=feat_name></td></tr>"
+            htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td style='text-align:right'><button id='post_run_with' name='post_run_with'>Create Project</button></td></tr>";
+			htmlTable+="</table>"
+
+			$("#post_run_with").click(function(){
+
+			    $("#load_message").html("");
+                $("#load_message").css({"display":"none", "z-index":"0"});
+			});
+
+			$("#cancel_run_with").click(function(){
+                $("#load_message").html("");
+                $("#load_message").css({"display":"none", "z-index":"0"});
+            });
+         });
+
+         ajx.fail(function(jqXHR, textStatus){
+            console.log(jqXHR, textStatus);
+          });
+
+}
+
+function del_feat(){
+}
 
 function get_all_suite(){
 	$.ajaxSetup({
@@ -77,7 +135,7 @@ function get_all_suite(){
 			htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td style='text-align:right'><button id='post_run_with' name='post_run_with'>Action</button></td></tr>";
 			htmlTable+="</table>"
 			$("#load_message").html(htmlTable);
-                        $("#load_message").css({"position":"fixed", "top":"30%", "left":"40%", "display":"block", "z-index":"10", "background": "lightgrey", "border-width":"2px", "border-color":"#2F4F4F", "border-style": "solid"})
+            $("#load_message").css({"position":"fixed", "top":"30%", "left":"40%", "display":"block", "z-index":"10", "background": "lightgrey", "border-width":"2px", "border-color":"#2F4F4F", "border-style": "solid"})
 			$("#pedit_action").change(function(){
 				switch($("#pedit_action option:selected").text()){
 					case "select":

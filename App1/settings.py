@@ -134,3 +134,5 @@ Variable_File = data["Variable_File"]
 ENV_Path = data["ENV_Path"]
 
 CWD = data["CWD"]
+
+Work_dir = data["Work_dir"]

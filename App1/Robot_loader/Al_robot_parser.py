@@ -177,10 +177,25 @@ def add_content(path, ftype):
     return status
 
 
+def is_content_exist(path, ftype):
+    if ftype == "file":
+        if os.path.isfile(path):
+            return True
+        else:
+            return False
+    elif ftype == "folder":
+        if os.path.isdir(path):
+            return True
+        else:
+            return False
+    else:
+        print("unknown type")
+        return False
+
 def deploy_feat(template, feat_name, workspace):
     try:
         print("deploying project from template: %s"%template)
-        with open("App1/project_template.json") as json_file:
+        with open(os.path.join("App1", "project_template.json")) as json_file:
             data = json.load(json_file)
         structure = data["templates"][template]
         folder_path = {}
@@ -212,3 +227,26 @@ def deploy_feat(template, feat_name, workspace):
         print("Error as %s" % str(e))
         status = False
     return status
+
+def get_templates():
+    template_list = {"template": []}
+    try:
+        with open(os.path.join("App1", "project_template.json")) as json_file:
+            data = json.load(json_file)
+
+        templates = data["templates"]
+        for key in templates.keys():
+            template_list["template"].append(templates[key]["name"])
+
+    except Exception as e:
+        print("Error as %s" % str(e))
+
+    return template_list
+
+
+def is_feat_exist(workspace, feat):
+    if os.path.isdir(os.path.join(workspace, feat)):
+        return True
+    else:
+        return False
+

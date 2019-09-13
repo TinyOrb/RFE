@@ -34,13 +34,17 @@ import time
 
 runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
 
+user = "default_user"
 
 def initial():
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
         "body$b1": "<div id=load_message name=load_message></div>",
         "body$b2":"<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
-        "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite><button id=edit_suite_btn>Edit Project</button></div></div>",
+        "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
+                  "<button id=add_feat>Add Project</button><br><br>"
+                  "<button id=edit_suite_btn>Edit Project</button><br><br>"
+                  "<button id=del_feat>Delete Project</button></div></div>",
         "body$b4":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
         "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
         "script$s2": "static/he.js",
@@ -396,16 +400,38 @@ def manage_feat(request):
         if(request.method == "POST"):
             action = request.POST["action"]
             if action == "add":
-                pass
+                feat_name = request.POST["name"]
+                workspace = meta.Work_dir[user]
+                template = request.POST["template"]
+                if Al_robot_parser.deploy_feat(template, feat_name, workspace):
+                    msg = "success"
+                    status = 201
+                else:
+                    msg = "fail"
+                    status = 500
             elif action == "delete":
                 pass
             elif action == "rename":
                 pass
             elif action == "template":
-                pass
+                msg =json.dumps(Al_robot_parser.get_templates())
+                status = 200
+            elif action == "exist":
+                feat_name = request.POST["name"]
+                if Al_robot_parser.is_feat_exist(meta.Work_dir[user], feat_name):
+                    msg = "exist"
+                    status = 200
+                else:
+                    msg = "not_exist"
+                    status = 200
             else:
-                return HttpResponse("fail", status=400)
+                msg = "fail"
+                status = 404
+
         else:
-            return HttpResponse("fail", status=400)
+            msg = "fail"
+            status = 404
+
+        return HttpResponse(msg, status=status)
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
