@@ -48,7 +48,7 @@ Automated installation
 *************************
 Currently, we have installer for ubuntu, centos and opensuse.
 
-Follow below url and download installer.tar.gz. Then
+Follow url https://github.com/TinyOrb/RFE/releases and download installer.tar.gz. Then
 
 $> tar -xvf installer.tar.gz
 
@@ -57,3 +57,49 @@ $> cd bundle
 $> sudo ./install.sh
 
 Navigate http://127.0.0.1:8000/RFE on your browser.
+
+************************
+How To Configure Project
+************************
+Go to App1/meta.json file
+
+```json
+{
+"Test_Suite_Folder": {
+    "project1":"workspace/suite1"
+    },
+
+"Variable_File" :{
+    "project1": null
+},
+
+"CWD" : {
+    "project1": null
+},
+
+"ENV_Path": {
+    "project1": {}
+    }
+}
+```
+-----------
+Definition:
+-----------
+Test_Suite_Folder: You can provide the path of robot framework suite path. This is like basic requirement for project to be added.
+
+Variable_File: This can be used to locate variable file as optional parameter. You may want to provide robot framework.
+
+CWD: This can be used to set current working directory for project.
+
+ENV_Path: This can be used to provide environment variable along value.
+
+
+Sample:
+
+```json
+"project2": {
+        "PYTHONPATH": ["/home/shad/saisei/qa/robot/lib"],
+        "PATH": ["/home/shad/saisei/qa/robot/lib/geckodriver"]
+    }
+```
+
