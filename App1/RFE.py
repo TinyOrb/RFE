@@ -42,9 +42,9 @@ def initial():
         "body$b1": "<div id=load_message name=load_message></div>",
         "body$b2":"<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
         "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
-                  "<button id=add_feat>Add Project</button><br><br>"
-                  "<button id=edit_suite_btn>Edit Project</button><br><br>"
-                  "<button id=del_feat>Delete Project</button></div></div>",
+                  #"<button id=add_feat>Add Project</button><br><br>"
+                  "<button id=edit_suite_btn>Edit Project</button></div></div>",
+                  #"<br><br><button id=del_feat>Delete Project</button></div></div>",
         "body$b4":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
         "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
         "script$s2": "static/he.js",
@@ -234,12 +234,20 @@ def log_load(current, history, time):
         output = ""
         for s in str(runner.script_log(info["script_output"])).splitlines():
             output += "<tr><td>%s</td></tr>" % s
-        initial_loading = {
-            "body$b1": "<br><br><table><tr><td><a href=\"%s\">Log</a></td></tr></table><br>" % ("static"+info["log"].replace(meta.STATICFILES_DIRS[0], "")),
-            "body$b2": "<table><tr><td><a href=\"%s\">Report</a></td></tr></table><br>" % ("static"+info["output"].replace(meta.STATICFILES_DIRS[0], "")),
-            "body$b3": "<table><tr><th>Script log</th></tr></table>",
-            "body$b4": "<table>%s</table>" % output
-        }
+        if os.path.isfile(info["log"]):
+            initial_loading = {
+                "body$b1": "<br><br><table><tr><td><a href=\"%s\">Log</a></td></tr></table><br>" % ("static"+info["log"].replace(meta.STATICFILES_DIRS[0], "")),
+                "body$b2": "<table><tr><td><a href=\"%s\">Report</a></td></tr></table><br>" % ("static"+info["output"].replace(meta.STATICFILES_DIRS[0], "")),
+                "body$b3": "<table><tr><th>Script log</th></tr></table>",
+                "body$b4": "<table>%s</table>" % output
+            }
+        else:
+            initial_loading = {
+                "body$b1": "<br><br><table><tr><td><a href=\"%s\">Log</a></td></tr></table><br>" % "No log",
+                "body$b2": "<table><tr><td><a href=\"%s\">Report</a></td></tr></table><br>" % "No Report",
+                "body$b3": "<table><tr><th>Script log</th></tr></table>",
+                "body$b4": "<table>%s</table>" % output
+            }
     else:
         initial_loading = {"body$b1": "Unable to Log"}
     return HTMLLoader.htmlstructure(**initial_loading)
@@ -427,7 +435,6 @@ def manage_feat(request):
             else:
                 msg = "fail"
                 status = 404
-
         else:
             msg = "fail"
             status = 404

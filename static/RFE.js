@@ -41,6 +41,7 @@ $(document).ready(function(){
     });
 
     $("#add_feat").click(function(){
+        add_feat("template");
     });
 
     $("#del_feat").click(function(){
@@ -52,7 +53,8 @@ $(document).ready(function(){
         }, 5000);
 })
 
-function add_feat(){
+
+function add_feat(action){
     $.ajaxSetup({
                 beforeSend: function(xhr, settings) {
                         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
@@ -63,7 +65,7 @@ function add_feat(){
         });
 
         var ajx = $.ajax({
-         url:"/MFEAT",
+         url:"/MANAGEFEAT",
          method:"POST",
          data:{action:"template"}
          });
@@ -81,12 +83,24 @@ function add_feat(){
             }
             htmlTable+="<tr><td>Project name: </td><td id=feat_name><input type=text id=feat_name></td></tr>"
             htmlTable += "<tr><td><button id='cancel_run_with'>Cancel</button></td><td style='text-align:right'><button id='post_run_with' name='post_run_with'>Create Project</button></td></tr>";
+			htmlTable += "<tr><td colspan=2 id='form_msg'></td></tr>"
 			htmlTable+="</table>"
 
 			$("#post_run_with").click(function(){
-
-			    $("#load_message").html("");
-                $("#load_message").css({"display":"none", "z-index":"0"});
+                template = $("#type_feat option:selected").text()
+                feat_name = $("#feat_name").val();
+                var data = {}
+                data["name"] = feat_name
+                data["template"] = template
+                if(feat_name != ""){
+                    manage_feat("add", data)
+                    $("#load_message").html("");
+                    $("#load_message").css({"display":"none", "z-index":"0"});
+                }
+                else{
+                    $("#feat_name").css({"border-color":"red"});
+                    $("#form_msg").html("Invalid field value");
+                }
 			});
 
 			$("#cancel_run_with").click(function(){
@@ -289,6 +303,7 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("suite"));
                         if(this.innerHTML.toLowerCase() == "run"){
                         invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), null);
+                        this.innerHTML = "wait"
                         }
                     });
 
@@ -299,6 +314,7 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("tc"));
                         if(this.innerHTML.toLowerCase() == "run"){
                         invoke("run", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
+                        this.innerHTML = "wait"
                         }
                     });
 
@@ -308,6 +324,7 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("suite"));
                         if(this.innerHTML.toLowerCase() == "run with"){
                         select_message("run_with", this.getAttribute("feat"), this.getAttribute("suite"), null);
+                        this.innerHTML = "wait"
                         }
                     });
 
@@ -318,6 +335,7 @@ function get_suite_tree(feature_name){
                         console.log(this.getAttribute("tc"));
                         if(this.innerHTML.toLowerCase() == "run with"){
                         select_message("run_with", this.getAttribute("feat"), this.getAttribute("suite"), this.getAttribute("tc"));
+                        this.innerHTML = "wait"
                         }
                     });
 
@@ -575,4 +593,32 @@ function f_action(feat, fl, action){
 	ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
 			});
+}
+
+function manage_feat(action, data){
+    $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                 }
+        });
+        var ajx = $.ajax({
+         url:"/MANAGEFEAT",
+         method:"POST",
+         data : data
+         });
+
+        ajx.done(function(msg){
+            if(msg == "success"){
+                prompt_msg("Operation success");
+            }
+            else{
+                prompt_msg("Operation failed!");
+            }
+        });
+
+         ajx.fail(function(jqXHR, textStatus){
+            console.log(jqXHR, textStatus);
+          });
 }

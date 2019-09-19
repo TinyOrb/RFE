@@ -33,6 +33,6 @@ urlpatterns = [
     url(r'^RFEEDITOR$', RFE.Core_Editor, name="editor"),
     url(r'^GETSERVERNOW$', RFE.get_time, name="ctime"),
     url('GETALLSUITES$', RFE.GetAllSuites, name="get_all"),
-    url('MFEAT$', RFE.manage_feat, name="manage_feat")
+    url('MANAGEFEAT$', RFE.manage_feat, name="manage_feat")
     #path(r'^App1/',Test.test1, name="index")
 ]
