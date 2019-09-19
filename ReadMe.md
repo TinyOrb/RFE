@@ -61,7 +61,7 @@ Navigate http://127.0.0.1:8000/RFE on your browser.
 ************************
 How To Configure Project
 ************************
-Go to App1/meta.json file
+Go to App1/meta.json file and update below json file with desired project name with path in Test_Suite_Folder.
 
 ```json
 {
@@ -98,8 +98,8 @@ Sample:
 
 ```json
 "project2": {
-        "PYTHONPATH": ["/home/shad/saisei/qa/robot/lib"],
-        "PATH": ["/home/shad/saisei/qa/robot/lib/geckodriver"]
+        "PYTHONPATH": ["/home/shad/sample/qa/robot/lib"],
+        "PATH": ["/home/shad/sample/qa/robot/lib/geckodriver"]
     }
 ```
 
