@@ -1,4 +1,7 @@
 {
+"Work_dir": {
+        "default_user": "workspace"
+    },
 "Test_Suite_Folder": {
     "project1":"workspace/suite1"
     },
