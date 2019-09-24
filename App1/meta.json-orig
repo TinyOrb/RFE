@@ -13,5 +13,22 @@
 
 "ENV_Path": {
     "project1": {}
+},
+
+"USER_LIST": {
+    "admin": {
+        "password": "defaultpassword",
+        "project_access": [
+            "project1",
+            "project2"
+        ]
+    },
+    "guest": {
+        "password": "guestpassword",
+        "project_access": [
+            "project1"
+        ]
     }
+}
+
 }
