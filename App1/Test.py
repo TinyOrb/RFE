@@ -2,25 +2,22 @@ from django.http import HttpResponse
 import datetime
 from modelling import HTMLLoader
 
-def temp():
+def login():
     dct = {
-        "body$b1":"<label for=x1>Enter your name</label>",
-        "body$b2":"<input type=text id=x1 name=x1 /> <br> <button id=sub name=sub>Greeting</button>",
-        "body$b3":"<div id=div1 name=div1></div>",
-        "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
-        "script$s2":"static/RFE.js",
-        "style$t1":"static/test.css"
+        "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
+                   "Robotframework Front End</h2></div>",
+        "body$b2": "<div id=login_div name=login_div><table><tr><th colspan=2>Enter your credential</th></tr>"
+                   "<tr><td colspan=2 id=err_msg>&nbsp;</td></tr>"
+                   "<tr><td>Username</td><td><input type=text id=username/></td></tr>"
+                   "<tr><td>Password</td><td><input type=password id=password/></td></tr>"
+                   "<tr><td colspan=2 id=err_msg>&nbsp;</td></tr>"
+                   "<tr><td colspan=2 style='text-align:center;'><button name=plz id=plz>Submit</button></td></tr>"
+                   "</table></div>",
+        "script$s2": "../static/home.js",
+        "style$t1": "../static/home.css"
         }
     return HTMLLoader.htmlstructure(**dct)
-
-def test1(request):
-    try:
-        xid = request.GET["id"]
-        return HttpResponse(temp())
-    except Exception as e:
-        return HttpResponse("Some error occurred" + str(e))
-        print e
     
 
 def home(request):
-    return HttpResponse("<h2>Welcome to Application 1</h2>")
+    return HttpResponse(login())

@@ -29,8 +29,6 @@ Robotframework
 
 other python package
 
-binaryornot 0.4.4
-
 Start Application
 -----------------
 It is django application. So go to installation directory and run django application.

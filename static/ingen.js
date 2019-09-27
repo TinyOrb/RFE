@@ -4,3 +4,54 @@ function prompt_msg(msg){
     $("#load_message").fadeIn("fast");
     $("#load_message").delay(3000).fadeOut("slow");
 }
+
+function check(){
+}
+
+function check_up(a,ap){
+    $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                 }
+        });
+
+        var ajx = $.ajax({
+         url:"/MANAGEFEAT",
+         method:"POST",
+         data:{action:"template"}
+         });
+
+        ajx.done(function(msg){
+        });
+
+        ajx.fail(function(jqXHR, textStatus){
+            console.log(jqXHR, textStatus);
+          });
+}
+
+function check_down(){
+        $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        }
+                 }
+        });
+
+        var ajx = $.ajax({
+         url:"/MANAGEFEAT",
+         method:"POST",
+         data:{action:"template"}
+         });
+
+        ajx.done(function(msg){
+        });
+
+        ajx.fail(function(jqXHR, textStatus){
+            console.log(jqXHR, textStatus);
+          });
+}
