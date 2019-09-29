@@ -5,10 +5,23 @@ function prompt_msg(msg){
     $("#load_message").delay(3000).fadeOut("slow");
 }
 
-function check(){
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
-function check_up(a,ap){
+function check_up(ac){
     $.ajaxSetup({
                 beforeSend: function(xhr, settings) {
                         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
@@ -19,36 +32,40 @@ function check_up(a,ap){
         });
 
         var ajx = $.ajax({
-         url:"/MANAGEFEAT",
+         url:"/",
          method:"POST",
-         data:{action:"template"}
+         data:ac
          });
 
         ajx.done(function(msg){
-        });
+            switch(ac["action"]){
+                case "check_in":
+                    if( msg == "Authenticated"){
+                        window.location = "/RFE"
+                    }
+                    else{
+                        window.location = "/"
+                    }
+                break;
+                case "check_out":
+                    if( msg == "Logout"){
+                        window.location = "/"
+                    }
+                    else{
+                    }
+                break;
+                case "check":
+                    if( msg == "Authorized"){
 
-        ajx.fail(function(jqXHR, textStatus){
-            console.log(jqXHR, textStatus);
-          });
-}
-
-function check_down(){
-        $.ajaxSetup({
-                beforeSend: function(xhr, settings) {
-                        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                        // Only send the token to relative URLs i.e. locally.
-                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                        }
-                 }
-        });
-
-        var ajx = $.ajax({
-         url:"/MANAGEFEAT",
-         method:"POST",
-         data:{action:"template"}
-         });
-
-        ajx.done(function(msg){
+                    }
+                    else{
+                        window.location = "/"
+                    }
+                break;
+                default:
+                 console.log("unknown action")
+                break
+            }
         });
 
         ajx.fail(function(jqXHR, textStatus){

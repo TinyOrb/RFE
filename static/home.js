@@ -16,7 +16,19 @@ limitations under the License.
 @author: Shad Hasan, Tinyorb.Org
 ***************************************************************************/
 $(document).ready(function(){
-    $('#plz').click(function(){
 
+    $.getScript( "static/ingen.js", function( data, textStatus, jqxhr ) {
+//      console.log( data ); // Data returned
+//      console.log( textStatus ); // Success
+//      console.log( jqxhr.status ); // 200
+        console.log( "Load was performed." );
+    });
+
+    $('#plz').click(function(){
+        data = {}
+        data["username"] = $("#username").val();
+        data["password"] = $("#password").val();
+        data["action"] = "check_in"
+        check_up(data);
     })
 });

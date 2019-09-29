@@ -136,3 +136,5 @@ ENV_Path = data["ENV_Path"]
 CWD = data["CWD"]
 
 Work_dir = data["Work_dir"]
+
+user_list = data["USER_LIST"]

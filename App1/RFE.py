@@ -46,18 +46,16 @@ def initial():
                   "<button id=edit_suite_btn>Edit Project</button></div></div>",
                   #"<br><br><button id=del_feat>Delete Project</button></div></div>",
         "body$b4":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
-        "script$s1":"https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
+        "script$s1":"../static/jquery.min.js",
         "script$s2": "static/he.js",
         "bscript$s1":"static/RFE.js",
         "style$t1":"static/RFE.css"
         }
     i = 1
     initial_loading["headrawscript$r"+str(i)] = "$(document).ready(function(){"
-    i = i+1
     for s in Suite:
-        initial_loading["headrawscript$r"+str(i)] = "$('#suite').html($('#suite').html()+'<div class=suite_list>"+s+"</div>');"
-        i = i + 1
-    initial_loading["headrawscript$r"+str(i)] = "});"
+        initial_loading["headrawscript$r"+str(i)] += "$('#suite').html($('#suite').html()+'<div class=suite_list>"+s+"</div>');"
+    initial_loading["headrawscript$r"+str(i)] += "});"
     return HTMLLoader.htmlstructure(**initial_loading)
 
 
@@ -99,6 +97,7 @@ def fetchSuite(feature):
 @ensure_csrf_cookie
 def InitialLoad(request):
     try:
+        print(initial())
         return HttpResponse(initial())
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
