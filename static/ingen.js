@@ -44,7 +44,7 @@ function check_up(ac){
                         window.location = "/RFE"
                     }
                     else{
-                        window.location = "/"
+                        $("#err_msg_2").html("<span style='color:red;'> Incorrect username and password</span>")
                     }
                 break;
                 case "check_out":
@@ -70,5 +70,8 @@ function check_up(ac){
 
         ajx.fail(function(jqXHR, textStatus){
             console.log(jqXHR, textStatus);
+            if(jqXHR["status"] == 401){
+            $("#err_msg_2").html("<span style='color:red;'> Incorrect username and password</span>")
+            }
           });
 }

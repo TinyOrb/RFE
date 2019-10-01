@@ -20,6 +20,7 @@ import json
 import os
 
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from modelling import HTMLLoader
@@ -36,11 +37,13 @@ runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(me
 
 user = "default_user"
 
-def initial():
+def initial(username):
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
         "body$b1": "<div id=load_message name=load_message></div>",
-        "body$b2":"<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">Robotframework Front End</h2></div>",
+        "body$b2": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
+                   "Robotframework Front End</h2><table><tr><td>{}</td>"
+                   "<td><button>logout</button></td></tr></table></div>".format(username),
         "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
                   #"<button id=add_feat>Add Project</button><br><br>"
                   "<button id=edit_suite_btn>Edit Project</button></div></div>",
@@ -59,10 +62,11 @@ def initial():
     return HTMLLoader.htmlstructure(**initial_loading)
 
 
-def status_load(current, history):
+def status_load(current, history, username=None):
         initial_loading = {
             "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
-                       "Robotframework Front End</h2></div>",
+                       "Robotframework Front End</h2><table><tr><td>{}</td>"
+                       "<td><button>logout</button></td></tr></table></div>".format(username),
             "body$b2": "<div id=suite name=suite><h2>STATS</h2></div>",
             "body$b3": "<div id=testcase name=testcase><h2>Logs</h2></div>",
             "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
@@ -97,8 +101,11 @@ def fetchSuite(feature):
 @ensure_csrf_cookie
 def InitialLoad(request):
     try:
-        print(initial())
-        return HttpResponse(initial())
+        #print(initial())
+        if request.session["username"] is None:
+            return redirect("/")
+        else:
+            return HttpResponse(initial(request.session["username"]))
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
@@ -195,6 +202,8 @@ def Abort_instance(request):
 def Run_stat(request):
     global runner
     try:
+        if request.session["username"] is None:
+            return redirect("/")
         if request.method == "GET":
             feature = request.GET["feat"]
             try:
@@ -210,7 +219,7 @@ def Run_stat(request):
                 tc = urllib.unquote(tc)
             #print(feature, suite, tc)
             return HttpResponse(status_load(runner.fetch_current(feature, suite, tc),
-                                                       runner.fetch_history(feature, suite, tc)))
+                                                       runner.fetch_history(feature, suite, tc), request.session["username"]))
         else:
             return HttpResponse("No attribute received")
     except Exception as e:

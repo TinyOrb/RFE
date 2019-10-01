@@ -21,6 +21,9 @@ $(document).ready(function(){
 //      console.log( data ); // Data returned
 //      console.log( textStatus ); // Success
 //      console.log( jqxhr.status ); // 200
+        data = {}
+        data["action"] = "check"
+        check_up(data)
         console.log( "Load was performed." );
     });
 

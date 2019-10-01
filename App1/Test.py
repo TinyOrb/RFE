@@ -12,7 +12,7 @@ def login():
                    "<tr><td colspan=2 id=err_msg>&nbsp;</td></tr>"
                    "<tr><td>Username</td><td><input type=text id=username /></td></tr>"
                    "<tr><td>Password</td><td><input type=password id=password /></td></tr>"
-                   "<tr><td colspan=2 id=err_msg>&nbsp;</td></tr>"
+                   "<tr><td colspan=2 id=err_msg_2>&nbsp;</td></tr>"
                    "<tr><td colspan=2 style='text-align:center;'><button name=plz id=plz>Submit</button></td></tr>"
                    "</table></div>",
         "script$s1": "../static/jquery.min.js",
@@ -37,7 +37,7 @@ def home(request):
                         Msg = "Authenticated"
                         status = 200
                     else:
-                        Msg = "Authorized"
+                        Msg = "Unauthenticated"
                         status = 401
             elif request.POST["action"] == "check_out":
                 if request.session.get("username") is not None:
