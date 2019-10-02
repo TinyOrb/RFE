@@ -56,7 +56,7 @@ function check_up(ac){
                 break;
                 case "check":
                     if( msg == "Authorized"){
-
+                        console.log(window.location)
                     }
                     else{
                     }
@@ -70,7 +70,7 @@ function check_up(ac){
         ajx.fail(function(jqXHR, textStatus){
             console.log(jqXHR, textStatus);
             if(jqXHR["status"] == 401){
-            if(action["check_in"] != "check_in")
+            if(ac["action"] == "check_in")
             $("#err_msg_2").html("<span style='color:red;'> Incorrect username and password</span>")
             }
           });
