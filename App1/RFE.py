@@ -43,7 +43,7 @@ def initial(username):
         "body$b1": "<div id=load_message name=load_message></div>",
         "body$b2": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
                    "Robotframework Front End</h2><table><tr><td>{}</td>"
-                   "<td><button>logout</button></td></tr></table></div>".format(username),
+                   "<td><button id=logout>logout</button></td></tr></table></div>".format(username),
         "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
                   #"<button id=add_feat>Add Project</button><br><br>"
                   "<button id=edit_suite_btn>Edit Project</button></div></div>",
@@ -66,7 +66,7 @@ def status_load(current, history, username=None):
         initial_loading = {
             "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
                        "Robotframework Front End</h2><table><tr><td>{}</td>"
-                       "<td><button>logout</button></td></tr></table></div>".format(username),
+                       "<td><button id=logout>logout</button></td></tr></table></div>".format(username),
             "body$b2": "<div id=suite name=suite><h2>STATS</h2></div>",
             "body$b3": "<div id=testcase name=testcase><h2>Logs</h2></div>",
             "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
@@ -102,7 +102,7 @@ def fetchSuite(feature):
 def InitialLoad(request):
     try:
         #print(initial())
-        if request.session["username"] is None:
+        if request.session.get("username") is None:
             return redirect("/")
         else:
             return HttpResponse(initial(request.session["username"]))
@@ -114,6 +114,8 @@ def InitialLoad(request):
 def LoadTestSuite(request):
     global runner
     try:
+        if request.session.get("username") is None:
+            return HttpResponse("Unauthorize", status=403)
         if request.method == "POST":
             feature = request.POST["feature"]
             return HttpResponse(json.dumps(runner.get_run_state(fetchSuite(feature))))
@@ -202,7 +204,7 @@ def Abort_instance(request):
 def Run_stat(request):
     global runner
     try:
-        if request.session["username"] is None:
+        if request.session.get("username") is None:
             return redirect("/")
         if request.method == "GET":
             feature = request.GET["feat"]

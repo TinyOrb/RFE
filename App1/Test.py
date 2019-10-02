@@ -42,8 +42,8 @@ def home(request):
             elif request.POST["action"] == "check_out":
                 if request.session.get("username") is not None:
                     del request.session["username"]
-                    Msg = "Logout"
-                    status = 401
+                    Msg = "/"
+                    status = 302
                 else:
                     Msg = "Unauthorize"
                     status = 403
@@ -52,15 +52,15 @@ def home(request):
                     Msg = "Authorized"
                     status = 200
                 else:
-                    Msg = "Unauthorize"
-                    status = 403
+                    Msg = "/"
+                    status = 401
             else:
                 Msg = "unknown request"
                 status = 500
         else:
             Msg = "Forbidden"
             status = 403
-        print(Msg, status)
+        # print(Msg, status)
         return HttpResponse(Msg, status=status)
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")

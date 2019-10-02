@@ -18,6 +18,23 @@ limitations under the License.
 tc_head = ""
 current_feature = ""
 $(document).ready(function(){
+
+   $.getScript( "static/ingen.js", function( data, textStatus, jqxhr ) {
+//      console.log( data ); // Data returned
+//      console.log( textStatus ); // Success
+//      console.log( jqxhr.status ); // 200
+        data = {}
+        data["action"] = "check"
+        check_up(data)
+        console.log( "Load was performed." );
+    });
+
+    $("#logout").click(function(){
+        data = {}
+        data["action"] = "check_out"
+        check_up(data)
+    });
+
 	console.log("loaded")
 	tc_head = $("#testcase").html();
 	current_feature = $(".suite_list")[0].innerHTML;
@@ -33,12 +50,6 @@ $(document).ready(function(){
 
     get_suite_tree(current_feature)
 
-    $.getScript( "static/ingen.js", function( data, textStatus, jqxhr ) {
-//        console.log( data ); // Data returned
-//        console.log( textStatus ); // Success
-//        console.log( jqxhr.status ); // 200
-        console.log( "Load was performed." );
-    });
 
     $("#add_feat").click(function(){
         add_feat("template");
