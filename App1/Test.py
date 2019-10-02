@@ -45,8 +45,8 @@ def home(request):
                     Msg = "Logout"
                     status = 200
                 else:
-                    Msg = "Unauthorize"
-                    status = 403
+                    Msg = "Logout"
+                    status = 200
             elif request.POST["action"] == "check":
                 if request.session.get("username") is not None:
                     Msg = "Authorized"

@@ -37,13 +37,15 @@ runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(me
 
 user = "default_user"
 
+header = "<div id=header name=header><h2 style=\"width:50%;padding:1%;text-align:left;float:left;\">" \
+         "Robotframework Front End</h2><table style='padding:1%;float:right;color:white;'><tr><td>{}</td>" \
+         "<td><button id=logout>logout</button></td></tr></table></div>"
+
 def initial(username):
     Suite = Al_robot.fetch_All_suite().keys()
     initial_loading = {
         "body$b1": "<div id=load_message name=load_message></div>",
-        "body$b2": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
-                   "Robotframework Front End</h2><table><tr><td>{}</td>"
-                   "<td><button id=logout>logout</button></td></tr></table></div>".format(username),
+        "body$b2": header.format(username),
         "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
                   #"<button id=add_feat>Add Project</button><br><br>"
                   "<button id=edit_suite_btn>Edit Project</button></div></div>",
@@ -64,9 +66,7 @@ def initial(username):
 
 def status_load(current, history, username=None):
         initial_loading = {
-            "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
-                       "Robotframework Front End</h2><table><tr><td>{}</td>"
-                       "<td><button id=logout>logout</button></td></tr></table></div>".format(username),
+            "body$b1": header.format(username),
             "body$b2": "<div id=suite name=suite><h2>STATS</h2></div>",
             "body$b3": "<div id=testcase name=testcase><h2>Logs</h2></div>",
             "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
@@ -322,11 +322,10 @@ def load_meta_run_with(request):
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
-def editor_load():
+def editor_load(username):
         initial_loading = {
             "body$b1": "<div id=load_message name=load_message></div>",
-            "body$b2": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
-                       "Robotframework Front End</h2></div>",
+            "body$b2": header.format(username),
             "body$b3": "<div style=\"width:97%;padding:1%; height:84%; margin-left:0.5%; margin-right:0.5%; margin-top:0.5%;\"><textarea style=\"width:98%;height:98%;resize: none;\" id=\"editor\"></textarea></div>",
             "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
             "script$s2": "../static/he.js",
@@ -338,6 +337,8 @@ def editor_load():
 @ensure_csrf_cookie
 def Core_Editor(request):
     try:
+        if request.session.get("username") is None:
+            return redirect("/")
         if(request.method == "POST"):
             feature = request.POST["feature"]
             try:
@@ -395,7 +396,7 @@ def Core_Editor(request):
                 print("Either suite is missing and extra tc info provided")
                 return HttpResponse("fail", status=400)
         elif(request.method == "GET"):
-            return HttpResponse(editor_load(), status=400)
+            return HttpResponse(editor_load(request.session["username"]), status=400)
         else:
             return HttpResponse("fail", status=400)
     except Exception as e:

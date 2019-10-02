@@ -71,7 +71,7 @@ function check_up(ac){
             console.log(jqXHR, textStatus);
             if(jqXHR["status"] == 401){
             if(ac["action"] == "check_in")
-            $("#err_msg_2").html("<span style='color:red;'> Incorrect username and password</span>")
+            $("#err_msg_2").html("<span style='color:red;'> *Incorrect username and password </span>")
             }
           });
 }
