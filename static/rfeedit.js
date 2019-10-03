@@ -198,6 +198,7 @@ function fetch_content(){
                         ms = _ms;
                     }
                     do_update = 0;
+                    clr_msg();
                  }
                 else{
                     fetch_fail = 1
@@ -206,7 +207,7 @@ function fetch_content(){
 			});
 		ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
-				prompt_msg("unable to connect");
+				per_msg("unable to connect");
 			});
 }
 
@@ -237,6 +238,7 @@ function update_content(){
                             ts = tc
                             ms = mc
                        prompt_msg("Saved successfully");
+                       clr_msg();
                        //console.log("write succeed");
                        update_fail = 2
                    }
@@ -246,8 +248,12 @@ function update_content(){
                 });
             ajx.fail(function(jqXHR, textStatus){
                     update_fail = 1
-                    prompt_msg("unable to connect");
                     console.log(jqXHR, textStatus);
+                    if(jqXHR["status"] == 403){
+                        per_msg("Session expire");
+                    }else{
+                        per_msg("unable to connect");
+                    }
                 });
 }
 

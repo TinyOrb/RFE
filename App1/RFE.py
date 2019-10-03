@@ -146,7 +146,7 @@ def Run_instance(request):
     global runner
     try:
         if request.session.get("username") is None:
-            return redirect("/expire")
+            return HttpResponse("", status=401)
         if request.method == "POST":
             feature = request.POST["feature"]
             try:
@@ -302,7 +302,7 @@ def load_meta_run_with(request):
     global runner
     try:
         if request.session.get("username") is None:
-            return redirect("/expire")
+            return HttpResponse("", status=401)
         if request.method == "POST":
             feature = request.POST["feature"]
             try:
@@ -347,7 +347,7 @@ def editor_load(username):
 def Core_Editor(request):
     try:
         if request.session.get("username") is None:
-            return redirect("/expire")
+            return HttpResponse("", status=403)
         if(request.method == "POST"):
             feature = request.POST["feature"]
             try:

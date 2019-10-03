@@ -455,11 +455,12 @@ function invoke(action, feature, suite, tc){
                 }
                 else{
                     console.log(action + ": failed")
+                    console.log(msg)
                 }
 			});
 		ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
-			if(jqXHR["status"] == 302){
+			if(jqXHR["status"] == 401){
                 window.location = "/expire"
             }
 			});
@@ -542,6 +543,9 @@ function select_message(action, feat, suite, tc){
     });
 	ajx.fail(function(jqXHR, textStatus){
             console.log(jqXHR, textStatus);
+            if(jqXHR["status"] == 401){
+                window.location = "/expire"
+            }
         });
 }
 
