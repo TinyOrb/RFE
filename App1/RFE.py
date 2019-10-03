@@ -103,7 +103,7 @@ def InitialLoad(request):
     try:
         #print(initial())
         if request.session.get("username") is None:
-            return redirect("/")
+            return redirect("/expire")
         else:
             return HttpResponse(initial(request.session["username"]))
     except Exception as e:
@@ -128,6 +128,8 @@ def LoadTestSuite(request):
 def GetAllSuites(request):
     global runner
     try:
+        if request.session.get("username") is None:
+            return HttpResponse("Unauthorize", status=403)
         if request.method == "POST":
             all = {}
             features = meta.Test_Suite_Folder
@@ -143,6 +145,8 @@ def GetAllSuites(request):
 def Run_instance(request):
     global runner
     try:
+        if request.session.get("username") is None:
+            return redirect("/expire")
         if request.method == "POST":
             feature = request.POST["feature"]
             try:
@@ -184,6 +188,8 @@ def Run_instance(request):
 def Abort_instance(request):
     global runner
     try:
+        if request.session.get("username") is None:
+            return redirect("/expire")
         if request.method == "POST":
             feature = request.POST["feature"]
             try:
@@ -205,7 +211,7 @@ def Run_stat(request):
     global runner
     try:
         if request.session.get("username") is None:
-            return redirect("/")
+            return redirect("/expire")
         if request.method == "GET":
             feature = request.GET["feat"]
             try:
@@ -267,8 +273,9 @@ def log_load(current, history, time):
 def Log_stat(request):
     global runner
     try:
+        if request.session.get("username") is None:
+            return HttpResponse("Unauthorize", status=403)
         if request.method == "POST":
-
             feature = request.POST["feature"]
             try:
                 suite = request.POST["suite"]
@@ -294,6 +301,8 @@ def Log_stat(request):
 def load_meta_run_with(request):
     global runner
     try:
+        if request.session.get("username") is None:
+            return redirect("/expire")
         if request.method == "POST":
             feature = request.POST["feature"]
             try:
@@ -338,7 +347,7 @@ def editor_load(username):
 def Core_Editor(request):
     try:
         if request.session.get("username") is None:
-            return redirect("/")
+            return redirect("/expire")
         if(request.method == "POST"):
             feature = request.POST["feature"]
             try:
@@ -406,6 +415,8 @@ def Core_Editor(request):
 @ensure_csrf_cookie
 def get_time(request):
     try:
+        if request.session.get("username") is None:
+            return HttpResponse("Unauthorize", status=403)
         if(request.method == "POST"):
             return HttpResponse(str(time.time() * 1000))
         else:
@@ -416,6 +427,8 @@ def get_time(request):
 @ensure_csrf_cookie
 def manage_feat(request):
     try:
+        if request.session.get("username") is None:
+            return redirect("/expire")
         if(request.method == "POST"):
             action = request.POST["action"]
             if action == "add":

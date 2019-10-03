@@ -22,6 +22,7 @@ from . import RFE
 urlpatterns = [
     #url(r'^admin/', admin.site.urls),
     url(r'^$', Test.home),
+    url(r'^expire$', Test.home_error),
     url(r'^RFE$', RFE.InitialLoad, name="RFE"),
     url(r'^RFETS$', RFE.LoadTestSuite, name="TS"),
     url(r'^RFERUN$', RFE.Run_instance, name="Run"),

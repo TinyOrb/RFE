@@ -459,6 +459,9 @@ function invoke(action, feature, suite, tc){
 			});
 		ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
+			if(jqXHR["status"] == 302){
+                window.location = "/expire"
+            }
 			});
 }
 
@@ -574,6 +577,9 @@ function invoke_run_with(feat, suite, tc, variable_file, variable, include_tag, 
 			});
 		ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
+			if(jqXHR["status"] == 401){
+                window.location = "/expire"
+            }
 			});
     //console.log(data)
 

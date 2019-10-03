@@ -206,6 +206,7 @@ function fetch_content(){
 			});
 		ajx.fail(function(jqXHR, textStatus){
 				console.log(jqXHR, textStatus);
+				prompt_msg("unable to connect");
 			});
 }
 
@@ -245,6 +246,7 @@ function update_content(){
                 });
             ajx.fail(function(jqXHR, textStatus){
                     update_fail = 1
+                    prompt_msg("unable to connect");
                     console.log(jqXHR, textStatus);
                 });
 }
