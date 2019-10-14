@@ -28,8 +28,43 @@ import urllib
 import App1.settings as meta
 
 @ensure_csrf_cookie
-def init_suite(request):
+def suite_manager(request):
     if request.session.get("username") is None:
         return redirect("/expire")
     else:
         access_project = meta.user_list["project_access"]
+        if request.method == "POST":
+            # create suite
+            pass
+        elif request.method == "PUT":
+            # update suite information
+            pass
+        elif request.method == "GET":
+            # fetch the suite information
+            action = request.GET["action"]
+            if action == "load":
+                # Get initial html load
+                try:
+                    suite = request.GET["suite"]
+                except Exception as e:
+                    suite = None
+                if suite is None:
+                    # if suite load all manual suite
+                    pass
+                else:
+
+
+def test_instance(request):
+    if request.session.get("username") is None:
+        return redirect("/expire")
+    else:
+        action = request.request["action"]
+        date = request.POST["date"]
+        suite_list = request.POST["suite_list"]
+
+
+def manage_manual(request):
+    if request.session.get("username") is None:
+        return redirect("/expire")
+    else:
+        suite_list = request.POST["suite_list"]
