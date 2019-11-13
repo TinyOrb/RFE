@@ -5,8 +5,7 @@
       "tcs": [],
       "script_suite": [],
       "creator": "",
-      "created_date": "",
-      "modified_on": ""
+      "created_date": ""
     }
   },
 
@@ -18,16 +17,13 @@
       "scenario": "",
       "creator": "",
       "created_date": "",
-      "automation": "",
-      "modified_on": "",
-      "links": []
+      "automation": ""
     }
   },
 
   "execution_suite": {
     "ES1000" : {
       "s_id" : "S1000",
-      "modified_on": "",
       "date" : "",
       "pass_count" : 0,
       "fail_count" : 0,
@@ -46,8 +42,7 @@
       "c_id": "C1000",
       "status": "pass",
       "comment": "",
-      "links": [],
-      "modified_on": ""
+      "links": []
     }
   }
 }
