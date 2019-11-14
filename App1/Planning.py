@@ -32,20 +32,31 @@ from App1.manual.man_manage import suite_manager
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 pool_1 = rw_pool(20, "App1/all_manual.json")
 
-def init_suite(username, suite):
+header = "<div id=header name=header><h2 style=\"width:50%;padding:1%;text-align:left;float:left;\">" \
+         "Robotframework Front End</h2><table style='padding:1%;float:right;color:white;'><tr><td>{}</td>" \
+         "<td><button id=logout>logout</button></td></tr></table></div>"
+
+def init_all_suite(username, suite):
 
     suites = suite_manager(pool_1)
-
-    suite_detail = suites.get_suites()
-
+    all_suite = suites.get_suites()
+    suites_list = all_suite.keys()
     dct = {
-        "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
-                   "Robotframework Front End</h2></div>",
+        "body$b1": header.format(username),
         "script$s1": "../static/jquery.min.js",
-        "script$s2": "../static/plan.js",
+        "script$s2": "static/he.js",
         "style$t1": "../static/plan.css",
+        "bscript$s1": "../static/plan.js",
         "headrawmeta$m1": "<title>suites</title>"
     }
+
+    table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1%;\"><table style=\"width:100%;\">"
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:20%;\">{}</th><th style=\"width:60%;\">{}</th><th style=\"width:20%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner")
+    for li in suites_list:
+        table += "<tr style=\"background:lightgrey;\"><td>%s</td><td>%s</td><td>%s</td></tr>" % (li, all_suite[li]["name"], all_suite[li]["creator"])
+    table += "</table></div>"
+    dct["body$b2"] = table
+    dct["body$b3"] = "<div style=\"width:20%;float:left;background:black;color:white;text-align:center;margin:1%;\"><h3>Future Scope</h3></div>"
     return htmlstructure(**dct)
 
 @ensure_csrf_cookie
@@ -56,9 +67,9 @@ def suite_plan(request):
         if request.method == "GET":
             try:
                 suite = request.GET["suite"]
-            except ValueError as e:
+            except Exception as e:
                 suite = None
-            return HttpResponse(init_suite(request.session.get("username"), suite=suite))
+            return HttpResponse(init_all_suite(request.session.get("username"), suite=suite))
         elif request.method == "POST":
             pass
         else:

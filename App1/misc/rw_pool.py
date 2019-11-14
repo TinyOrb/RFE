@@ -1,7 +1,7 @@
 import threading
 import time
 import logging
-
+import json
 
 class rw_pool(threading.Thread):
 
@@ -88,11 +88,11 @@ class rw_thread(threading.Thread):
             self.evt.wait()
         self.evt.clear()
         with open(self.filename, 'r+w') as f:
-            data = f.read()
+            data = json.load(f)
             if str(type(operation)) == "function":
                 x = operation(data)
                 if x is not None:
-                    f.write(x)
+                    json.dump(data, f, indent=4)
                 else:
                     raise RuntimeError("Mode: multi takes function of a argument and return string as argument")
             else:
@@ -103,7 +103,7 @@ class rw_thread(threading.Thread):
         if not self.evt.is_set():
             self.evt.wait()
         with open(self.filename, 'r') as f:
-            data = f.read()
+            data = json.load(f)
         return data
 
     def write(self, data):
@@ -111,7 +111,7 @@ class rw_thread(threading.Thread):
             self.evt.wait()
         self.evt.clear()
         with open(self.filename, 'w') as f:
-            f.write(data)
+            json.dump(data, f, indent=4)
 
     def run(self):
         self.mutex = True

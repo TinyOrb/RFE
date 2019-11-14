@@ -18,6 +18,7 @@ from django.contrib import admin
 # RFE stands for robot framework front end
 from . import Test
 from . import RFE
+from . import Planning
 
 urlpatterns = [
     #url(r'^admin/', admin.site.urls),
@@ -33,6 +34,7 @@ urlpatterns = [
     url(r'^RFEEDITOR$', RFE.Core_Editor, name="editor"),
     url(r'^GETSERVERNOW$', RFE.get_time, name="ctime"),
     url('GETALLSUITES$', RFE.GetAllSuites, name="get_all"),
-    url('MANAGEFEAT$', RFE.manage_feat, name="manage_feat")
+    url('MANAGEFEAT$', RFE.manage_feat, name="manage_feat"),
+    url('PLANSUITE$', Planning.suite_plan, name="suite_plan")
     #path(r'^App1/',Test.test1, name="index")
 ]

@@ -9,11 +9,11 @@ class suite_manager:
     def get_suites(self):
         thread_id = self.pool.action("read")
         for iter in range(10):
-            if self.pool.get_thread_buffer(thread_id) is not str and self.pool.get_thread_buffer(thread_id) != "No thread":
-                data = self.pool.get_thread_buffer(thread_id)
-                data = json.loads(data)
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
+                data = result.values()[0]["suites"]
                 self.pool.remove_thread_buffer(thread_id)
-                return data["suites"]
+                return data
             time.sleep(1)
         return {"Read: failure": "timeout"}
 
