@@ -50,14 +50,38 @@ def init_all_suite(username, suite):
         "headrawmeta$m1": "<title>suites</title>"
     }
 
-    table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1%;\"><table style=\"width:100%;\">"
-    table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:20%;\">{}</th><th style=\"width:60%;\">{}</th><th style=\"width:20%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner")
+    table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
+            "<table style=\"width:100%;\">"
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:15%;\">{}</th>" \
+             "<th style=\"width:70%;\">{}</th>" \
+             "<th style=\"width:15%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner")
     for li in suites_list:
         table += "<tr style=\"background:lightgrey;\"><td>%s</td><td>%s</td><td>%s</td></tr>" % (li, all_suite[li]["name"], all_suite[li]["creator"])
     table += "</table></div>"
     dct["body$b2"] = table
-    dct["body$b3"] = "<div style=\"width:20%;float:left;background:black;color:white;text-align:center;margin:1%;\"><h3>Future Scope</h3></div>"
+    dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
+                     "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
+    dct["body$b4"] = "<div style=\"width:94%;margin:1%;height:15%;\">" \
+                     "<button style=\"padding:0.5% 1%;margin:0 1%;\">Add Suite</button></div>"
+    dct["body$b5"] = "<div id=load_message name=load_message></div>"
     return htmlstructure(**dct)
+
+def form_suite():
+
+    projects = meta.Test_Suite_Folder.keys()
+
+    table = "<div id=\"suite_form\" style=\"width:40%;height:30%;\">" \
+            "<table style=\"width:100%;\">"
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Suite Name </td>" \
+             "<td style=\"width:60%;\"><input type=text id=suite_name style=\"width:auto;\"></td></tr>"
+    table += "<tr><td> Automation projects </td><td><select onchange=\"load_suite()\">"
+    for project in projects:
+        table += "<option value={}>{}</option>".format(project, project)
+    table += "</select></td></tr>"
+    table += "<tr><td> Suite List </td><td> <select multiple id=select_suite></select></td></tr>"
+    table += "</table></div>"
+    return table
+
 
 @ensure_csrf_cookie
 def suite_plan(request):
@@ -71,7 +95,15 @@ def suite_plan(request):
                 suite = None
             return HttpResponse(init_all_suite(request.session.get("username"), suite=suite))
         elif request.method == "POST":
-            pass
+            try:
+                action = request.POST["action"]
+            except Exception as e:
+                action = None
+                logging.error(str(e))
+
+            if action == "form":
+                return HttpResponse(form_suite())
+
         else:
             return HttpResponse(status=204)
 

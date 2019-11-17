@@ -31,6 +31,11 @@ function clr_msg(){
     $("#load_message").css({"display":"none"})
 }
 
+function load_form(msg){
+    $("#load_message").html(msg);
+    $("#load_message").css({"position":"fixed", "top":"25%", "left":"40%", "display":"block", "z-index":"10", "background": "#cbc3c1", "border-width":"0px", "padding":"15px 25px", "border-radius": "5px", "text-size":"36px"});
+}
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
