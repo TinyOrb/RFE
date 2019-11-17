@@ -17,6 +17,7 @@ limitations under the License.
 """
 
 import os
+import json
 import logging
 import time
 
@@ -28,6 +29,7 @@ from App1.misc.rw_pool import rw_pool
 from modelling.HTMLLoader import htmlstructure
 import App1.settings as meta
 from App1.manual.man_manage import suite_manager
+from App1.Robot_loader import Al_robot_parser
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 pool_1 = rw_pool(20, "App1/all_manual.json")
@@ -37,10 +39,14 @@ header = "<div id=header name=header><h2 style=\"width:50%;padding:1%;text-align
          "<td><button id=logout>logout</button></td></tr></table></div>"
 
 def init_all_suite(username, suite):
-
+    '''
+    Return suite planning page html
+    '''
     suites = suite_manager(pool_1)
     all_suite = suites.get_suites()
     suites_list = all_suite.keys()
+
+
     dct = {
         "body$b1": header.format(username),
         "script$s1": "../static/jquery.min.js",
@@ -62,25 +68,33 @@ def init_all_suite(username, suite):
     dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
                      "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
     dct["body$b4"] = "<div style=\"width:94%;margin:1%;height:15%;\">" \
-                     "<button style=\"padding:0.5% 1%;margin:0 1%;\">Add Suite</button></div>"
+                     "<button style=\"padding:0.5% 1%;margin:0 1%;\" id=add_suite>Add Suite</button></div>"
     dct["body$b5"] = "<div id=load_message name=load_message></div>"
     return htmlstructure(**dct)
 
 def form_suite():
-
+    '''
+    Return suite html form and project dict
+    '''
     projects = meta.Test_Suite_Folder.keys()
+    projects_dict = {}
 
+    for project in projects:
+        projects_dict[project] = Al_robot_parser.get_sub_suite(meta.Test_Suite_Folder[project]).values()
     table = "<div id=\"suite_form\" style=\"width:40%;height:30%;\">" \
             "<table style=\"width:100%;\">"
     table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Suite Name </td>" \
              "<td style=\"width:60%;\"><input type=text id=suite_name style=\"width:auto;\"></td></tr>"
-    table += "<tr><td> Automation projects </td><td><select onchange=\"load_suite()\">"
+    table += "<tr><td> Automation projects </td><td><select id=selected_project>"
     for project in projects:
         table += "<option value={}>{}</option>".format(project, project)
     table += "</select></td></tr>"
-    table += "<tr><td> Suite List </td><td> <select multiple id=select_suite></select></td></tr>"
+    table += "<tr><td> Suite List </td><td> <select multiple=\"multiple\" id=select_suite></select></td></tr>"
+    table += "<tr><td><button id=submit_suite> Add Suite </button></td>" \
+             "<td><button id=cancel_form> Cancel </td></tr>"
     table += "</table></div>"
-    return table
+
+    return json.dumps({"form": table, "projects": projects_dict})
 
 
 @ensure_csrf_cookie
@@ -101,8 +115,20 @@ def suite_plan(request):
                 action = None
                 logging.error(str(e))
 
-            if action == "form":
+            if action == "suite_form":
                 return HttpResponse(form_suite())
+            elif action == "submit_suite_form":
+                name = request.POST["name"]
+                creator = request.session.get("username")
+                project = request.POST["project"]
+                if request.POST["suite_list"] == "":
+                    suite_list = []
+                else:
+                    suite_list = request.POST["suite_list"].split(",")
+                suites_manage = suite_manager(pool_1)
+                return HttpResponse(suites_manage.add_suite(name, creator, suite_list, project))
+            else:
+                pass
 
         else:
             return HttpResponse(status=204)

@@ -69,30 +69,3 @@ def fetch_All_suite():
     except Exception as e:
         return "Error! " + str(e)
 
-
-def fetch_suite_test_cases(suite):
-    try:
-        path = Test_Suite_Folder[suite]
-    except Exception as e:
-        return "Error! " + str(e)
-
-
-def fetch_suite_content(path):
-    try:
-        pass
-    except Exception as e:
-        return "Error! " + str(e)
-
-
-def update_test_suite(path, content):
-    try:
-        pass
-    except Exception as e:
-        return "Error! " + str(e)
-
-
-def execute_scenarios(path, cases):
-    try:
-        pass
-    except Exception as e:
-        return "Error! " + str(e)

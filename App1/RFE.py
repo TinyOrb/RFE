@@ -46,15 +46,15 @@ def initial(username):
     initial_loading = {
         "body$b1": "<div id=load_message name=load_message></div>",
         "body$b2": header.format(username),
-        "body$b3":"<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
+        "body$b3": "<div id=feature name=feature><div id=suite name=suite><h2>Features</h2></div><div id=edit_suite name=edit_suite>"
                   #"<button id=add_feat>Add Project</button><br><br>"
                   "<button id=edit_suite_btn>Edit Project</button></div></div>",
                   #"<br><br><button id=del_feat>Delete Project</button></div></div>",
-        "body$b4":"<div id=testcase name=testcase><h2>Test Case</h2></div>",
-        "script$s1":"../static/jquery.min.js",
+        "body$b4": "<div id=testcase name=testcase><h2>Test Case</h2></div>",
+        "script$s1": "../static/jquery.min.js",
         "script$s2": "static/he.js",
-        "bscript$s1":"static/RFE.js",
-        "style$t1":"static/RFE.css"
+        "bscript$s1": "static/RFE.js",
+        "style$t1": "static/RFE.css"
         }
     i = 1
     initial_loading["headrawscript$r"+str(i)] = "$(document).ready(function(){"
@@ -123,9 +123,10 @@ def LoadTestSuite(request):
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
-
+#Please rename GetAllSuites to GetAllFiles
 @ensure_csrf_cookie
 def GetAllSuites(request):
+
     global runner
     try:
         if request.session.get("username") is None:

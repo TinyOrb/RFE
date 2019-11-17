@@ -44,5 +44,10 @@
       "comment": "",
       "links": []
     }
-  }
+  },
+
+  "next_suite_id" : 1001,
+  "next_case_id" : 1001,
+  "next_exec_suite_id": 1001,
+  "next_exec_case_id": 1001
 }
