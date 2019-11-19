@@ -28,7 +28,7 @@ $(document).ready(function(){
 function suite_plan(data){
 
     var ajx = $.ajax({
-          url:"/PLANSUITE",
+          url:"/PLAN",
           method:"POST",
           data : data
     });
@@ -63,7 +63,7 @@ function suite_plan(data){
                 })
             break
             case "submit_suite_form":
-            if(msg.includes("success")){
+            if(msg == 0){
                 prompt_msg("successfully add suite")
             }
             break

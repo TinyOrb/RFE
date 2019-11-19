@@ -58,11 +58,23 @@ def init_all_suite(username, suite):
 
     table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
             "<table style=\"width:100%;\">"
-    table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:15%;\">{}</th>" \
-             "<th style=\"width:70%;\">{}</th>" \
-             "<th style=\"width:15%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner")
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:12%;\">{}</th>" \
+             "<th style=\"width:50%;\">{}</th>" \
+             "<th style=\"width:8%;\">{}</th>" \
+             "<th colspan=3></th>" \
+             "<th style=\"width:10%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner", "Created On")
     for li in suites_list:
-        table += "<tr style=\"background:lightgrey;\"><td>%s</td><td>%s</td><td>%s</td></tr>" % (li, all_suite[li]["name"], all_suite[li]["creator"])
+        edit_btn = "<button class=edit_suite suite_id={}>Edit</button>".format(li)
+        del_btn = "<button class=del_suite suite_id={}>Delete</button>".format(li)
+        table += "<tr style=\"background:lightgrey;\">" \
+                 "<td>{}</td>" \
+                 "<td>{}</td>" \
+                 "<td>{}</td>" \
+                 "<td style=\"width:5%;\"><a style=\"text-decoration:none;\" target=_blank href=/PLAN/SUITE/{}>open</a></td>" \
+                 "<td style=\"width:5%;\">{}</td>" \
+                 "<td style=\"width:5%;\">{}</td>" \
+                 "<td style=\"width:15%;\">{}</td></tr>".\
+            format(li, all_suite[li]["name"], all_suite[li]["creator"], li, edit_btn, del_btn, all_suite[li]["created_date"])
     table += "</table></div>"
     dct["body$b2"] = table
     dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
