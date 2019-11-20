@@ -43,8 +43,6 @@ def init_all_suite(username, suite):
     Return suite planning page html
     '''
     suites = suite_manager(pool_1)
-    all_suite = suites.get_suites()
-    suites_list = all_suite.keys()
 
 
     dct = {
@@ -55,32 +53,50 @@ def init_all_suite(username, suite):
         "bscript$s1": "../static/plan.js",
         "headrawmeta$m1": "<title>suites</title>"
     }
+    if suite is None:
+        all_suite = suites.get_suites()
+        suites_list = all_suite.keys()
 
-    table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
-            "<table style=\"width:100%;\">"
-    table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:12%;\">{}</th>" \
-             "<th style=\"width:50%;\">{}</th>" \
-             "<th style=\"width:8%;\">{}</th>" \
-             "<th colspan=3></th>" \
-             "<th style=\"width:10%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner", "Created On")
-    for li in suites_list:
-        edit_btn = "<button class=edit_suite suite_id={}>Edit</button>".format(li)
-        del_btn = "<button class=del_suite suite_id={}>Delete</button>".format(li)
-        table += "<tr style=\"background:lightgrey;\">" \
-                 "<td>{}</td>" \
-                 "<td>{}</td>" \
-                 "<td>{}</td>" \
-                 "<td style=\"width:5%;\"><a style=\"text-decoration:none;\" target=_blank href=/PLAN/SUITE/{}>open</a></td>" \
-                 "<td style=\"width:5%;\">{}</td>" \
-                 "<td style=\"width:5%;\">{}</td>" \
-                 "<td style=\"width:15%;\">{}</td></tr>".\
-            format(li, all_suite[li]["name"], all_suite[li]["creator"], li, edit_btn, del_btn, all_suite[li]["created_date"])
-    table += "</table></div>"
-    dct["body$b2"] = table
-    dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
-                     "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
-    dct["body$b4"] = "<div style=\"width:94%;margin:1%;height:15%;\">" \
-                     "<button style=\"padding:0.5% 1%;margin:0 1%;\" id=add_suite>Add Suite</button></div>"
+        table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
+                "<table style=\"width:100%;\">"
+        table += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:12%;\">{}</th>" \
+                 "<th style=\"width:50%;\">{}</th>" \
+                 "<th style=\"width:8%;\">{}</th>" \
+                 "<th colspan=3></th>" \
+                 "<th style=\"width:10%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner", "Created On")
+        for li in suites_list:
+            edit_btn = "<button class=edit_suite suite_id={}>Edit</button>".format(li)
+            del_btn = "<button class=del_suite suite_id={}>Delete</button>".format(li)
+            table += "<tr style=\"background:lightgrey;\">" \
+                     "<td>{}</td>" \
+                     "<td>{}</td>" \
+                     "<td>{}</td>" \
+                     "<td style=\"width:5%;\"><a style=\"text-decoration:none;\" target=_blank href=/PLAN?suite={}>open</a></td>" \
+                     "<td style=\"width:5%;\">{}</td>" \
+                     "<td style=\"width:5%;\">{}</td>" \
+                     "<td style=\"width:15%;\">{}</td></tr>".\
+                format(li, all_suite[li]["name"], all_suite[li]["creator"], li, edit_btn, del_btn, all_suite[li]["created_date"])
+        table += "</table></div>"
+        dct["body$b2"] = table
+        dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
+                         "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
+        dct["body$b4"] = "<div style=\"width:94%;margin:1%;height:15%;\">" \
+                         "<button style=\"padding:0.5% 1%;margin:0 1%;\" id=add_suite>Add Suite</button></div>"
+    else:
+        match_suite = suites.get_suite(suite)
+        cases = match_suite.get("cases")
+
+        script_suite = match_suite.get("script_suite")
+        table = "<div><table><tr>"
+        for li in script_suite:
+            table += "<td>{}</td>".format(li)
+        table += "</tr></table></div>"
+
+        if cases is not None and len(cases) != 0:
+            for li in cases.keys():
+                pass
+
+
     dct["body$b5"] = "<div id=load_message name=load_message></div>"
     return htmlstructure(**dct)
 

@@ -18,7 +18,15 @@ class suite_manager:
         return {"Read: failure": "timeout"}
 
     def get_suite(self, suite):
-        pass
+        thread_id = self.pool.action("read")
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
+                data = result.values()[0]["suites"][suite]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Read: failure": "timeout"}
 
     def update_suite(self, suite_id, data):
         pass

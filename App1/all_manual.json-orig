@@ -30,24 +30,9 @@
       "untested_count": 0,
       "tester": "",
       "manual_case": 0,
-      "automate_case": 0
+      "automate_case": 0,
+      m_case :
     }
   },
-
-  "execution_case": {
-    "EC1000": {
-      "name": "",
-      "es_id": "ES1000",
-      "date": "",
-      "c_id": "C1000",
-      "status": "pass",
-      "comment": "",
-      "links": []
-    }
-  },
-
-  "next_suite_id" : 1001,
-  "next_case_id" : 1001,
-  "next_exec_suite_id": 1001,
-  "next_exec_case_id": 1001
+  }
 }
