@@ -30,6 +30,7 @@ from modelling.HTMLLoader import htmlstructure
 import App1.settings as meta
 from App1.manual.man_manage import suite_manager
 from App1.Robot_loader import Al_robot_parser
+from App1.Robot_loader import Al_robot
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 pool_1 = rw_pool(20, "App1/all_manual.json")
@@ -85,17 +86,51 @@ def init_all_suite(username, suite):
     else:
         match_suite = suites.get_suite(suite)
         cases = match_suite.get("cases")
-
+        name = match_suite.get("name")
         script_suite = match_suite.get("script_suite")
-        table = "<div><table><tr>"
-        for li in script_suite:
-            table += "<td>{}</td>".format(li)
-        table += "</tr></table></div>"
+        automation_case = {}
+        feature = match_suite.get("script_project")
 
-        if cases is not None and len(cases) != 0:
-            for li in cases.keys():
-                pass
 
+        for script in script_suite:
+            match_script = filter(lambda x : x["name"] == script, Al_robot_parser.get_testcases_list(feature, Al_robot.fetch_All_suite()[feature])["suites"])
+            automation_case[script] = match_script[0]["tcs"]
+
+        auto_case_html = "<table style=\"margin:1%; padding:1%;background:#EEEEEE; width:98%;border:1px solid black;\">"
+        for script in automation_case.keys():
+            auto_case_html += "<tr><th>Script: {}</th></tr>".format(script.replace(".robot", ""))
+            for a_case in automation_case[script]:
+                auto_case_html += "<tr><td style=\"border:1px solid black;\">{}</td></tr>".format(a_case.get("name"))
+        auto_case_html += "</table>"
+
+        case_html = "<table style=\"margin:1%; padding:1%;background:#EEEEEE; width:98%;border:1px solid black;\">"
+        if cases is not None:
+            case_html += "<tr><th colspan=4>Manual Cases</th></tr>"
+            case_html += "<tr><th>{}</th><th>{}</th><th>{}</th><th>{}</th></tr>".format("Case Id.", "Name", "Creator", "Created Date")
+            for case in cases.keys():
+                case_html += "<tr>"
+                case_html += "<td>{}<td>".format(case)
+                case_html += "<td>{}<td>".format(cases[case]["name"])
+                case_html += "<td>{}<td>".format(cases[case]["creator"])
+                case_html += "<td>{}<td>".format(cases[case]["created_date"])
+                case_html += "</tr>"
+
+        else:
+            case_html += "<tr><th colspan=4>No Manual Cases</th></tr>"
+        case_html += "</table>"
+
+        table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">"
+        table += "<h2>{}</h2>".format(name)
+        table += auto_case_html
+        table += case_html
+        table += "</div>"
+        dct["body$b2"] = table
+
+        dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
+                         "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
+
+        dct["body$b4"] = "<div style=\"width:94%;margin:1%;height:15%;\">" \
+                         "<button style=\"padding:0.5% 1%;margin:0 1%;\" id=add_case>Add Test Case</button></div>"
 
     dct["body$b5"] = "<div id=load_message name=load_message></div>"
     return htmlstructure(**dct)
@@ -109,7 +144,7 @@ def form_suite():
 
     for project in projects:
         projects_dict[project] = Al_robot_parser.get_sub_suite(meta.Test_Suite_Folder[project]).values()
-    table = "<div id=\"suite_form\" style=\"width:40%;height:30%;\">" \
+    table = "<div id=\"case_form\" style=\"width:40%;height:30%;\">" \
             "<table style=\"width:100%;\">"
     table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Suite Name </td>" \
              "<td style=\"width:60%;\"><input type=text id=suite_name style=\"width:auto;\"></td></tr>"
@@ -124,6 +159,23 @@ def form_suite():
 
     return json.dumps({"form": table, "projects": projects_dict})
 
+def form_case():
+    '''
+    Return case html form
+    '''
+    table = "<div id=\"case_form\" style=\"overflow-y:auto;\">" \
+            "<table style=\"width:100%;\">"
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Case Name </td>" \
+             "<td style=\"width:60%;\"><input type=text id=case_name style=\"width:auto;\"></td></tr>"
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Description </td>" \
+             "<td style=\"width:60%;\"><textarea id=case_desc cols=30 rows=5></textarea></td></tr>"
+    table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Steps </td>" \
+             "<td style=\"width:60%;\"><textarea id=case_step cols=30 rows=5></textarea></td></tr>"
+    table += "<tr><td><button id=submit_case> Add Case </button></td>" \
+             "<td><button id=cancel_form> Cancel </td></tr>"
+    table += "</table></div>"
+
+    return json.dumps({"form": table})
 
 @ensure_csrf_cookie
 def suite_plan(request):
@@ -145,6 +197,8 @@ def suite_plan(request):
 
             if action == "suite_form":
                 return HttpResponse(form_suite())
+            elif action == "case_form":
+                return HttpResponse(form_case())
             elif action == "submit_suite_form":
                 name = request.POST["name"]
                 creator = request.session.get("username")
@@ -155,6 +209,8 @@ def suite_plan(request):
                     suite_list = request.POST["suite_list"].split(",")
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.add_suite(name, creator, suite_list, project))
+            elif action == "submit_case_form":
+                pass
             else:
                 pass
 

@@ -21,6 +21,10 @@ $(document).ready(function(){
         suite_plan(data)
     });
 
+    $("#add_case").click(function(){
+        data = {"action":"case_form"}
+        suite_plan(data)
+    });
 	console.log("loaded")
 
 });
@@ -66,6 +70,14 @@ function suite_plan(data){
             if(msg == 0){
                 prompt_msg("successfully add suite")
             }
+            break
+            case "case_form":
+                load_form(p_msg.form);
+                $("#cancel_form").click(function(){
+                    clr_msg();
+                });
+                $("#submit_case").click(function(){
+                });
             break
         }
 	})
