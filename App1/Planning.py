@@ -66,8 +66,8 @@ def init_all_suite(username, suite):
                  "<th colspan=3></th>" \
                  "<th style=\"width:10%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner", "Created On")
         for li in suites_list:
-            edit_btn = "<button class=edit_suite suite_id={}>Edit</button>".format(li)
-            del_btn = "<button class=del_suite suite_id={}>Delete</button>".format(li)
+            edit_btn = "<button id=edit_suite suite_id={}>Edit</button>".format(li)
+            del_btn = "<button id=del_suite suite_id={}>Delete</button>".format(li)
             table += "<tr style=\"background:lightgrey;\">" \
                      "<td>{}</td>" \
                      "<td>{}</td>" \
@@ -104,15 +104,26 @@ def init_all_suite(username, suite):
         auto_case_html += "</table>"
 
         case_html = "<table style=\"margin:1%; padding:1%;background:#EEEEEE; width:98%;border:1px solid black;\">"
-        if cases is not None:
-            case_html += "<tr><th colspan=4>Manual Cases</th></tr>"
-            case_html += "<tr><th>{}</th><th>{}</th><th>{}</th><th>{}</th></tr>".format("Case Id.", "Name", "Creator", "Created Date")
+        if cases is not None and len(cases) > 0:
+            case_html += "<tr><th colspan=7 style=\"border:1px solid black;\">Manual Cases</th></tr>"
+            case_html += "<tr><th style=\"border:1px solid black;\">{}</th>" \
+                         "<th style=\"border:1px solid black;\">{}</th>" \
+                         "<th style=\"border:1px solid black;\">{}</th>" \
+                         "<th style=\"border:1px solid black;\">{}</th>" \
+                         "<th colspan=3 style=\"border:1px solid black;\">{}</th></tr>".format("Case Id.", "Name", "Creator", "Created Date", "")
             for case in cases.keys():
                 case_html += "<tr>"
-                case_html += "<td>{}<td>".format(case)
-                case_html += "<td>{}<td>".format(cases[case]["name"])
-                case_html += "<td>{}<td>".format(cases[case]["creator"])
-                case_html += "<td>{}<td>".format(cases[case]["created_date"])
+                case_html += "<td style=\"border:1px solid black;\">{}</td>".format(case)
+                case_html += "<td style=\"border:1px solid black;\">{}</td>".format(cases[case]["name"])
+                case_html += "<td style=\"border:1px solid black;\">{}</td>".format(cases[case]["creator"])
+                case_html += "<td style=\"border:1px solid black;\">{}</td>".format(cases[case]["created_date"])
+                case_html += "<td style=\"border:1px solid black;\">" \
+                             "<a style=\"text-decoration:none;\" target=_blank href=/PLAN?suite={}&case={}>" \
+                             "open</a></td>".format(suite, case)
+                case_html += "<td style=\"border:1px solid black;\">" \
+                             "<button id=edit_case suite_id={} case_id={}>Edit</button></td>".format(suite, case)
+                case_html += "<td style=\"border:1px solid black;\">" \
+                             "<button id=del_case suite_id={} case_id={}>Delete</button></td>".format(suite, case)
                 case_html += "</tr>"
 
         else:
@@ -210,7 +221,13 @@ def suite_plan(request):
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.add_suite(name, creator, suite_list, project))
             elif action == "submit_case_form":
-                pass
+                name = request.POST["name"]
+                creator = request.session.get("username")
+                desc = request.POST["desc"]
+                steps = request.POST["steps"]
+                suite = request.POST["suite"]
+                suites_manage = suite_manager(pool_1)
+                return HttpResponse(suites_manage.add_case(name, suite, creator, desc, steps))
             else:
                 pass
 

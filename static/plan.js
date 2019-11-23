@@ -77,6 +77,13 @@ function suite_plan(data){
                     clr_msg();
                 });
                 $("#submit_case").click(function(){
+                    data = {}
+                    data["name"] = $("#case_name").val();
+                    data["desc"] = $("#case_desc").val();
+                    data["steps"] = $("#case_step").val();
+                    data["suite"] = window.location.href.split("=")[1]
+                    data["action"] = "submit_case_form"
+                    suite_plan(data)
                 });
             break
         }

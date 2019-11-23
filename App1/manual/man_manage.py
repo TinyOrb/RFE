@@ -61,8 +61,31 @@ class suite_manager:
             time.sleep(1)
         return {"Multi operation: failure": "timeout"}
 
-    def add_test(self, suite_id, data):
-        test_name = data["name"]
-        test_desc = data["desc"]
-        links = data["links"]
-        self.pool.action("write", data="", operation=self.add_ops)
+    def add_case_ops(self, name, suite, creator, desc, step):
+
+        def add_case(data):
+            case_id = "C{}".format(data["next_case_id"])
+            if data["suites"][suite].get("cases") is None:
+                data["suites"][suite]["cases"] = {}
+            data["suites"][suite]["cases"][case_id] ={}
+            data["suites"][suite]["cases"][case_id]["name"] = name
+            data["suites"][suite]["cases"][case_id]["scenario"] = step
+            data["suites"][suite]["cases"][case_id]["description"] = desc
+            data["suites"][suite]["cases"][case_id]["creator"] = creator
+            data["suites"][suite]["cases"][case_id]["created_date"] = time.asctime(time.localtime(time.time()))
+            data["next_case_id"] += 1
+            return data
+        return add_case
+
+    def add_case(self, name, suite, creator, desc, step):
+        ops = self.add_case_ops(name, suite, creator, desc, step)
+        thread_id = self.pool.action("multi", operation=ops)
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
+                0].lower():
+                data = result.values()[0]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Multi operation: failure": "timeout"}
