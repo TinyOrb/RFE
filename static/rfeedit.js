@@ -198,7 +198,7 @@ function fetch_content(){
                         ms = _ms;
                     }
                     do_update = 0;
-                    clr_msg();
+                    setTimeout(function() { clr_msg(); }, 3000);
                  }
                 else{
                     fetch_fail = 1
@@ -238,7 +238,8 @@ function update_content(){
                             ts = tc
                             ms = mc
                        prompt_msg("Saved successfully");
-                       clr_msg();
+                       setTimeout(function() { clr_msg(); }, 3000);
+
                        //console.log("write succeed");
                        update_fail = 2
                    }

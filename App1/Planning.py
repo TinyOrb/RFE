@@ -66,8 +66,8 @@ def init_all_suite(username, suite):
                  "<th colspan=3></th>" \
                  "<th style=\"width:10%;\">{}</th></tr>".format("Suite id.", "Suite name", "Owner", "Created On")
         for li in suites_list:
-            edit_btn = "<button id=edit_suite suite_id={}>Edit</button>".format(li)
-            del_btn = "<button id=del_suite suite_id={}>Delete</button>".format(li)
+            edit_btn = "<button class=edit_suite suite_id={}>Edit</button>".format(li)
+            del_btn = "<button class=del_suite suite_id={}>Delete</button>".format(li)
             table += "<tr style=\"background:lightgrey;\">" \
                      "<td>{}</td>" \
                      "<td>{}</td>" \
@@ -121,9 +121,9 @@ def init_all_suite(username, suite):
                              "<a style=\"text-decoration:none;\" target=_blank href=/PLAN?suite={}&case={}>" \
                              "open</a></td>".format(suite, case)
                 case_html += "<td style=\"border:1px solid black;\">" \
-                             "<button id=edit_case suite_id={} case_id={}>Edit</button></td>".format(suite, case)
+                             "<button class=edit_case suite_id={} case_id={}>Edit</button></td>".format(suite, case)
                 case_html += "<td style=\"border:1px solid black;\">" \
-                             "<button id=del_case suite_id={} case_id={}>Delete</button></td>".format(suite, case)
+                             "<button class=del_case suite_id={} case_id={}>Delete</button></td>".format(suite, case)
                 case_html += "</tr>"
 
         else:
@@ -188,6 +188,41 @@ def form_case():
 
     return json.dumps({"form": table})
 
+
+def edit_form(suite, case=None):
+    '''
+    Return edit form
+    '''
+    suites = suite_manager(pool_1)
+    match_suite = suites.get_suite(suite)
+    if case is None:
+        projects = meta.Test_Suite_Folder.keys()
+        projects_dict = {}
+
+        for project in projects:
+            projects_dict[project] = Al_robot_parser.get_sub_suite(meta.Test_Suite_Folder[project]).values()
+        table = "<div id=\"case_form\" style=\"width:40%;height:30%;\">" \
+                "<table style=\"width:100%;\">"
+        table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Suite Name </td>" \
+                 "<td style=\"width:60%;\">" \
+                 "<input type=text id=suite_name style=\"width:auto;\" value=\"{}\"></td></tr>".format(match_suite["name"])
+        table += "<tr><td> Automation projects </td><td><select id=selected_project>"
+        for project in projects:
+            if match_suite.get("script_project") is not None and match_suite["script_project"] == project:
+                table += "<option selected value={}>{}</option>".format(project, project)
+            else:
+                table += "<option value={}>{}</option>".format(project, project)
+        table += "</select></td></tr>"
+        table += "<tr><td> Suite List </td><td> <select multiple=\"multiple\" id=select_suite></select></td></tr>"
+        table += "<tr><td><button suite_id={} id=update_suite> Update Suite </button></td>" \
+                 "<td><button id=cancel_form> Cancel </td></tr>".format(suite)
+        table += "</table></div>"
+
+        return json.dumps({"form": table, "projects": projects_dict})
+    else:
+        match_case = match_suite.get("cases")[case]
+
+
 @ensure_csrf_cookie
 def suite_plan(request):
     if request.session.get("username") is None:
@@ -208,8 +243,19 @@ def suite_plan(request):
 
             if action == "suite_form":
                 return HttpResponse(form_suite())
+
             elif action == "case_form":
                 return HttpResponse(form_case())
+
+            elif action == "edit_suite_form":
+                suite = request.POST["suite"]
+                return HttpResponse(edit_form(suite))
+
+            elif action == "edit_case_form":
+                suite = request.POST["suite"]
+                case = request.POST["case"]
+                return HttpResponse(edit_form(suite, case))
+
             elif action == "submit_suite_form":
                 name = request.POST["name"]
                 creator = request.session.get("username")
@@ -220,6 +266,7 @@ def suite_plan(request):
                     suite_list = request.POST["suite_list"].split(",")
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.add_suite(name, creator, suite_list, project))
+
             elif action == "submit_case_form":
                 name = request.POST["name"]
                 creator = request.session.get("username")
@@ -228,6 +275,7 @@ def suite_plan(request):
                 suite = request.POST["suite"]
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.add_case(name, suite, creator, desc, steps))
+
             else:
                 pass
 

@@ -25,6 +25,37 @@ $(document).ready(function(){
         data = {"action":"case_form"}
         suite_plan(data)
     });
+
+    $(".edit_suite").click(function(){
+        data = {}
+        data["suite"] = $(this).attr("suite_id")
+        data["action"] = "edit_suite_form"
+        suite_plan(data)
+    });
+
+    $(".edit_case").click(function(){
+        data = {}
+        data["suite"] = $(this).attr("suite_id")
+        data["case"] = $(this).attr("case_id")
+        data["action"] = "edit_case_form"
+        suite_plan(data)
+    });
+
+    $(".del_suite").click(function(){
+        data = {}
+        data["suite"] = $(this).attr("suite_id")
+        data["action"] = "del_suite"
+        suite_plan(data)
+    });
+
+    $(".del_case").click(function(){
+        data = {}
+        data["suite"] = $(this).attr("suite_id")
+        data["case"] = $(this).attr("case_id")
+        data["action"] = "del_case"
+        suite_plan(data)
+    });
+
 	console.log("loaded")
 
 });
@@ -85,6 +116,42 @@ function suite_plan(data){
                     data["action"] = "submit_case_form"
                     suite_plan(data)
                 });
+            break
+            case "edit_suite_form":
+                load_form(p_msg.form);
+
+                project = $("#selected_project option:selected").text();
+                $("#select_suite").html("")
+                p_msg.projects[project].forEach(select_html)
+
+                $("#selected_project").change(function(){
+                    project = $("#selected_project option:selected").val();
+                    $("#select_suite").html("");
+                    p_msg.projects[project].forEach(select_html);
+                });
+
+                $("#cancel_form").click(function(){
+                    clr_msg();
+                });
+            break
+            case "edit_case_form":
+                load_form(p_msg.form);
+                $("#cancel_form").click(function(){
+                    clr_msg();
+                });
+                $("#submit_case").click(function(){
+                    data = {}
+                    data["name"] = $("#case_name").val();
+                    data["desc"] = $("#case_desc").val();
+                    data["steps"] = $("#case_step").val();
+                    data["suite"] = window.location.href.split("=")[1]
+                    data["action"] = "submit_case_form"
+                    suite_plan(data)
+                });
+            break
+            case "del_suite":
+            break
+            case "del_case":
             break
         }
 	})
