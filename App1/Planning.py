@@ -201,7 +201,7 @@ def edit_form(suite, case=None):
 
         for project in projects:
             projects_dict[project] = Al_robot_parser.get_sub_suite(meta.Test_Suite_Folder[project]).values()
-        table = "<div id=\"case_form\" style=\"width:40%;height:30%;\">" \
+        table = "<div id=\"edit_suite_form\" style=\"width:40%;height:30%;\">" \
                 "<table style=\"width:100%;\">"
         table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Suite Name </td>" \
                  "<td style=\"width:60%;\">" \
@@ -276,6 +276,25 @@ def suite_plan(request):
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.add_case(name, suite, creator, desc, steps))
 
+            elif action == "update_suite":
+                name = request.POST["name"]
+                creator = request.session.get("username")
+                suite = request.POST["suite"]
+                project = request.POST["project"]
+                if request.POST["suite_list"] == "":
+                    suite_list = None
+                else:
+                    suite_list = request.POST["suite_list"].split(",")
+                suites_manage = suite_manager(pool_1)
+                return HttpResponse(suites_manage.update_suite(suite, name, creator, suite_list, project))
+
+            elif action == "update_case":
+                pass
+
+            elif action == "del_suite":
+                suite = request.POST["suite"]
+                suites_manage = suite_manager(pool_1)
+                return HttpResponse(suites_manage.del_suite(suite))
             else:
                 pass
 

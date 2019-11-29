@@ -98,9 +98,9 @@ function suite_plan(data){
                 })
             break
             case "submit_suite_form":
-            if(msg == 0){
-                prompt_msg("successfully add suite")
-            }
+                if(msg == 0){
+                    prompt_msg("successfully add suite");
+                }
             break
             case "case_form":
                 load_form(p_msg.form);
@@ -117,6 +117,11 @@ function suite_plan(data){
                     suite_plan(data)
                 });
             break
+            case "submit_case_form":
+            if(msg == 0){
+                prompt_msg("successfully add case");
+            }
+            break
             case "edit_suite_form":
                 load_form(p_msg.form);
 
@@ -130,9 +135,24 @@ function suite_plan(data){
                     p_msg.projects[project].forEach(select_html);
                 });
 
+                $("#update_suite").click(function(){
+                    data = {}
+                    data["suite"] = $("#update_suite").attr("suite_id");
+                    data["name"] = $("#suite_name").val();
+                    data["project"] = project
+                    data["action"] = "update_suite"
+                    data["suite_list"] = $("#select_suite option:selected").toArray().map(item => item.value).join();
+                    suite_plan(data)
+                });
+
                 $("#cancel_form").click(function(){
                     clr_msg();
                 });
+            break
+            case "update_suite":
+                if(msg == 0){
+                    prompt_msg("Suite successfully updated");
+                }
             break
             case "edit_case_form":
                 load_form(p_msg.form);
@@ -149,7 +169,11 @@ function suite_plan(data){
                     suite_plan(data)
                 });
             break
+
             case "del_suite":
+                if(msg == 0){
+                    prompt_msg("successfully suite deleted");
+                }
             break
             case "del_case":
             break

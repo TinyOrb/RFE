@@ -28,8 +28,52 @@ class suite_manager:
             time.sleep(1)
         return {"Read: failure": "timeout"}
 
-    def update_suite(self, suite_id, data):
-        pass
+    def update_suite_ops(self, suite, name, creator, suite_list, project):
+
+        def update_suite(data):
+            data["suites"][suite]["name"] = name
+            data["suites"][suite]["modifier"] = creator
+            if suite_list is not None:
+                data["suites"][suite]["script_project"] = project
+                data["suites"][suite]["script_suite"] = suite_list
+            data["suites"][suite]["modified_date"] = time.asctime(time.localtime(time.time()))
+            return data
+
+        return update_suite
+
+    def update_suite(self, suite, name, creator, suite_list, project):
+        ops = self.update_suite_ops(suite, name, creator, suite_list, project)
+        thread_id = self.pool.action("multi", operation=ops)
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
+                data = result.values()[0]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Multi operation: failure": "timeout"}
+
+    def del_suite_ops(self, suite):
+
+        def del_suite(data):
+            del data["suites"][suite]
+            return data
+
+        return del_suite
+
+
+    def del_suite(self, suite):
+        ops = self.del_suite_ops(suite)
+        thread_id = self.pool.action("multi", operation=ops)
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
+                0].lower():
+                data = result.values()[0]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Multi operation: failure": "timeout"}
 
     def update_test_execution(self, test_execution_id):
         pass
