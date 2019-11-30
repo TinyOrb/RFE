@@ -159,23 +159,32 @@ function suite_plan(data){
                 $("#cancel_form").click(function(){
                     clr_msg();
                 });
-                $("#submit_case").click(function(){
+                $("#update_case").click(function(){
                     data = {}
+                    data["suite"] = $("#update_case").attr("suite_id")
+                    data["case"] = $("#update_case").attr("case_id")
                     data["name"] = $("#case_name").val();
                     data["desc"] = $("#case_desc").val();
                     data["steps"] = $("#case_step").val();
                     data["suite"] = window.location.href.split("=")[1]
-                    data["action"] = "submit_case_form"
+                    data["action"] = "update_case"
                     suite_plan(data)
                 });
             break
-
+            case "update_case":
+                if(msg == 0){
+                    prompt_msg("Case successfully updated");
+                }
+            break
             case "del_suite":
                 if(msg == 0){
                     prompt_msg("successfully suite deleted");
                 }
             break
             case "del_case":
+                if(msg == 0){
+                    prompt_msg("successfully case deleted");
+                }
             break
         }
 	})

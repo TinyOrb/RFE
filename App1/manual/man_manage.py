@@ -61,7 +61,6 @@ class suite_manager:
 
         return del_suite
 
-
     def del_suite(self, suite):
         ops = self.del_suite_ops(suite)
         thread_id = self.pool.action("multi", operation=ops)
@@ -74,9 +73,6 @@ class suite_manager:
                 return data
             time.sleep(1)
         return {"Multi operation: failure": "timeout"}
-
-    def update_test_execution(self, test_execution_id):
-        pass
 
     def add_suite_ops(self, name, creator, suite_list, project):
 
@@ -133,3 +129,52 @@ class suite_manager:
                 return data
             time.sleep(1)
         return {"Multi operation: failure": "timeout"}
+
+    def update_case_ops(self, name, suite, case, creator, desc, steps):
+
+        def update_case(data):
+            data["suites"][suite]["cases"][case]["name"] = name
+            data["suites"][suite]["cases"][case]["scenario"] = steps
+            data["suites"][suite]["cases"][case]["description"] = desc
+            data["suites"][suite]["cases"][case]["modifier"] = creator
+            data["suites"][suite]["cases"][case]["modified_date"] = time.asctime(time.localtime(time.time()))
+            return data
+
+        return update_case
+
+    def update_case(self, name, suite, case, creator, desc, steps):
+        ops = self.update_case_ops(name, suite, case, creator, desc, steps)
+        thread_id = self.pool.action("multi", operation=ops)
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
+                0].lower():
+                data = result.values()[0]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Multi operation: failure": "timeout"}
+
+    def del_case_ops(self, suite, case):
+
+        def del_case(data):
+            del data["suites"][suite]["cases"][case]
+            return data
+
+        return del_case
+
+    def del_case(self, suite, case):
+        ops = self.del_case_ops(suite, case)
+        thread_id = self.pool.action("multi", operation=ops)
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
+                0].lower():
+                data = result.values()[0]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Multi operation: failure": "timeout"}
+
+    def update_test_execution(self, test_execution_id):
+        pass

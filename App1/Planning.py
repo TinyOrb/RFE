@@ -221,6 +221,22 @@ def edit_form(suite, case=None):
         return json.dumps({"form": table, "projects": projects_dict})
     else:
         match_case = match_suite.get("cases")[case]
+        table = "<div id=\"case_form\" style=\"overflow-y:auto;\">" \
+                "<table style=\"width:100%;\">"
+        table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Case Name </td>" \
+                 "<td style=\"width:60%;\"><input type=text id=case_name style=\"width:auto;\" value=\"{}\"></td></tr>"\
+            .format(match_case["name"])
+        table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Description </td>" \
+                 "<td style=\"width:60%;\"><textarea id=case_desc cols=30 rows=5>{}</textarea></td></tr>"\
+            .format(match_case["description"])
+        table += "<tr style=\"background:#2f4f4f;color:white;\"><td style=\"width:40%;\">Steps </td>" \
+                 "<td style=\"width:60%;\"><textarea id=case_step cols=30 rows=5>{}</textarea></td></tr>"\
+            .format(match_case["scenario"])
+        table += "<tr><td><button id=update_case suite_id={} case_id={}> Update Case </button></td>" \
+                 "<td><button id=cancel_form> Cancel </td></tr>".format(suite, case)
+        table += "</table></div>"
+
+        return json.dumps({"form": table})
 
 
 @ensure_csrf_cookie
@@ -289,12 +305,25 @@ def suite_plan(request):
                 return HttpResponse(suites_manage.update_suite(suite, name, creator, suite_list, project))
 
             elif action == "update_case":
-                pass
+                name = request.POST["name"]
+                creator = request.session.get("username")
+                desc = request.POST["desc"]
+                steps = request.POST["steps"]
+                suite = request.POST["suite"]
+                case = request.POST["case"]
+                suites_manage = suite_manager(pool_1)
+                return HttpResponse(suites_manage.update_case(name, suite, case, creator, desc, steps))
 
             elif action == "del_suite":
                 suite = request.POST["suite"]
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.del_suite(suite))
+
+            elif action == "del_case":
+                suite = request.POST["suite"]
+                case = request.POST["case"]
+                suites_manage = suite_manager(pool_1)
+                return HttpResponse(suites_manage.del_case(suite, case))
             else:
                 pass
 
