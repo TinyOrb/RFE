@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^GETSERVERNOW$', RFE.get_time, name="ctime"),
     url('GETALLSUITES$', RFE.GetAllSuites, name="get_all"),
     url('MANAGEFEAT$', RFE.manage_feat, name="manage_feat"),
-    url('PLAN$', Planning.suite_plan, name="suite_plan")
+    url('PLAN$', Planning.suite_plan, name="suite_plan"),
+    url('EXEC$', Planning.suite_execution, name="")
     #path(r'^App1/',Test.test1, name="index")
 ]

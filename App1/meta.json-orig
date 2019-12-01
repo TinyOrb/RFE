@@ -22,14 +22,14 @@
     "admin": {
         "password": "defaultpassword",
         "project_access": [
-            {"project1": "edit", "del"},
-            {"project2":"edit", "del"}
+            {"project1": ["edit", "del"]},
+            {"project2":["edit", "del"]}
         ]
     },
     "guest": {
         "password": "guestpassword",
         "project_access": [
-            {"project1" : "edit", "del"}
+            {"project1" : ["edit", "del"]}
          ]
         }
     }

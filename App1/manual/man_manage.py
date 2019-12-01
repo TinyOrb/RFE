@@ -1,5 +1,5 @@
-import json
 import time
+
 
 class suite_manager:
 
@@ -176,5 +176,3 @@ class suite_manager:
             time.sleep(1)
         return {"Multi operation: failure": "timeout"}
 
-    def update_test_execution(self, test_execution_id):
-        pass

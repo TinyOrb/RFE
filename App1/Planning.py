@@ -29,6 +29,7 @@ from App1.misc.rw_pool import rw_pool
 from modelling.HTMLLoader import htmlstructure
 import App1.settings as meta
 from App1.manual.man_manage import suite_manager
+from App1.manual.man_execution import exec_manager
 from App1.Robot_loader import Al_robot_parser
 from App1.Robot_loader import Al_robot
 
@@ -44,7 +45,6 @@ def init_all_suite(username, suite):
     Return suite planning page html
     '''
     suites = suite_manager(pool_1)
-
 
     dct = {
         "body$b1": header.format(username),
@@ -91,7 +91,6 @@ def init_all_suite(username, suite):
         automation_case = {}
         feature = match_suite.get("script_project")
 
-
         for script in script_suite:
             match_script = filter(lambda x : x["name"] == script, Al_robot_parser.get_testcases_list(feature, Al_robot.fetch_All_suite()[feature])["suites"])
             automation_case[script] = match_script[0]["tcs"]
@@ -130,21 +129,25 @@ def init_all_suite(username, suite):
             case_html += "<tr><th colspan=4>No Manual Cases</th></tr>"
         case_html += "</table>"
 
-        table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">"
+        table = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;background:#FFFFE0;height:80%;\">"
         table += "<h2>{}</h2>".format(name)
+        table += "<div style=\"overflow-y:auto;height:90%;\">"
         table += auto_case_html
         table += case_html
-        table += "</div>"
+        table += "</div></div>"
         dct["body$b2"] = table
 
         dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
                          "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
 
         dct["body$b4"] = "<div style=\"width:94%;margin:1%;height:15%;\">" \
-                         "<button style=\"padding:0.5% 1%;margin:0 1%;\" id=add_case>Add Test Case</button></div>"
+                         "<button style=\"padding:0.5% 1%;margin:0 1%;\" id=add_case>Add Test Case</button>" \
+                         "<button style=\"padding:0.5% 1%;margin:0 1%;\" suite_id={} id=exec_suite>" \
+                         "Execute Suite</button></div>".format(suite)
 
     dct["body$b5"] = "<div id=load_message name=load_message></div>"
     return htmlstructure(**dct)
+
 
 def form_suite():
     '''
@@ -169,6 +172,7 @@ def form_suite():
     table += "</table></div>"
 
     return json.dumps({"form": table, "projects": projects_dict})
+
 
 def form_case():
     '''
@@ -237,6 +241,22 @@ def edit_form(suite, case=None):
         table += "</table></div>"
 
         return json.dumps({"form": table})
+
+
+def instantiate_suite(username, suite):
+    suites_manage = suite_manager(pool_1)
+    match_suite = suites_manage.get_suite(suite)
+    feature = match_suite.get("script_project")
+    script_suite = match_suite.get("script_suite")
+    automation_case = {}
+
+    for script in script_suite:
+        match_script = filter(lambda x: x["name"] == script, Al_robot_parser.
+                              get_testcases_list(feature, Al_robot.fetch_All_suite()[feature])["suites"])
+        automation_case[script] = match_script[0]["tcs"]
+
+    exec_manage = exec_manager(pool_1)
+    return exec_manage.instantiate(username, manual=match_suite, automation=automation_case)
 
 
 @ensure_csrf_cookie
@@ -324,21 +344,51 @@ def suite_plan(request):
                 case = request.POST["case"]
                 suites_manage = suite_manager(pool_1)
                 return HttpResponse(suites_manage.del_case(suite, case))
+
+            elif action == "instantiate_suite":
+                suite = request.POST["suite"]
+                return HttpResponse(instantiate_suite(suite))
             else:
-                pass
+                return HttpResponse(status=404)
 
         else:
             return HttpResponse(status=204)
 
 
-@ensure_csrf_cookie
-def test_plan(request):
-    if request.session.get("username") is None:
-        return redirect("/expire")
-    else:
-        if request.method == "POST":
-            date = str(time.time() * 1000)
+def init_execution(username, suite):
+    suites = exec_manager(pool_1)
 
+    dct = {
+        "body$b1": header.format(username),
+        "script$s1": "../static/jquery.min.js",
+        "script$s2": "static/he.js",
+        "style$t1": "../static/plan.css",
+        "bscript$s1": "../static/plan.js",
+        "headrawmeta$m1": "<title>execution</title>"
+    }
+    if suite is None:
+        all_suite = suites.get_suites()
+        suites_list = all_suite.keys()
+        if suites_list is not None or len(suites_list) > 0:
+            html = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">"
+            html += "<table style=\"width:100%;\"><tr style=\"background:#2f4f4f;color:white;\">" \
+                    "<th>{}</th><th>{}</th><th>{}</th><th colspan=2>{}</th></tr><tbody>"\
+                .format("Id.", "Name", "Creator", "")
+            for s in suites_list:
+                html += "<tr style=\"background:lightgrey;\"><td>{}</td><td>{}</td><td>{}</td><td>" \
+                        "<button class=open es_id={}>open</button></td>" \
+                        "<td><button class=open es_id={}>delete</button></td></tr>"\
+                    .format(s, all_suite[s]["name"], all_suite[s]["creator"], s, s)
+            html += "</tbody></table></div>"
+            dct["body$b2"] = html
+        else:
+            dct["body$b2"] = "<div>No suite in execution</div>"
+    else:
+        pass
+    dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
+                     "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
+    dct["body$b5"] = "<div id=load_message name=load_message></div>"
+    return htmlstructure(**dct)
 
 
 @ensure_csrf_cookie
@@ -346,53 +396,14 @@ def suite_execution(request):
     if request.session.get("username") is None:
         return redirect("/expire")
     else:
-        if request.method == "POST":
-            date = request.POST["date"]
-            suite = request.POST["suite"]
-            # create new instance of suite with S1000
-
-            ## code here
-
-        elif request.method == "PUT":
-            instance_id = request.PUT["instance_id"]
-            action = request.PUT["action"]
-            if action == "update":
-                tc = request.PUT["tc"]
-
-                #update the run instance
-
-                # code here
-
-            elif action == "map_script_log":
-                log_info = request.PUT["log"]
-
-                #update the instance after after the script log
-
-                # code here
-
-            else:
-                pass
-                #future scope
-
-        elif request.method == "GET":
+        if request.method == "GET":
             try:
-                suite_id = request.GET["suite_id"]
+                suite = request.GET["suite"]
             except Exception as e:
-                suite_id = None
-            if suite_id is None:
-                # Get all the manual suite list with add, edit and delete controller
-                pass
-                # Code Here
-            else:
-                action = ""
-        else:
+                suite = None
+            return HttpResponse(init_execution(request.session.get("username"), suite))
+
+        elif request.method == "POST":
             pass
-            #future scope
-
-
-@ensure_csrf_cookie
-def test_execution(request):
-    if request.session.get("username") is None:
-        return redirect("/expire")
-    else:
-        pass
+        else:
+            return HttpResponse(status=404)

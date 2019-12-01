@@ -56,6 +56,13 @@ $(document).ready(function(){
         suite_plan(data)
     });
 
+    $("#exec_suite").click(function(){
+        data = {}
+        data["suite"] = $(this).attr("suite_id")
+        data["action"] = "instantiate_suite"
+        suite_plan(data)
+    });
+
 	console.log("loaded")
 
 });
@@ -100,6 +107,7 @@ function suite_plan(data){
             case "submit_suite_form":
                 if(msg == 0){
                     prompt_msg("successfully add suite");
+                    location.reload();
                 }
             break
             case "case_form":
@@ -120,6 +128,7 @@ function suite_plan(data){
             case "submit_case_form":
             if(msg == 0){
                 prompt_msg("successfully add case");
+                location.reload();
             }
             break
             case "edit_suite_form":
@@ -152,6 +161,7 @@ function suite_plan(data){
             case "update_suite":
                 if(msg == 0){
                     prompt_msg("Suite successfully updated");
+                    location.reload();
                 }
             break
             case "edit_case_form":
@@ -174,16 +184,19 @@ function suite_plan(data){
             case "update_case":
                 if(msg == 0){
                     prompt_msg("Case successfully updated");
+                    location.reload();
                 }
             break
             case "del_suite":
                 if(msg == 0){
                     prompt_msg("successfully suite deleted");
+                    location.reload();
                 }
             break
             case "del_case":
                 if(msg == 0){
                     prompt_msg("successfully case deleted");
+                    location.reload();
                 }
             break
         }
