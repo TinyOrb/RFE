@@ -10,21 +10,29 @@ class exec_manager:
 
         def instantiate(data):
             suite_id = "ES{}".format(data["next_exec_suite_id"])
-            data["execution_suite"][suite_id] = {}
-            data["execution_suite"][suite_id]["name"] = manual["name"]
-            data["execution_suite"][suite_id]["creator"] = username
-            data["execution_suite"][suite_id]["script_suite"] = manual.get("script_suite")
-            data["execution_suite"][suite_id]["creation_date"] = time.asctime(time.localtime(time.time()))
-            data["execution_suite"][suite_id]["script_project"] = manual.get("script_project")
-            data["execution_suite"][suite_id]["m_cases"] = {}
-            data["execution_suite"][suite_id]["a_cases"] = {}
-            case_id = "EC{}".format(data["next_exec_case_id"])
-            if manual.get("cases") is None:
-                data["execution_suite"][suite_id]["m_cases"][case_id] = {}
-                manual["cases"]
-                case_id += 1
-
-            data["execution_suite"][suite_id]["a_cases"] = {}
+            data["execution_suites"][suite_id] = {}
+            data["execution_suites"][suite_id]["name"] = manual["name"]
+            data["execution_suites"][suite_id]["creator"] = username
+            data["execution_suites"][suite_id]["script_suite"] = manual.get("script_suite")
+            data["execution_suites"][suite_id]["creation_date"] = time.asctime(time.localtime(time.time()))
+            data["execution_suites"][suite_id]["script_project"] = manual.get("script_project")
+            data["execution_suites"][suite_id]["m_cases"] = {}
+            data["execution_suites"][suite_id]["a_cases"] = {}
+            case_id = data["next_exec_case_id"]
+            if manual.get("cases") is not None and len(manual) > 0:
+                for case in manual["cases"].keys():
+                    data["execution_suites"][suite_id]["m_cases"]["EC{}".format(case_id)] = {}
+                    data["execution_suites"][suite_id]["m_cases"]["EC{}".format(case_id)]["name"] = manual["cases"][case]["name"]
+                    data["execution_suites"][suite_id]["m_cases"]["EC{}".format(case_id)]["description"] = manual["cases"][case]["description"]
+                    data["execution_suites"][suite_id]["m_cases"]["EC{}".format(case_id)]["scenario"] = manual["cases"][case]["scenario"]
+                    case_id += 1
+            if automation is not None and len(automation) > 0:
+                for script in automation.keys():
+                    for case in automation[script]:
+                        data["execution_suites"][suite_id]["a_cases"]["EC{}".format(case_id)] = {}
+                        data["execution_suites"][suite_id]["a_cases"]["EC{}".format(case_id)]["name"] = case.get("name")
+                        #future bring automation case name with keyword step
+                        case_id += 1
             data["next_exec_case_id"] = case_id
             data["next_exec_suite_id"] += 1
             return data
@@ -48,7 +56,7 @@ class exec_manager:
         for iter in range(10):
             result = self.pool.get_thread_buffer(thread_id)
             if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
-                data = result.values()[0]["execution_suite"]
+                data = result.values()[0]["execution_suites"]
                 self.pool.remove_thread_buffer(thread_id)
                 return data
             time.sleep(1)
@@ -59,7 +67,7 @@ class exec_manager:
         for iter in range(10):
             result = self.pool.get_thread_buffer(thread_id)
             if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
-                data = result.values()[0]["execution_suite"][suite]
+                data = result.values()[0]["execution_suites"][suite]
                 self.pool.remove_thread_buffer(thread_id)
                 return data
             time.sleep(1)

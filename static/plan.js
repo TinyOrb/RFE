@@ -199,6 +199,11 @@ function suite_plan(data){
                     location.reload();
                 }
             break
+            case "instantiate_suite":
+                if(msg == 0){
+                    prompt_msg("successfully suite instantiated");
+                }
+            break
         }
 	})
 

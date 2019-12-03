@@ -347,7 +347,7 @@ def suite_plan(request):
 
             elif action == "instantiate_suite":
                 suite = request.POST["suite"]
-                return HttpResponse(instantiate_suite(suite))
+                return HttpResponse(instantiate_suite(request.session.get("username"), suite))
             else:
                 return HttpResponse(status=404)
 
