@@ -355,6 +355,22 @@ def suite_plan(request):
             return HttpResponse(status=204)
 
 
+def format_select_case_result(select, suite, case, _type, script=0):
+    if select == "failed":
+        status_select = "<select class=result_exec es_id={} case_id={} type={} script={}><option value=passed selected=selected>passed</option>" \
+                        "<option value=failed>failed</option>" \
+                        "<option value=not_tested>not tested</option></select>".format(suite, case, _type, script)
+    elif select == "passed":
+        status_select = "<select class=result_exec es_id={} case_id={} type={} script={}><option value=passed>passed</option>" \
+                        "<option value=failed selected=selected>failed</option>" \
+                        "<option value=not_tested>not tested</option></select>".format(suite, case, _type, script)
+    else:
+        status_select = "<select class=result_exec es_id={} case_id={} type={} script={}><option value=passed>passed</option>" \
+                        "<option value=failed>failed</option>" \
+                        "<option value=not_tested  selected=selected>not tested</option></select>".format(suite, case, _type, script)
+    return status_select
+
+
 def init_execution(username, suite):
     suites = exec_manager(pool_1)
 
@@ -363,7 +379,7 @@ def init_execution(username, suite):
         "script$s1": "../static/jquery.min.js",
         "script$s2": "static/he.js",
         "style$t1": "../static/plan.css",
-        "bscript$s1": "../static/plan.js",
+        "bscript$s1": "../static/exec.js",
         "headrawmeta$m1": "<title>execution</title>"
     }
     if suite is None:
@@ -376,15 +392,33 @@ def init_execution(username, suite):
                 .format("Id.", "Name", "Creator", "")
             for s in suites_list:
                 html += "<tr style=\"background:lightgrey;\"><td>{}</td><td>{}</td><td>{}</td><td>" \
-                        "<button class=open es_id={}>open</button></td>" \
-                        "<td><button class=open es_id={}>delete</button></td></tr>"\
+                        "<a href=\"/EXEC?es_id={}\" target=_blank>open</a></td>" \
+                        "<td><button class=delete es_id={}>delete</button></td></tr>"\
                     .format(s, all_suite[s]["name"], all_suite[s]["creator"], s, s)
             html += "</tbody></table></div>"
             dct["body$b2"] = html
         else:
             dct["body$b2"] = "<div>No suite in execution</div>"
     else:
-        pass
+        match_suite = suites.get_suite(suite)
+        html = "<div id=\"suites_block\" style=\"width:70%;float:left;margin:1% 2%;overflow-y:auto;background:#FFFFE0;height:80%;\">"
+        html += "<table style=\"width:100%;\"><tr style=\"background:black;color:white;\">" \
+                "<th colspan=3>{}</th></tr><tbody>".format(match_suite["name"])
+        html += "<tr style=\"background:#2f4f4f;color:white;\"><th style=\"width:15%;\">{}</th><th>{}</th><th style=\"width:15%;\">{}</th></tr>"\
+            .format("Id.", "Case", "Status")
+        for case in match_suite["m_cases"].keys():
+            html += "<tr style=\"background:lightgrey;\"><td>{}</td><td>{}</td><td>{}</td></tr>"\
+                .format(case, match_suite["m_cases"][case]["name"],
+                        format_select_case_result(match_suite["m_cases"][case]["result"], suite, case, "m"))
+        for script in match_suite["a_cases"].keys():
+            html += "<tr style=\"background:lightgrey;\"><th colspan=3>{}</th></tr>".format(script)
+            for case in match_suite["a_cases"][script].keys():
+                html += "<tr style=\"background:lightgrey;\"><td>{}</td><td>{}</td><td>{}</td></tr>" \
+                    .format(case, match_suite["a_cases"][script][case]["name"],
+                            format_select_case_result(match_suite["a_cases"][script][case]["result"], suite, case, "a", script))
+        html += "</tbody></table></div>"
+        dct["body$b2"] = html
+
     dct["body$b3"] = "<div style=\"width:20%;float:left;text-align:center;margin:1%;overflow-y:auto;background:#FFFFE0;height:80%;\">" \
                      "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
     dct["body$b5"] = "<div id=load_message name=load_message></div>"
@@ -398,12 +432,28 @@ def suite_execution(request):
     else:
         if request.method == "GET":
             try:
-                suite = request.GET["suite"]
+                suite = request.GET["es_id"]
             except Exception as e:
                 suite = None
             return HttpResponse(init_execution(request.session.get("username"), suite))
 
         elif request.method == "POST":
-            pass
+            try:
+                action = request.POST["action"]
+            except Exception as e:
+                action = None
+                logging.error(str(e))
+
+            if action == "update_case":
+                suite = request.POST["suite"]
+                case = request.POST["case"]
+                status = request.POST["status"]
+                script = request.POST["script"]
+                _type = request.POST["type"]
+                exec_manage = exec_manager(pool_1)
+                return HttpResponse(exec_manage.update_case(request.session.get("username"), suite, case, status, _type, script))
+
+            else:
+                return HttpResponse(status=404)
         else:
             return HttpResponse(status=404)
