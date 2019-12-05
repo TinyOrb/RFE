@@ -11,6 +11,9 @@ TC001 Verify animal is lion
 TC002 Verify animal is lion
     Verifying animal is    animal=Tiger
 
+TC1004 Verify nothing
+    Log   who cares
+
 *** Keywords ***
 Verifying animal is
     [Arguments]    ${animal}

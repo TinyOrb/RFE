@@ -39,6 +39,14 @@ $(document).ready(function(){
         suite_plan(data)
     });
 
+    $(".map_log_form").click(function(){
+        data = {}
+        data["suite"] = $(this).attr("es_id")
+        data["script"] = $(this).attr("script")
+        data["action"] = "map_log_form"
+        suite_plan(data)
+    });
+
 });
 
 function suite_plan(data){
@@ -58,7 +66,29 @@ function suite_plan(data){
                     prompt_msg("successfully updated case status");
                 }
 	    break
+	    case "map_log_form":
+	        load_form(p_msg.form);
+	        $("#cancel").click(function(){
+	            clr_msg();
+	        });
+	        $(".map_log").click(function(){
+	            data = {}
+                data["suite"] = $(this).attr("es_id")
+                data["script"] = $(this).attr("script")
+                data["project"] = $(this).attr("proj")
+                data["time"] = $(this).attr("time")
+                data["action"] = "map_log"
+                suite_plan(data)
+	        });
+	    break
+	    case "map_log":
+	        if(msg == 0){
+                    prompt_msg("Mapping successfully done");
+                    location.reload();
+                }
+	    break
 	    }
+
 	 });
 
 }

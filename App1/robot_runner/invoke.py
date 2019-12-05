@@ -64,7 +64,7 @@ class invoke:
                 current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
                 current_state["log"] = os.path.join(current_state["dir"], "log.html")
                 current_state["output"] = os.path.join(current_state["dir"], "report.html")
-                current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+                current_state["xml"] = os.path.join(current_state["dir"], "output.xml")
                 current_state["cmd"] = "python -m robot "
                 if include_tags is not None:
                     current_state["cmd"] += "--include \"%s\" " % include_tags
@@ -93,7 +93,7 @@ class invoke:
                 current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
                 current_state["log"] = os.path.join(current_state["dir"], "log.html")
                 current_state["output"] = os.path.join(current_state["dir"], "report.html")
-                current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+                current_state["xml"] = os.path.join(current_state["dir"], "output.xml")
                 current_state["cmd"] = "python -m robot "
                 if include_tags is not None:
                     current_state["cmd"] += "--include \"%s\" " % include_tags
@@ -120,7 +120,7 @@ class invoke:
                 current_state["script_output"] = os.path.join(current_state["dir"], "script.txt")
                 current_state["log"] = os.path.join(current_state["dir"], "log.html")
                 current_state["output"] = os.path.join(current_state["dir"], "report.html")
-                current_state["xml"] = os.path.join(current_state["dir"], "output.html")
+                current_state["xml"] = os.path.join(current_state["dir"], "output.xml")
                 current_state["cmd"] = "python -m robot "
                 if include_tags is not None:
                     current_state["cmd"] += "--include \"%s\" " % include_tags

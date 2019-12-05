@@ -65,7 +65,6 @@ class exec_manager:
         thread_id = self.pool.action("multi", operation=ops)
         for iter in range(10):
             result = self.pool.get_thread_buffer(thread_id)
-            print(result)
             if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
                 data = result.values()[0]
                 self.pool.remove_thread_buffer(thread_id)
@@ -94,7 +93,6 @@ class exec_manager:
         thread_id = self.pool.action("multi", operation=ops)
         for iter in range(10):
             result = self.pool.get_thread_buffer(thread_id)
-            print(result)
             if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
                 0].lower():
                 data = result.values()[0]
@@ -120,6 +118,31 @@ class exec_manager:
             result = self.pool.get_thread_buffer(thread_id)
             if result is not str and result != "No thread" and result is not None and "success" in result.keys()[0].lower():
                 data = result.values()[0]["execution_suites"][suite]
+                self.pool.remove_thread_buffer(thread_id)
+                return data
+            time.sleep(1)
+        return {"Read: failure": "timeout"}
+
+    def map_log_ops(self, suite, script, case_status):
+
+        def map_log(data):
+            print(data["execution_suites"][suite]["a_cases"][script].keys())
+            for case in data["execution_suites"][suite]["a_cases"][script].keys():
+                data["execution_suites"][suite]["a_cases"][script][case]["result"] \
+                    = case_status[data["execution_suites"][suite]["a_cases"][script][case]["name"]]
+            return data
+
+        return map_log
+
+    def map_log(self, suite, script, case_status):
+        ops = self.map_log_ops(suite, script, case_status)
+        thread_id = self.pool.action("multi", operation=ops)
+        for iter in range(10):
+            result = self.pool.get_thread_buffer(thread_id)
+            print(result)
+            if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
+                0].lower():
+                data = result.values()[0]
                 self.pool.remove_thread_buffer(thread_id)
                 return data
             time.sleep(1)

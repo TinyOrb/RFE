@@ -26,12 +26,14 @@ from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from App1.misc.rw_pool import rw_pool
+from App1.misc.parse_xml import parse_for_test
 from modelling.HTMLLoader import htmlstructure
 import App1.settings as meta
 from App1.manual.man_manage import suite_manager
 from App1.manual.man_execution import exec_manager
 from App1.Robot_loader import Al_robot_parser
 from App1.Robot_loader import Al_robot
+from robot_runner.invoke import invoke as invoke
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 pool_1 = rw_pool(20, "App1/all_manual.json")
@@ -356,11 +358,11 @@ def suite_plan(request):
 
 
 def format_select_case_result(select, suite, case, _type, script=0):
-    if select == "failed":
+    if select == "passed":
         status_select = "<select class=result_exec es_id={} case_id={} type={} script={}><option value=passed selected=selected>passed</option>" \
                         "<option value=failed>failed</option>" \
                         "<option value=not_tested>not tested</option></select>".format(suite, case, _type, script)
-    elif select == "passed":
+    elif select == "failed":
         status_select = "<select class=result_exec es_id={} case_id={} type={} script={}><option value=passed>passed</option>" \
                         "<option value=failed selected=selected>failed</option>" \
                         "<option value=not_tested>not tested</option></select>".format(suite, case, _type, script)
@@ -369,6 +371,23 @@ def format_select_case_result(select, suite, case, _type, script=0):
                         "<option value=failed>failed</option>" \
                         "<option value=not_tested  selected=selected>not tested</option></select>".format(suite, case, _type, script)
     return status_select
+
+
+def log_map_form(suite, project, script):
+    runner = invoke(track='App1/robot_runner/track.json',
+                    result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
+    logs = runner.fetch_history(feature=project, suite=script, tc=None)
+
+    if logs is not None:
+        html = "<div><table>"
+        for log in logs:
+            html += "<tr><td><button class=map_log es_id={} proj={} script={} time=\"{}\">{}</button></td></tr>"\
+                .format(suite, project, script, log["time"], log["time"])
+        html += "<tr><td><button id=cancel>cancel</button></td></tr>"
+        html += "</table></div>"
+    else:
+        html = "<div><table><tr><td>No log</td></tr><tr><td><button id=cancel>cancel</button></td></tr></div>"
+    return json.dumps({"form": html})
 
 
 def init_execution(username, suite):
@@ -411,7 +430,9 @@ def init_execution(username, suite):
                 .format(case, match_suite["m_cases"][case]["name"],
                         format_select_case_result(match_suite["m_cases"][case]["result"], suite, case, "m"))
         for script in match_suite["a_cases"].keys():
-            html += "<tr style=\"background:lightgrey;\"><th colspan=3>{}</th></tr>".format(script)
+            html += "<tr style=\"background:lightgrey;\"><th colspan=3>{} :: " \
+                    "<button class=map_log_form es_id={} script={}>map log</button></th> " \
+                .format(script.replace(".robot", ""), suite, script)
             for case in match_suite["a_cases"][script].keys():
                 html += "<tr style=\"background:lightgrey;\"><td>{}</td><td>{}</td><td>{}</td></tr>" \
                     .format(case, match_suite["a_cases"][script][case]["name"],
@@ -423,6 +444,18 @@ def init_execution(username, suite):
                      "<h3 style=\"background:black;color:white;margin:1%;\">Future Scope</h3></div>"
     dct["body$b5"] = "<div id=load_message name=load_message></div>"
     return htmlstructure(**dct)
+
+
+def map_log(suite, script, project, _time):
+    runner = invoke(track='App1/robot_runner/track.json',
+                    result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
+    logs = runner.fetch_history(feature=project, suite=script, tc=None)
+    for log in logs:
+        if log["time"] == _time:
+            xml = log["xml"]
+    case_status = parse_for_test(xml)
+    exec_manage = exec_manager(pool_1)
+    return exec_manage.map_log(suite, script, case_status)
 
 
 @ensure_csrf_cookie
@@ -453,6 +486,19 @@ def suite_execution(request):
                 exec_manage = exec_manager(pool_1)
                 return HttpResponse(exec_manage.update_case(request.session.get("username"), suite, case, status, _type, script))
 
+            elif action == "map_log_form":
+                suite = request.POST["suite"]
+                script = request.POST["script"]
+                project = exec_manager(pool_1).get_suite(suite)["script_project"]
+                return HttpResponse(log_map_form(suite, project, script))
+
+            elif action == "map_log":
+                suite = request.POST["suite"]
+                script = request.POST["script"]
+                project = request.POST["project"]
+                _time = request.POST["time"]
+
+                return HttpResponse(map_log(suite, script, project, _time))
             else:
                 return HttpResponse(status=404)
         else:
