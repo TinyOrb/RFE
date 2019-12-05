@@ -1,38 +1,52 @@
 {
-  "suites": {
-    "S1000": {
-      "name": "One suite",
-      "tcs": [],
-      "script_suite": [],
-      "creator": "",
-      "created_date": ""
-    }
-  },
-
-  "cases": {
-    "C1000": {
-      "name" : "One case",
-      "type" : "manual",
-      "description" : "",
-      "scenario": "",
-      "creator": "",
-      "created_date": "",
-      "automation": ""
-    }
-  },
-
-  "execution_suite": {
-    "ES1000" : {
-      "s_id" : "S1000",
-      "date" : "",
-      "pass_count" : 0,
-      "fail_count" : 0,
-      "untested_count": 0,
-      "tester": "",
-      "manual_case": 0,
-      "automate_case": 0,
-      m_case :
-    }
-  },
-  }
+    "suites": {
+        "S1000": {
+            "script_suite": [],
+            "name": "One suite",
+            "creator": "",
+            "created_date": "Sun Nov 17 17:42:44 2019",
+            "modified_on": "",
+            "cases": {
+                "C1000": {
+                    "name": "One case",
+                    "links": [],
+                    "creator": "anonymous",
+                    "scenario": "",
+                    "automation": "",
+                    "created_date": "",
+                    "modified_on": "",
+                    "description": ""
+                }
+            }
+        }
+    },
+    "next_exec_suite_id": 1001,
+    "next_case_id": 1001,
+    "next_exec_case_id": 1001,
+    "execution_suites": {
+        "ES1000": {
+            "m_cases": {
+                "EC1000": {
+                    "status": "pass",
+                    "comment": "",
+                    "name": "",
+                    "links": [],
+                    "c_id": "C1000",
+                    "date": "",
+                    "modified_on": ""
+                }
+            },
+            "modified_date": "",
+            "name": "Dummy suite execution",
+            "creator": "",
+            "creation_date": "",
+            "untested_count": 0,
+            "s_id": "S1000",
+            "fail_count": 0,
+            "pass_count": 0,
+            "automate_case": 0,
+            "manual_case": 0
+        }
+    },
+    "next_suite_id": 1001
 }
