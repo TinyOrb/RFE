@@ -28,6 +28,12 @@ $(document).ready(function(){
         console.log( "Load was performed." );
     });
 
+    $("#logout").click(function(){
+        data = {}
+        data["action"] = "check_out"
+        check_up(data)
+    });
+
     $(".result_exec").change(function(){
         data = {}
         data["suite"] = $(this).attr("es_id")
