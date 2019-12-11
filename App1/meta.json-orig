@@ -15,22 +15,23 @@
 },
 
 "ENV_Path": {
-    "project1": {}
+    "project1": {
+        "PATH": ["workspace/binary"]
+    }
 },
 
 "USER_LIST": {
     "admin": {
         "password": "defaultpassword",
         "project_access": [
-            {"project1": ["edit", "del"]},
-            {"project2":["edit", "del"]}
-        ]
-    },
+            "project1"
+            ]
+        },
     "guest": {
         "password": "guestpassword",
         "project_access": [
-            {"project1" : ["edit", "del"]}
-         ]
+            "project1"
+            ]
         }
     }
 
