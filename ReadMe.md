@@ -17,8 +17,12 @@ limitations under the License.
 
 @author: Shad Hasan, Tinyorb.org
 **************************************************************************
+RFE: Robotframework front end is complete web based test suite 
+-----------------------------------
+It has three URL /RFE, /PLAN, /EXEC which provides interface to interact automation suite, test planning and 
+text execution respectively.
 
-
+-----------------------------------
 Requirement for manual installation
 -----------------------------------
 Python 2.7
