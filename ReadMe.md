@@ -100,4 +100,14 @@ Sample:
         "PATH": ["/home/shad/sample/qa/robot/lib/geckodriver"]
     }
 ```
+-------------
+Verification:
+-------------
+Navigate http://127.0.0.1:8000/RFE
+
+Click on Run on WEB_TESTING_SAMPLE.ROBOT
+
+Click on view
+
+If everything goes as planned, wait to script log "Completed".
 
