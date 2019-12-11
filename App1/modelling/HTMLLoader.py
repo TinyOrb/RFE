@@ -115,7 +115,7 @@ def bodystructure(param):
     body_key_list.sort()
     st = ""
     for key in body_key_list:
-        st = st + param[key]
+        st = "{}{}".format(st, param[key])
 
     for bkey in body_script_key:
         st = st + "<script type=text/javascript src=" + param[bkey] + " ></script>"

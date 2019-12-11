@@ -250,20 +250,20 @@ def log_load(current, history, time):
     if len(info) > 0:
         output = ""
         for s in str(runner.script_log(info["script_output"])).splitlines():
-            output += "<tr><td>%s</td></tr>" % s
+            output += "<tr><td>{}</td></tr>".format(s)
         if os.path.isfile(info["log"]):
             initial_loading = {
                 "body$b1": "<br><br><table><tr><td><a href=\"%s\">Log</a></td></tr></table><br>" % ("static"+info["log"].replace(meta.STATICFILES_DIRS[0], "")),
                 "body$b2": "<table><tr><td><a href=\"%s\">Report</a></td></tr></table><br>" % ("static"+info["output"].replace(meta.STATICFILES_DIRS[0], "")),
                 "body$b3": "<table><tr><th>Script log</th></tr></table>",
-                "body$b4": "<table>%s</table>" % output
+                "body$b4": "<table>{}</table>".format(output)
             }
         else:
             initial_loading = {
                 "body$b1": "<br><br><table><tr><td><a href=\"%s\">Log</a></td></tr></table><br>" % "No log",
                 "body$b2": "<table><tr><td><a href=\"%s\">Report</a></td></tr></table><br>" % "No Report",
                 "body$b3": "<table><tr><th>Script log</th></tr></table>",
-                "body$b4": "<table>%s</table>" % output
+                "body$b4": "<table>{}</table>".format(output)
             }
     else:
         initial_loading = {"body$b1": "Unable to Log"}
