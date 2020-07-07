@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-import datetime
+from django.views.decorators.csrf import ensure_csrf_cookie
 from modelling import HTMLLoader
 import App1.settings as meta
 import time
@@ -22,7 +22,7 @@ def login(msg=""):
         }
     return HTMLLoader.htmlstructure(**dct)
     
-
+@ensure_csrf_cookie
 def home(request):
     try:
         if request.method == "GET":
@@ -65,6 +65,7 @@ def home(request):
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+@ensure_csrf_cookie
 def home_error(request):
     try:
         if request.method == "GET":
