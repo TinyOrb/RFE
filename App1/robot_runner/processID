@@ -1,0 +1,32 @@
+{
+    "project1_new_suite2.robot_": {
+        "status": "Done", 
+        "instance": [
+            "project1", 
+            "new_suite2.robot", 
+            null
+        ], 
+        "cmd": " export PATH=$PATH:workspace/binary; echo start of script output; python -m robot --outputdir \"/home/shad/RFE-Work/static/RFE_RESULT/project1/new_suite2.robot/2020-07-25_15-55-38.250731\" workspace/suite1/new_suite2.robot ; echo end of script output ", 
+        "pid": 30644
+    }, 
+    "project1_sample.robot_": {
+        "status": "Done", 
+        "instance": [
+            "project1", 
+            "sample.robot", 
+            null
+        ], 
+        "cmd": " export PATH=$PATH:workspace/binary; echo start of script output; python -m robot --outputdir \"/home/shad/RFE-Work/static/RFE_RESULT/project1/sample.robot/2020-07-25_15-55-54.848628\" workspace/suite1/sample.robot ; echo end of script output ", 
+        "pid": 30679
+    }, 
+    "project1_web_testing_sample.robot_": {
+        "status": "Done", 
+        "instance": [
+            "project1", 
+            "web_testing_sample.robot", 
+            null
+        ], 
+        "cmd": " export PATH=$PATH:workspace/binary; echo start of script output; python -m robot --outputdir \"/home/shad/RFE-Work/static/RFE_RESULT/project1/web_testing_sample.robot/2020-07-25_15-55-53.819614\" workspace/suite1/web_testing_sample.robot ; echo end of script output ", 
+        "pid": 30667
+    }
+}

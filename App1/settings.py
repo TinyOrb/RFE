@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import json
 
+from App1.misc.logger import log
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -138,3 +140,6 @@ CWD = data["CWD"]
 Work_dir = data["Work_dir"]
 
 user_list = data["USER_LIST"]
+
+logging = log()
+logging.enable_level(debug=True)

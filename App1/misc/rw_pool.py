@@ -18,8 +18,8 @@ limitations under the License.
 
 import threading
 import time
-import logging
 import json
+import App1.settings as meta
 
 class rw_pool(threading.Thread):
 
@@ -132,7 +132,7 @@ class rw_thread(threading.Thread):
 
     def run(self):
         self.mutex = True
-        logging.info("Thread id: {}, data: {}, operation: {}".format(self.thread_number, self.data, self.mode))
+        meta.logging.info("Thread id: {}, data: {}, operation: {}".format(self.thread_number, self.data, self.mode))
         if self.mode == "read":
             try:
                 self.buffer.set({"Read: success": self.read()})
@@ -156,5 +156,5 @@ class rw_thread(threading.Thread):
                 self.evt.set()
         else:
             self.buffer.set({"No operation": -1})
-        logging.info("Ending thread number: {}, iter: {}, buffer {}".format(self.thread_number, self.data, self.buffer))
+        meta.logging.info("Ending thread number: {}, iter: {}, buffer {}".format(self.thread_number, self.data, self.buffer))
         self.mutex = False

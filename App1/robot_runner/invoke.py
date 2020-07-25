@@ -26,6 +26,7 @@ import threading
 from sys import platform
 
 import App1.Robot_loader.Al_robot as Al_robot
+import App1.settings as meta
 
 
 class Invoke:
@@ -40,6 +41,15 @@ class Invoke:
         self.cd_path = None
         self.Python_Path = None
         self.process_pool = process_pool
+        self.thread_list = self.read_process_id()
+        for process in self.thread_list.keys():
+            if self.thread_list[process]["status"] == "Aborted" or self.thread_list[process]["status"] == "Done":
+                continue
+            else:
+                (feature, suite, tc) = self.thread_list[process]["instance"]
+                current_state = self.fetch_current(feature, suite, tc)
+                self.keep_eye(current_state, feature, suite, tc)
+
 
     def read_process_id(self):
         thread_id = self.process_pool.action("read")
@@ -47,7 +57,7 @@ class Invoke:
             result = self.process_pool.get_thread_buffer(thread_id)
             if result is not str and result != "No thread" and result is not None and "success" in result.keys()[
                 0].lower():
-                data = result.values()
+                data = result.values()[0]
                 self.process_pool.remove_thread_buffer(thread_id)
                 return data
             time.sleep(1)
@@ -165,28 +175,30 @@ class Invoke:
                 self.update_current(current_state, feature, suite, tc)
 
             else:
-                print("No enough input provided")
+                meta.logging.info("No enough input provided")
                 return "Fail"
+
+            meta.logging.debug(self.thread_list)
             if self.thread_list.get("%s_%s_%s" % (feature, "" if suite is None else suite,
                                                   "" if tc is None else tc)) is None or \
                     self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
                                                    "" if tc is None else tc)]["status"] == "Done":
-                print("Main    : before creating thread")
+                meta.logging.info("Main    : before creating thread")
                 self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] \
                     = {"status": "Start"}
                 x = threading.Thread(target=self.run, args=(current_state, feature, suite, tc,))
-                print("Main    : before running thread")
+                meta.logging.info("Main    : before running thread")
                 x.start()
             return "Success"
         except Exception as e:
-            print("Exception occur %s" % str(e))
+            meta.logging.info("Exception occur %s" % str(e))
             return "Fail"
 
     def abort_run(self, feature, suite=None, tc=None):
         try:
             if self.thread_list.get(
                     "%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)) is None:
-                print("No tracked process")
+                meta.logging.info("No tracked process")
                 current = self.fetch_current(feature, suite, tc)
                 current["status"] = "unknown"
                 self.update_current(current, feature, suite, tc)
@@ -196,20 +208,20 @@ class Invoke:
                                   "" if tc is None else tc)]["status"] == "Aborted" or self.thread_list[
                     "%s_%s_%s" % (feature, "" if suite is None else suite,
                                   "" if tc is None else tc)]["status"] == "Done":
-                print("Process is finished already")
+                meta.logging.info("Process is finished already")
                 return "success"
             else:
                 self.thread_list[
                     "%s_%s_%s" % (feature, "" if suite is None else suite,
                                   "" if tc is None else tc)]["status"] = "Abort"
-                print("Mark process abortion")
+                meta.logging.info("Mark process abortion")
                 return "success"
         except Exception as e:
-            print("Exception occurred %s" % str(e))
+            meta.logging.info("Exception occurred %s" % str(e))
             return "fail"
 
     def get_run_state(self, stack_json):
-        print("Fetching query")
+        meta.logging.info("Fetching query")
         try:
             with open(self.track) as json_file:
                 data = json.load(json_file)
@@ -257,12 +269,12 @@ class Invoke:
                     for tc in suite["tcs"]:
                         tc["status"] = "Run"
         except Exception as e:
-            print("Exception occur %s" % str(e))
+            meta.logging.info("Exception occur %s" % str(e))
 
         return stack_json
 
     def fetch_history(self, feature, suite=None, tc=None):
-        print("Fetching query")
+        meta.logging.info("Fetching query")
         with open(self.track) as json_file:
             data = json.load(json_file)
         flag = 0
@@ -284,15 +296,15 @@ class Invoke:
                     flag = 3
                     status = data_feature["history_status"]
         if flag == 0:
-            print("query failed")
+            meta.logging.info("query failed")
         elif flag == 1 or flag == 2 or flag == 3:
-            print("data fetch successfully")
+            meta.logging.info("data fetch successfully")
         else:
-            print("unknown query")
+            meta.logging.info("unknown query")
         return status
 
     def fetch_current(self, feature, suite=None, tc=None):
-        print("Fetching query")
+        meta.logging.info("Fetching query")
         with open(self.track) as json_file:
             data = json.load(json_file)
         flag = 0
@@ -314,15 +326,15 @@ class Invoke:
                     flag = 3
                     status = data_feature["current_status"]
         if flag == 0:
-            print("query failed")
+            meta.logging.info("query failed")
         elif flag == 1 or flag == 2 or flag == 3:
-            print("data fetch successfully")
+            meta.logging.info("data fetch successfully")
         else:
-            print("unknown query")
+            meta.logging.info("unknown query")
         return status
 
     def update_history(self, current_status, feature, suite=None, tc=None):
-        print("Updating status")
+        meta.logging.info("Updating status")
         with open(self.track) as json_file:
             data = json.load(json_file)
 
@@ -346,22 +358,22 @@ class Invoke:
                     flag = 3
 
         if flag == 0:
-            print("Insertion failed")
+            meta.logging.info("Insertion failed")
             return False
         elif flag == 1 or flag == 2 or flag == 3:
             try:
                 with open(self.track, 'w') as outfile:
                     json.dump(data, outfile)
-                print("Insertion success")
+                meta.logging.info("Insertion success")
                 return True
             except:
-                print("Unknown exception")
+                meta.logging.info("Unknown exception")
         else:
-            print("Unknown state")
+            meta.logging.info("Unknown state")
             return False
 
     def update_current(self, current_status, feature, suite=None, tc=None):
-        print("Updating status")
+        meta.logging.info("Updating status")
         with open(self.track) as json_file:
             data = json.load(json_file)
         flag = 0
@@ -383,18 +395,18 @@ class Invoke:
                     flag = 3
 
         if flag == 0:
-            print("Insertion failed")
+            meta.logging.info("Insertion failed")
             return False
         elif flag == 1 or flag == 2 or flag == 3:
             try:
                 with open(self.track, 'w') as outfile:
                     json.dump(data, outfile)
-                print("Insertion success")
+                meta.logging.info("Insertion success")
                 return True
             except:
-                print("Unknown exception")
+                meta.logging.info("Unknown exception")
         else:
-            print("Unknown state")
+            meta.logging.info("Unknown state")
             return False
 
     def run(self, current_state, feature, suite, tc):
@@ -407,7 +419,7 @@ class Invoke:
                     path_cmd = "%s:%s" % (path_cmd, path)
                 path_cmd = "%s;" % path_cmd
             if not self.ensure_path(current_state["script_output"], type="file"):
-                print("Failed to create script output file")
+                meta.logging.info("Failed to create script output file")
                 return False
             with open(self.normal_path(current_state["script_output"]), "wb") as out:
                 if self.cd_path is None:
@@ -415,7 +427,6 @@ class Invoke:
                           (path_cmd, current_state["cmd"])
                     process = subprocess.Popen([cmd], stdout=out, stderr=out,
                                                shell=True, preexec_fn=os.setsid)
-
                 else:
                     cmd = "%s echo start of script output; %s ; echo end of script output " % \
                           (path_cmd, current_state["cmd"])
@@ -425,37 +436,9 @@ class Invoke:
             current_state["status"] = "running"
             self.update_current(current_state, feature, suite, tc)
             self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] \
-                = {"status": "Running", "cmd": cmd, "pid": process.pid}
-            line = self.get_last_line(self.normal_path(current_state["script_output"]))
+                = {"status": "Running", "cmd": cmd, "pid": process.pid,"instance":(feature, suite,tc)}
 
-            while "end of script output" not in str(line):
-                print(self.thread_list)
-                if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
-                                                  "" if tc is None else tc)]["status"] == "Abort":
-                    os.killpg(os.getpgid(process.pid), signal.SIGTERM)
-                    process.kill()
-                    current_state["status"] = "aborted"
-
-                    with open(self.normal_path(current_state["script_output"]), "a") as out:
-                        subprocess.Popen("echo Script aborted!;", stdout=out, stderr=out, shell=True)
-                    self.update_current(current_state, feature, suite, tc)
-                    self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
-                                                   "" if tc is None else tc)]["status"] = "Aborted"
-                    print("Thread ended: %s_%s_%s" % (feature,
-                                                      "" if suite is None else suite, "" if tc is None else tc))
-                    break
-                time.sleep(1)
-                line = self.get_last_line(self.normal_path(current_state["script_output"]))
-
-            current_state["status"] = "done"
-            cur_time = str(datetime.datetime.now())
-            cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
-            current_state["end_time"] = cur_time1
-            self.update_current(current_state, feature, suite, tc)
-            self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
-                                           "" if tc is None else tc)]["status"] = "Done"
-            print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
-            return True
+            return self.keep_eye(current_state, feature, suite, tc)
 
         elif platform == "win32":
             envs = self.Python_Path
@@ -466,7 +449,7 @@ class Invoke:
                     path_cmd = "%s:%s" % (path_cmd, path)
                 path_cmd = "%s;" % path_cmd
             if not self.ensure_path(current_state["script_output"], type="file"):
-                print("Failed to create script output file")
+                meta.logging.info("Failed to create script output file")
                 return False
             with open(self.normal_path(current_state["script_output"]), "wb") as out:
                 cmd = "%s echo start of script output & %s & echo end of script output " %\
@@ -476,36 +459,9 @@ class Invoke:
             current_state["status"] = "running"
             self.update_current(current_state, feature, suite, tc)
             self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] \
-                = {"status": "Running", "cmd": cmd, "pid": process.pid}
-            line = self.get_last_line(self.normal_path(current_state["script_output"]))
+                = {"status": "Running", "cmd": cmd, "pid": process.pid, "instance":(feature, suite,tc)}
 
-            while "end of script output" not in str(line):
-                if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
-                                                  "" if tc is None else tc)]["status"] == "Abort":
-                    process.kill()
-                    process.terminate()
-                    os.kill(process.pid, signal.CTRL_C_EVENT)
-                    current_state["status"] = "aborted"
-                    with open(self.normal_path(current_state["script_output"]), "a") as out:
-                        subprocess.Popen("echo Script aborted!;", stdout=out, stderr=out, shell=True)
-                    self.update_current(current_state, feature, suite, tc)
-                    self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
-                                                   "" if tc is None else tc)]["status"] = "Aborted"
-                    print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite,
-                                                      "" if tc is None else tc))
-                    break
-                time.sleep(1)
-                line = self.get_last_line(self.normal_path(current_state["script_output"]))
-
-            current_state["status"] = "done"
-            cur_time = str(datetime.datetime.now())
-            cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
-            current_state["end_time"] = cur_time1
-            self.update_current(current_state, feature, suite, tc)
-            self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
-                                           "" if tc is None else tc)]["status"] = "Done"
-            print("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
-            return True
+            return self.keep_eye(current_state, feature, suite, tc)
 
         elif platform == "darwin":
             return False
@@ -513,12 +469,81 @@ class Invoke:
             return False
 
     def keep_eye(self, current_state, feature, suite, tc):
-        if platform == "linux" or platform == "linux2":
-            pass
-        elif platform == "darwin":
+        try:
+            pid = self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                           "" if tc is None else tc)]["pid"]
+            if platform == "linux" or platform == "linux2":
+                line = self.get_last_line(self.normal_path(current_state["script_output"]))
+
+                while "end of script output" not in str(line):
+                    if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                                      "" if tc is None else tc)]["status"] == "Abort":
+                        os.killpg(os.getpgid(pid), signal.SIGTERM)
+                        current_state["status"] = "aborted"
+
+                        with open(self.normal_path(current_state["script_output"]), "a") as out:
+                            subprocess.Popen("echo Script aborted!;", stdout=out, stderr=out, shell=True)
+                        self.update_current(current_state, feature, suite, tc)
+                        self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                                       "" if tc is None else tc)]["status"] = "Aborted"
+                        self.write_process_id()
+                        meta.logging.info("Thread ended: %s_%s_%s" % (feature,
+                                                          "" if suite is None else suite, "" if tc is None else tc))
+                        break
+                    time.sleep(1)
+                    line = self.get_last_line(self.normal_path(current_state["script_output"]))
+
+                current_state["status"] = "done"
+                cur_time = str(datetime.datetime.now())
+                cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+                current_state["end_time"] = cur_time1
+                self.update_current(current_state, feature, suite, tc)
+                self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                               "" if tc is None else tc)]["status"] = "Done"
+                self.write_process_id()
+                meta.logging.info("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
+                return True
+            elif platform == "win32":
+                line = self.get_last_line(self.normal_path(current_state["script_output"]))
+
+                while "end of script output" not in str(line):
+                    if self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                                      "" if tc is None else tc)]["status"] == "Abort":
+                        os.kill(pid, signal.CTRL_C_EVENT)
+                        current_state["status"] = "aborted"
+                        with open(self.normal_path(current_state["script_output"]), "a") as out:
+                            subprocess.Popen("echo Script aborted!;", stdout=out, stderr=out, shell=True)
+                        self.update_current(current_state, feature, suite, tc)
+                        self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                                       "" if tc is None else tc)]["status"] = "Aborted"
+                        self.write_process_id()
+                        meta.logging.info("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite,
+                                                          "" if tc is None else tc))
+                        break
+                    time.sleep(1)
+                    line = self.get_last_line(self.normal_path(current_state["script_output"]))
+
+                current_state["status"] = "done"
+                cur_time = str(datetime.datetime.now())
+                cur_time1 = cur_time.split(" ")[0] + "_" + cur_time.split(" ")[1]
+                current_state["end_time"] = cur_time1
+                self.update_current(current_state, feature, suite, tc)
+                self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                               "" if tc is None else tc)]["status"] = "Done"
+                self.write_process_id()
+                meta.logging.info("Thread ended: %s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc))
+                return True
+            elif platform == "darwin":
+                return False
+            else:
+                return False
+        except Exception as e:
+            meta.logging.debug("Error: {}".format(str(e)))
+            self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
+                                           "" if tc is None else tc)]["status"] = "Done"
+            self.write_process_id()
             return False
-        else:
-            return False
+
 
     def normal_path(self, path):
         if platform == "linux" or platform == "linux2":
@@ -536,8 +561,8 @@ class Invoke:
             lastline = data[-1]
             return lastline
         except Exception as e:
-            print("Exception occured as %s" % str(e))
-            return ""
+            meta.logging.debug("Exception occurred as %s" % str(e))
+            raise RuntimeError("File does not exist: {}".format(path))
 
     def ensure_path(self, path, type="dir"):
         try:
@@ -552,15 +577,15 @@ class Invoke:
                 if not os.path.exists(path):
                     os.makedirs(path)
                 else:
-                    print("Directory all ready exist")
+                    meta.logging.info("Directory all ready exist")
             elif type == "file":
                 if not os.path.exists(os.path.dirname(path)):
                     os.makedirs(os.path.dirname(path))
                 else:
-                    print("Directory all ready exist")
+                    meta.logging.info("Directory all ready exist")
             return True
         except Exception as e:
-            print("Some unknown error occured: %s" % str(e))
+            meta.logging.info("Some unknown error occured: %s" % str(e))
             return False
 
     def fetch_detail_traverse_data(self, data, feature, suite, tc):
@@ -581,7 +606,7 @@ class Invoke:
                                         if tc == data_tc["name"]:
                                             detail["tc"] = tc
         except Exception as e:
-            print("Exception occurs %s" % str(e))
+            meta.logging.info("Exception occurs %s" % str(e))
 
         return detail
 
@@ -590,27 +615,27 @@ class Invoke:
 
         if current_data_set["feature"] is not None:
             if suite is None:
-                print("Data set already exist")
+                meta.logging.info("Data set already exist")
             else:
                 if current_data_set["suite"] is not None:
                     if tc is None:
-                        print("Data set already exist")
+                        meta.logging.info("Data set already exist")
                     else:
                         if current_data_set["tc"] is not None:
-                            print("Data set already exist")
+                            meta.logging.info("Data set already exist")
                         else:
-                            print("Preparing test case data set")
+                            meta.logging.info("Preparing test case data set")
                             d_tc = dict()
                             d_tc["name"] = tc
                             d_tc["id"] = data["tc_count"] + 1
                             d_tc["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc)
                             d_tc["current_status"] = {}
                             d_tc["history_status"] = []
-                            print("Inserting test case data set")
+                            meta.logging.info("Inserting test case data set")
                             self.insert_data_set(data, feature, suite, TC=d_tc)
-                            print("Insertion completed")
+                            meta.logging.info("Insertion completed")
                 else:
-                    print("Preparing suite data set")
+                    meta.logging.info("Preparing suite data set")
                     d_suite = dict()
                     d_suite["name"] = suite
                     d_suite["id"] = data["suite_count"] + 1
@@ -618,22 +643,22 @@ class Invoke:
                     d_suite["current_status"] = {}
                     d_suite["history_status"] = []
                     d_suite["tcs"] = []
-                    print("Inserting suite data set")
+                    meta.logging.info("Inserting suite data set")
                     self.insert_data_set(data, feature, suite, SUITE=d_suite)
-                    print("Insertion completed")
+                    meta.logging.info("Insertion completed")
                     if tc is not None:
-                        print("Preparing test case data set")
+                        meta.logging.info("Preparing test case data set")
                         d_tc = dict()
                         d_tc["name"] = tc
                         d_tc["id"] = data["tc_count"] + 1
                         d_tc["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc)
                         d_tc["current_status"] = {}
                         d_tc["history_status"] = []
-                        print("Inserting test case data set")
+                        meta.logging.info("Inserting test case data set")
                         self.insert_data_set(data, feature, suite, TC=d_tc)
-                        print("Insertion completed")
+                        meta.logging.info("Insertion completed")
         else:
-            print("Preparing feature data set")
+            meta.logging.info("Preparing feature data set")
             d_feature = dict()
             d_feature["name"] = feature
             d_feature["id"] = data["feature_count"] + 1
@@ -641,11 +666,11 @@ class Invoke:
             d_feature["current_status"] = {}
             d_feature["history_status"] = []
             d_feature["suites"] = []
-            print("Inserting feature data set")
+            meta.logging.info("Inserting feature data set")
             self.insert_data_set(data, feature, suite, FEATURE=d_feature)
-            print("Insertion completed")
+            meta.logging.info("Insertion completed")
             if suite is not None:
-                print("Preparing suite data set")
+                meta.logging.info("Preparing suite data set")
                 d_suite = dict()
                 d_suite["name"] = suite
                 d_suite["id"] = data["suite_count"] + 1
@@ -653,20 +678,20 @@ class Invoke:
                 d_suite["current_status"] = {}
                 d_suite["history_status"] = []
                 d_suite["tcs"] = []
-                print("Inserting suite data set")
+                meta.logging.info("Inserting suite data set")
                 self.insert_data_set(data, feature, suite, SUITE=d_suite)
-                print("Insertion completed")
+                meta.logging.info("Insertion completed")
                 if tc is not None:
-                    print("Preparing test case data set")
+                    meta.logging.info("Preparing test case data set")
                     d_tc = dict()
                     d_tc["name"] = tc
                     d_tc["id"] = data["tc_count"] + 1
                     d_tc["dir"] = os.path.join(os.path.join(os.path.join(self.result_dir, feature), suite), tc)
                     d_tc["current_status"] = {}
                     d_tc["history_status"] = []
-                    print("Inserting test case data set")
+                    meta.logging.info("Inserting test case data set")
                     self.insert_data_set(data, feature, suite, TC=d_tc)
-                    print("Insertion completed")
+                    meta.logging.info("Insertion completed")
 
     def insert_data_set(self, data, feature, suite, FEATURE=None, SUITE=None, TC=None):
         if FEATURE is not None:
