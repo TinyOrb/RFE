@@ -4,6 +4,7 @@ from modelling import HTMLLoader
 import App1.settings as meta
 import time
 
+
 def login(msg=""):
     dct = {
         "body$b1": "<div id=header name=header><h2 style=\"width:98%;padding:1%;text-align:left;\">"
@@ -64,6 +65,7 @@ def home(request):
         return HttpResponse(Msg, status=status)
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
 
 @ensure_csrf_cookie
 def home_error(request):

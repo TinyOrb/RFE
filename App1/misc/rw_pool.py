@@ -50,8 +50,7 @@ class rw_pool(threading.Thread):
         self.end_flag = True
         self._file = _file
         self.evt.set()
-        for i in range(max_thread):
-            self.rw_threads[i] = None
+        self.rw_threads = {i:None for i in range(max_thread)}
         super(rw_pool, self).__init__()
 
     def action(self, do, data=None, operation=None):
@@ -59,12 +58,13 @@ class rw_pool(threading.Thread):
         self.gen_thread_id = self.gen_thread_id + 1
 
         allocated = 0
-        while allocated == 0:
-            for pool_num in self.rw_threads.keys():
-                if self.rw_threads[pool_num] is None or not self.rw_threads[pool_num].mutex:
-                    alloc_pool = pool_num
-                    allocated = 1
-                    break
+        for pool_num in self.rw_threads.keys():
+            if self.rw_threads[pool_num] is None or not self.rw_threads[pool_num].mutex:
+                alloc_pool = pool_num
+                allocated = 1
+                break
+        if allocated == 0:
+            return "Thread buffer overflow"
         self.thread_buffer[self.gen_thread_id] = self.meta_buffer(self.gen_thread_id)
         self.rw_threads[alloc_pool] = rw_thread(self.gen_thread_id, self.evt, self._file, self.thread_buffer[self.gen_thread_id], mutex=True,)
         self.rw_threads[alloc_pool].mode = do
@@ -88,7 +88,6 @@ class rw_pool(threading.Thread):
     def run(self):
         while self.end_flag:
             pass
-
 
 
 class rw_thread(threading.Thread):
@@ -116,7 +115,6 @@ class rw_thread(threading.Thread):
                 raise RuntimeError("Mode: multi takes function of a argument and return string as argument")
         else:
             raise RuntimeError("Mode: multi takes function of a argument as argument")
-
 
     def read(self):
         if not self.evt.is_set():

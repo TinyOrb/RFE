@@ -19,7 +19,6 @@ limitations under the License.
 import os
 import json
 import logging
-import time
 
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -33,7 +32,7 @@ from App1.manual.man_manage import suite_manager
 from App1.manual.man_execution import exec_manager
 from App1.Robot_loader import Al_robot_parser
 from App1.Robot_loader import Al_robot
-from robot_runner.invoke import invoke as invoke
+from robot_runner.invoke import Invoke as Invoke
 
 logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 pool_1 = rw_pool(20, "App1/all_manual.json")
@@ -374,7 +373,7 @@ def format_select_case_result(select, suite, case, _type, script=0):
 
 
 def log_map_form(suite, project, script):
-    runner = invoke(track='App1/robot_runner/track.json',
+    runner = Invoke(track='App1/robot_runner/track.json',
                     result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
     logs = runner.fetch_history(feature=project, suite=script, tc=None)
 
@@ -447,7 +446,7 @@ def init_execution(username, suite):
 
 
 def map_log(suite, script, project, _time):
-    runner = invoke(track='App1/robot_runner/track.json',
+    runner = Invoke(track='App1/robot_runner/track.json',
                     result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
     logs = runner.fetch_history(feature=project, suite=script, tc=None)
     for log in logs:

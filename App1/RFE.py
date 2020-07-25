@@ -26,14 +26,16 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from modelling import HTMLLoader
 from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
-from robot_runner.invoke import invoke as invoke
+from robot_runner.invoke import Invoke as Invoke
 import App1.settings as meta
+from App1.misc.rw_pool import rw_pool
 
 import urllib
 
 import time
 
-runner = invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"))
+runner = Invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(meta.STATICFILES_DIRS[0], "RFE_RESULT"),
+                process_pool=rw_pool(20, 'App1/robot_runner/processID'))
 
 user = "default_user"
 
@@ -69,7 +71,7 @@ def status_load(current, history, username=None):
             "body$b1": header.format(username),
             "body$b2": "<div id=suite name=suite><h2>STATS</h2></div>",
             "body$b3": "<div id=testcase name=testcase><h2>Logs</h2></div>",
-            "script$s1": "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js",
+            "script$s1": "../static/jquery.min.js",
             "script$s2": "../static/he.js",
             "style$t1": "../static/RFE.css",
             "bscript$s1": "../static/FSTAT.js",
@@ -99,7 +101,7 @@ def fetchSuite(feature):
 
 
 @ensure_csrf_cookie
-def InitialLoad(request):
+def initial_load(request):
     try:
         #print(initial())
         if request.session.get("username") is None:
@@ -111,7 +113,7 @@ def InitialLoad(request):
 
 
 @ensure_csrf_cookie
-def LoadTestSuite(request):
+def load_test_suite(request):
     global runner
     try:
         if request.session.get("username") is None:
@@ -123,14 +125,14 @@ def LoadTestSuite(request):
         # raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
-#Please rename GetAllSuites to GetAllFiles
+
 @ensure_csrf_cookie
-def GetAllSuites(request):
+def get_all_files(request):
 
     global runner
     try:
         if request.session.get("username") is None:
-            return HttpResponse("Unauthorize", status=403)
+            return HttpResponse("Not authorize", status=403)
         if request.method == "POST":
             all = {}
             features = meta.Test_Suite_Folder
@@ -143,7 +145,7 @@ def GetAllSuites(request):
 
 
 @ensure_csrf_cookie
-def Run_instance(request):
+def run_instance(request):
     global runner
     try:
         if request.session.get("username") is None:
@@ -186,7 +188,7 @@ def Run_instance(request):
 
 
 @ensure_csrf_cookie
-def Abort_instance(request):
+def abort_instance(request):
     global runner
     try:
         if request.session.get("username") is None:
@@ -208,7 +210,7 @@ def Abort_instance(request):
 
 
 @ensure_csrf_cookie
-def Run_stat(request):
+def run_stat(request):
     global runner
     try:
         if request.session.get("username") is None:
@@ -271,7 +273,7 @@ def log_load(current, history, time):
 
 
 @ensure_csrf_cookie
-def Log_stat(request):
+def log_stat(request):
     global runner
     try:
         if request.session.get("username") is None:
@@ -297,6 +299,7 @@ def Log_stat(request):
             return HttpResponse(log_load(runner.fetch_current(feature, suite, tc), runner.fetch_history(feature, suite, tc), start_time))
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
 
 @ensure_csrf_cookie
 def load_meta_run_with(request):
@@ -332,6 +335,7 @@ def load_meta_run_with(request):
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+
 def editor_load(username):
         initial_loading = {
             "body$b1": "<div id=load_message name=load_message></div>",
@@ -344,8 +348,9 @@ def editor_load(username):
         }
         return HTMLLoader.htmlstructure(**initial_loading)
 
+
 @ensure_csrf_cookie
-def Core_Editor(request):
+def core_editor(request):
     try:
         if request.session.get("username") is None:
             return HttpResponse("", status=403)
@@ -413,6 +418,7 @@ def Core_Editor(request):
         #raise e
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
 
+
 @ensure_csrf_cookie
 def get_time(request):
     try:
@@ -424,6 +430,7 @@ def get_time(request):
             return HttpResponse("fail", status=400)
     except Exception as e:
         return HttpResponse("Some error occurred <div style='display: none;'>" + str(e) + "</div>")
+
 
 @ensure_csrf_cookie
 def manage_feat(request):
