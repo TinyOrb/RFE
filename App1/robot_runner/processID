@@ -26,7 +26,7 @@
             "web_testing_sample.robot", 
             null
         ], 
-        "cmd": " export PATH=$PATH:workspace/binary; echo start of script output; python -m robot --outputdir \"/home/shad/RFE-Work/static/RFE_RESULT/project1/web_testing_sample.robot/2020-07-25_15-55-53.819614\" workspace/suite1/web_testing_sample.robot ; echo end of script output ", 
-        "pid": 30667
+        "cmd": " export PATH=$PATH:workspace/binary; echo start of script output; python -m robot --outputdir \"/home/shad/RFE-Work/static/RFE_RESULT/project1/web_testing_sample.robot/2020-07-25_16-20-17.524213\" workspace/suite1/web_testing_sample.robot ; echo end of script output ", 
+        "pid": 32083
     }
 }

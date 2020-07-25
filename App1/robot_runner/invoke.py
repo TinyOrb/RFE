@@ -434,10 +434,10 @@ class Invoke:
                                                shell=True, cwd=self.cd_path, preexec_fn=os.setsid)
 
             current_state["status"] = "running"
-            self.update_current(current_state, feature, suite, tc)
             self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] \
-                = {"status": "Running", "cmd": cmd, "pid": process.pid,"instance":(feature, suite,tc)}
-
+                = {"status": "Running", "cmd": cmd, "pid": process.pid, "instance": (feature, suite, tc)}
+            self.write_process_id()
+            self.update_current(current_state, feature, suite, tc)
             return self.keep_eye(current_state, feature, suite, tc)
 
         elif platform == "win32":
@@ -457,9 +457,10 @@ class Invoke:
                 process = subprocess.Popen(cmd, stdout=out, stderr=out, shell=True)
 
             current_state["status"] = "running"
-            self.update_current(current_state, feature, suite, tc)
             self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite, "" if tc is None else tc)] \
-                = {"status": "Running", "cmd": cmd, "pid": process.pid, "instance":(feature, suite,tc)}
+                = {"status": "Running", "cmd": cmd, "pid": process.pid, "instance": (feature, suite, tc)}
+            self.write_process_id()
+            self.update_current(current_state, feature, suite, tc)
 
             return self.keep_eye(current_state, feature, suite, tc)
 
@@ -470,6 +471,7 @@ class Invoke:
 
     def keep_eye(self, current_state, feature, suite, tc):
         try:
+            meta.logging.info("Keeping eye on thread")
             pid = self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
                                            "" if tc is None else tc)]["pid"]
             if platform == "linux" or platform == "linux2":
@@ -538,6 +540,7 @@ class Invoke:
             else:
                 return False
         except Exception as e:
+
             meta.logging.debug("Error: {}".format(str(e)))
             self.thread_list["%s_%s_%s" % (feature, "" if suite is None else suite,
                                            "" if tc is None else tc)]["status"] = "Done"
