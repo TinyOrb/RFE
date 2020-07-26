@@ -23,7 +23,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 
-from modelling import HTMLLoader
+from modelling import html_loader
 from Robot_loader import Al_robot
 from Robot_loader import Al_robot_parser
 from robot_runner.invoke import Invoke as Invoke
@@ -40,7 +40,11 @@ runner = Invoke(track='App1/robot_runner/track.json', result_dir=os.path.join(me
 user = "default_user"
 
 header = "<div id=header name=header><h2 style=\"width:50%;padding:1%;text-align:left;float:left;\">" \
-         "Robotframework Front End</h2><table style='padding:1%;float:right;color:white;'><tr><td>{}</td>" \
+         "Robotframework Front End</h2><table style='padding:1%;float:right;color:white;'><tr>" \
+         "<td><button><a style=\"text-decoration:none;\" href=\"/RFE\">Robot Automation</a></button></td>" \
+         "<td><button><a style=\"text-decoration:none;\" href=\"/PLAN\">Test Planning</a></button></td>" \
+         "<td><button><a style=\"text-decoration:none;\" href=\"/EXEC\">Test Execution</a></button></td>" \
+         "<td>{}</td>" \
          "<td><button id=logout>logout</button></td></tr></table></div>"
 
 def initial(username):
@@ -63,7 +67,7 @@ def initial(username):
     for s in Suite:
         initial_loading["headrawscript$r"+str(i)] += "$('#suite').html($('#suite').html()+'<div class=suite_list>"+s+"</div>');"
     initial_loading["headrawscript$r"+str(i)] += "});"
-    return HTMLLoader.htmlstructure(**initial_loading)
+    return html_loader.htmlstructure(**initial_loading)
 
 
 def status_load(current, history, username=None):
@@ -82,7 +86,7 @@ def status_load(current, history, username=None):
                                                           "tc_head = $(\"#testcase\").html(); " \
                                                           "$(\"#testcase\").html(tc_head + \"No Logs\"); " \
                                                           "});"
-            return HTMLLoader.htmlstructure(**initial_loading)
+            return html_loader.htmlstructure(**initial_loading)
         else:
             initial_loading["headrawscript$r1"] = "$(document).ready(function(){"
             initial_loading["headrawscript$r1"] += "$('#suite').html($('#suite').html()+'<div><h3>Current status</h3></div>');"
@@ -92,7 +96,7 @@ def status_load(current, history, username=None):
                 initial_loading["headrawscript$r1"] += "$('#suite').html($('#suite').html()+'<div class=stat_list>" + h["time"] + "</div>');"
             initial_loading["headrawscript$r1"] += "});"
             #print(HTMLLoader.htmlstructure(**initial_loading))
-            return HTMLLoader.htmlstructure(**initial_loading)
+            return html_loader.htmlstructure(**initial_loading)
 
 
 def fetchSuite(feature):
@@ -269,7 +273,7 @@ def log_load(current, history, time):
             }
     else:
         initial_loading = {"body$b1": "Unable to Log"}
-    return HTMLLoader.htmlstructure(**initial_loading)
+    return html_loader.htmlstructure(**initial_loading)
 
 
 @ensure_csrf_cookie
@@ -346,7 +350,7 @@ def editor_load(username):
             "style$t1": "../static/RFE.css",
             "bscript$s1": "../static/rfeedit.js",
         }
-        return HTMLLoader.htmlstructure(**initial_loading)
+        return html_loader.htmlstructure(**initial_loading)
 
 
 @ensure_csrf_cookie

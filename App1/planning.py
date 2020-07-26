@@ -26,7 +26,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 
 from App1.misc.rw_pool import rw_pool
 from App1.misc.parse_xml import parse_for_test
-from modelling.HTMLLoader import htmlstructure
+from modelling.html_loader import htmlstructure
 import App1.settings as meta
 from App1.manual.man_manage import suite_manager
 from App1.manual.man_execution import exec_manager
@@ -38,7 +38,11 @@ logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 pool_1 = rw_pool(20, "App1/all_manual.json")
 
 header = "<div id=header name=header><h2 style=\"width:50%;padding:1%;text-align:left;float:left;\">" \
-         "Robotframework Front End</h2><table style='padding:1%;float:right;color:white;'><tr><td>{}</td>" \
+         "Robotframework Front End</h2><table style='padding:1%;float:right;color:white;'><tr>" \
+         "<td><button><a style=\"text-decoration:none;\" href=\"/RFE\">Robot Automation</a></button></td>" \
+         "<td><button><a style=\"text-decoration:none;\" href=\"/PLAN\">Test Planning</a></button></td>" \
+         "<td><button><a style=\"text-decoration:none;\" href=\"/EXEC\">Test Execution</a></button></td>" \
+         "<td>{}</td>" \
          "<td><button id=logout>logout</button></td></tr></table></div>"
 
 def init_all_suite(username, suite):

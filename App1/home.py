@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
-from modelling import HTMLLoader
+from modelling import html_loader
 import App1.settings as meta
 import time
 
@@ -21,7 +21,7 @@ def login(msg=""):
         "style$t1": "../static/home.css",
         "headrawmeta$m1": "<title>home</title>"
         }
-    return HTMLLoader.htmlstructure(**dct)
+    return html_loader.htmlstructure(**dct)
     
 @ensure_csrf_cookie
 def home(request):

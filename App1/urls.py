@@ -14,16 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import url
-from django.contrib import admin
+
 # RFE stands for robot framework front end
-from . import Test
+from . import home
 from . import RFE
-from . import Planning
+from . import planning
 
 urlpatterns = [
     #url(r'^admin/', admin.site.urls),
-    url(r'^$', Test.home),
-    url(r'^expire$', Test.home_error),
+    url(r'^$', home.home),
+    url(r'^expire$', home.home_error),
     url(r'^RFE$', RFE.initial_load, name="RFE"),
     url(r'^RFETS$', RFE.load_test_suite, name="TS"),
     url(r'^RFERUN$', RFE.run_instance, name="Run"),
@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^GETSERVERNOW$', RFE.get_time, name="ctime"),
     url('GETALLSUITES$', RFE.get_all_files, name="all_files"),
     url('MANAGEFEAT$', RFE.manage_feat, name="manage_feat"),
-    url('PLAN$', Planning.suite_plan, name="suite_plan"),
-    url('EXEC$', Planning.suite_execution, name="")
+    url('PLAN$', planning.suite_plan, name="suite_plan"),
+    url('EXEC$', planning.suite_execution, name="")
     #path(r'^App1/',Test.test1, name="index")
 ]
