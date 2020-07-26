@@ -35,20 +35,21 @@ class Invoke:
     # Life cycle of thread Start -> Running -> Abort -> Aborted -> Done or Start -> Running -> Done
     thread_list = {}
 
-    def __init__(self, track, result_dir, process_pool):
+    def __init__(self, track, result_dir, process_pool=None):
         self.track = track
         self.result_dir = result_dir
         self.cd_path = None
         self.Python_Path = None
-        self.process_pool = process_pool
-        self.thread_list = self.read_process_id()
-        for process in self.thread_list.keys():
-            if self.thread_list[process]["status"] == "Aborted" or self.thread_list[process]["status"] == "Done":
-                continue
-            else:
-                (feature, suite, tc) = self.thread_list[process]["instance"]
-                current_state = self.fetch_current(feature, suite, tc)
-                self.keep_eye(current_state, feature, suite, tc)
+        if process_pool is not None:
+            self.process_pool = process_pool
+            self.thread_list = self.read_process_id()
+            for process in self.thread_list.keys():
+                if self.thread_list[process]["status"] == "Aborted" or self.thread_list[process]["status"] == "Done":
+                    continue
+                else:
+                    (feature, suite, tc) = self.thread_list[process]["instance"]
+                    current_state = self.fetch_current(feature, suite, tc)
+                    self.keep_eye(current_state, feature, suite, tc)
 
 
     def read_process_id(self):
