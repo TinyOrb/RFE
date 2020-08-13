@@ -1,0 +1,37 @@
+Requirenment For Resolution:
+
+1. asnlcrypto==0.24.0
+2. binaryornot==0.4.4
+3. certifi==2019.6.16
+4. chardet--3.0.4
+5. configparser==3.5.0b2
+6. cryptography==2.6.1
+7. dbus-pytjon==1.2.12
+8. Django==1.11
+9. docutils==0.15.2
+10. entrypoints==0.3
+11. enum34==1.1.6
+12. idna==2.6
+13. ipaddress==1.0.17
+14. keyring==18.0.1
+15. keyrings.alt==3.1.1
+16. kitchen==1.2.6
+17. mercurial==4.8.2
+18. netaddr==0.7.19
+19. numpy==1.16.4
+20. pdftotext==2.1.1
+21. pexpect==4.7.0
+22. ptyprocess==0.6.0
+23. pycrypto==2.6.1
+24. PyGOonject==3.34.0
+25. pytz=2019.1
+26. pyxdg==0.25
+27. requests==2.22.0
+28. robotframework==3.0.4
+29. robotframework-selenium2library==3.0.0
+30. robotframework-selenium2library==3.3.1
+31. SecretStorage==2.3.1
+32. selenium==3.141.0
+33. six==1.12.0
+34. statistics=1.0.3.5
+35. urllib3==1.25.3
