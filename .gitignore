@@ -8,4 +8,6 @@ App1/robot_runner/track.json
 .idea
 workspace/*
 *all_manual.json
-
+requirements.txt
+*.pyc
+processID
