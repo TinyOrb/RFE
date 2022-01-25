@@ -23,6 +23,16 @@ It has three URL /RFE, /PLAN, /EXEC which provides interface to interact automat
 text execution respectively.
 
 -----------------------------------
+Quick Check
+-----------------------------------
+```
+docker pull tinyorb/rfe
+docker run --name=rfe -p 80:8000
+```
+
+docker source [link](https://bitbucket.org/tinyorb_team/rfe_docker/src/master/)
+
+-----------------------------------
 Requirement for manual installation
 -----------------------------------
 Python 2.7
